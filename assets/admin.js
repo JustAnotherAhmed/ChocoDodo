@@ -1,6 +1,7 @@
 // Admin panel logic — Dashboard / Products / Orders / Users / Settings.
 
-const API_BASE = window.CHOCODODO_API_BASE || 'http://localhost:4242';
+// Same-origin relative URLs by default — works on Railway/any host AND localhost.
+const API_BASE = window.CHOCODODO_API_BASE || '';
 const $ = (s, p = document) => p.querySelector(s);
 const $$ = (s, p = document) => [...p.querySelectorAll(s)];
 

@@ -1,7 +1,11 @@
 // Auth page handlers — signup, login, account.
 // Loaded on pages/signup.html, pages/login.html, pages/account.html
 
-const API_BASE = window.CHOCODODO_API_BASE || 'http://localhost:4242';
+// API_BASE empty by default = same-origin relative URLs. Works on Railway,
+// any hosted domain, and localhost where the backend serves the frontend too.
+// To override for a split frontend/backend setup, set window.CHOCODODO_API_BASE
+// before this script loads.
+const API_BASE = window.CHOCODODO_API_BASE || '';
 const $ = (s, p = document) => p.querySelector(s);
 const $$ = (s, p = document) => [...p.querySelectorAll(s)];
 

@@ -7,7 +7,8 @@
    - Animations + form handling
    ============================================ */
 
-const API_BASE = window.CHOCODODO_API_BASE || 'http://localhost:4242';
+// Same-origin relative URLs by default — works on Railway/any host AND localhost.
+const API_BASE = window.CHOCODODO_API_BASE || '';
 
 /* ---------- HARDCODED FALLBACK PRODUCTS ----------
    Used only if /api/products is unreachable (e.g. site opened
