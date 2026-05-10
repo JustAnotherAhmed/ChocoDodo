@@ -36,6 +36,9 @@ desktop.ini
 *.swp
 *.swo
 
+# Claude Code config (often contains saved curl commands with real creds)
+.claude/
+
 # Build artifacts (none today, future-proofing)
 dist/
 build/
