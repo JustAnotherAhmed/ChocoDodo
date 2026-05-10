@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="bg-d" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#FCE4EC"/>
+      <stop offset="100%" stop-color="#F5E6D3"/>
+    </radialGradient>
+    <radialGradient id="dough" cx="40%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#E8C39E"/>
+      <stop offset="100%" stop-color="#C49A6C"/>
+    </radialGradient>
+    <radialGradient id="frost" cx="40%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#8B5A3C"/>
+      <stop offset="100%" stop-color="#3E2723"/>
+    </radialGradient>
+    <filter id="shadow-d" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="6" result="off"/>
+      <feFlood flood-color="#3E2723" flood-opacity="0.18"/>
+      <feComposite in2="off" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg-d)"/>
+  <!-- shadow -->
+  <ellipse cx="200" cy="245" rx="110" ry="14" fill="#3E2723" opacity="0.15"/>
+  <!-- donut group -->
+  <g filter="url(#shadow-d)">
+    <!-- dough base -->
+    <circle cx="200" cy="160" r="100" fill="url(#dough)"/>
+    <!-- frosting blob with drips -->
+    <path d="M 110 160 Q 110 90 200 80 Q 290 90 290 160 Q 285 175 270 178 L 268 195 Q 260 198 254 192 L 248 178 Q 230 180 220 178 L 215 200 Q 207 204 200 198 L 196 178 Q 175 180 165 178 L 160 192 Q 152 196 146 188 L 140 175 Q 120 175 110 160 Z" fill="url(#frost)"/>
+    <!-- inner hole -->
+    <circle cx="200" cy="160" r="32" fill="#FFF8E7"/>
+    <circle cx="200" cy="160" r="32" fill="none" stroke="#3E2723" stroke-opacity="0.18" stroke-width="2"/>
+    <!-- sprinkles -->
+    <rect x="155" y="120" width="14" height="4" rx="2" fill="#F5B7B1" transform="rotate(25 162 122)"/>
+    <rect x="220" y="115" width="14" height="4" rx="2" fill="#A8DADC" transform="rotate(-30 227 117)"/>
+    <rect x="180" y="105" width="14" height="4" rx="2" fill="#D4AF37" transform="rotate(60 187 107)"/>
+    <rect x="245" y="135" width="14" height="4" rx="2" fill="#C2185B" transform="rotate(-15 252 137)"/>
+    <rect x="135" y="140" width="14" height="4" rx="2" fill="#5DADE2" transform="rotate(45 142 142)"/>
+    <rect x="240" y="155" width="14" height="4" rx="2" fill="#F5B7B1" transform="rotate(70 247 157)"/>
+    <rect x="160" y="155" width="14" height="4" rx="2" fill="#D4AF37" transform="rotate(-10 167 157)"/>
+    <rect x="200" y="125" width="14" height="4" rx="2" fill="#A8DADC" transform="rotate(35 207 127)"/>
+    <!-- highlight -->
+    <ellipse cx="160" cy="115" rx="30" ry="10" fill="#fff" opacity="0.2"/>
+  </g>
+  <!-- decoration dots -->
+  <circle cx="50" cy="50" r="6" fill="#F5B7B1" opacity="0.6"/>
+  <circle cx="350" cy="60" r="5" fill="#A8DADC" opacity="0.6"/>
+  <circle cx="60" cy="250" r="4" fill="#D4AF37" opacity="0.6"/>
+  <circle cx="340" cy="240" r="6" fill="#F5B7B1" opacity="0.6"/>
+</svg>

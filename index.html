@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ChocoDoDo — handcrafted chocolates, donuts, macarons & bakery delights. From our kitchen to you." />
+  <meta name="theme-color" content="#6B4423" />
+
+  <!-- Open Graph (for WhatsApp, Telegram, Facebook, LinkedIn link previews) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ChocoDoDo" />
+  <meta property="og:title" content="ChocoDoDo — Handcrafted chocolates and bakery treats" />
+  <meta property="og:description" content="Stuffed chocolate, biscuits, donuts, macarons, and seasonal boxes — handmade fresh and delivered across Egypt." />
+  <meta property="og:image" content="assets/images/logo.jpg" />
+  <meta property="og:image:alt" content="ChocoDoDo logo" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="ar_EG" />
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="ChocoDoDo — Handcrafted chocolates and bakery treats" />
+  <meta name="twitter:description" content="Stuffed chocolate, biscuits, donuts, macarons, and seasonal boxes — handmade fresh and delivered across Egypt." />
+  <meta name="twitter:image" content="assets/images/logo.jpg" />
+  <title>ChocoDoDo — From Our Kitchen To You</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.jpg" />
+  <script src="assets/themes.js"></script>
+  <script src="assets/i18n.js"></script>
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div id="loader" class="loader">
+    <div class="loader-donut">
+      <div class="loader-donut-hole"></div>
+      <div class="loader-sprinkle s1"></div>
+      <div class="loader-sprinkle s2"></div>
+      <div class="loader-sprinkle s3"></div>
+      <div class="loader-sprinkle s4"></div>
+      <div class="loader-sprinkle s5"></div>
+    </div>
+    <p class="loader-text" data-i18n="loader.text">Baking magic...</p>
+  </div>
+
+  <!-- ===================== NAV BAR ===================== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.jpg" alt="ChocoDoDo" loading="lazy" onerror="this.onerror=null;this.src='assets/images/logo.svg';" />
+        <span class="nav-brand">Choco<em>DoDo</em></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#home" class="nav-link active" data-i18n="nav.home">Home</a></li>
+        <li><a href="#about" class="nav-link" data-i18n="nav.about">About</a></li>
+        <li><a href="menu.html" class="nav-link" data-i18n="nav.menu">Menu</a></li>
+        <li><a href="#contact" class="nav-link" data-i18n="nav.contact">Contact</a></li>
+      </ul>
+      <div class="nav-actions" data-lang-toggle-mount>
+        <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <a id="main" tabindex="-1" class="sr-only">Main content</a>
+
+  <!-- ===================== HERO ===================== -->
+  <section id="home" class="hero">
+    <div class="hero-bg">
+      <div class="floating-item donut-1"></div>
+      <div class="floating-item donut-2"></div>
+      <div class="floating-item macaron-1"></div>
+      <div class="floating-item macaron-2"></div>
+      <div class="floating-item heart-1"></div>
+      <div class="floating-item heart-2"></div>
+      <div class="floating-item sprinkle-1"></div>
+      <div class="floating-item sprinkle-2"></div>
+      <div class="floating-item sprinkle-3"></div>
+      <div class="floating-item pearl-1"></div>
+      <div class="floating-item pearl-2"></div>
+    </div>
+
+    <div class="hero-content">
+      <div class="hero-text">
+        <span class="hero-badge">
+          <span class="pulse-dot"></span>
+          <span data-i18n="hero.badge">Fresh Today · Handmade with Love</span>
+        </span>
+        <h1 class="hero-title">
+          <span class="title-word">Choco</span><span class="title-word title-accent">DoDo</span>
+        </h1>
+        <p class="hero-tagline" data-i18n="hero.tagline">From our kitchen to you</p>
+        <p class="hero-desc" data-i18n="hero.desc">
+          Handcrafted chocolates, biscuits, and bakery treats — made fresh every day with the finest ingredients and a whole lot of love.
+        </p>
+        <div class="hero-cta">
+          <a href="menu.html" class="btn btn-primary">
+            <span data-i18n="hero.order">Order Now</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+          </a>
+          <a href="#featured" class="btn btn-ghost" data-i18n="hero.see_menu">See Menu</a>
+        </div>
+        <div class="hero-stats">
+          <div class="stat"><strong data-count="10">0</strong><span data-i18n="hero.stats.fillings">Filling Options</span></div>
+          <div class="stat"><strong data-count="1000">0</strong><span data-i18n="hero.stats.customers">Happy Customers</span></div>
+          <div class="stat"><strong data-count="100">0</strong><span data-i18n="hero.stats.handmade">% Handmade</span></div>
+        </div>
+      </div>
+
+      <div class="hero-logo">
+        <div class="logo-orbit">
+          <div class="orbit-item o1">DoDo</div>
+          <div class="orbit-item o2">DoDo</div>
+          <div class="orbit-item o3">DoDo</div>
+          <div class="orbit-item o4">DoDo</div>
+        </div>
+        <div class="logo-frame">
+          <img src="assets/images/logo.jpg" alt="ChocoDoDo Logo" class="logo-img" onerror="this.parentNode.classList.add('logo-fallback')" />
+          <div class="logo-fallback-content">
+            <div class="fallback-emoji">🍩</div>
+            <div class="fallback-text">ChocoDoDo</div>
+          </div>
+        </div>
+        <div class="logo-glow"></div>
+      </div>
+    </div>
+
+    <a href="#about" class="scroll-indicator">
+      <span>Scroll</span>
+      <div class="scroll-mouse"><div class="scroll-wheel"></div></div>
+    </a>
+  </section>
+
+  <!-- ===================== MARQUEE STRIP ===================== -->
+  <div class="marquee">
+    <div class="marquee-track">
+      <span>🍫 Stuffed Chocolate</span><span>·</span>
+      <span lang="ar" dir="rtl">شكولاتة محشية</span><span>·</span>
+      <span>🥜 Snickers Signature</span><span>·</span>
+      <span lang="ar" dir="rtl">سنيكرز</span><span>·</span>
+      <span>🍪 Handmade Biscuits</span><span>·</span>
+      <span lang="ar" dir="rtl">بسكويت يدوي</span><span>·</span>
+      <span>🌾 Diet-Friendly Options</span><span>·</span>
+      <span lang="ar" dir="rtl">دايت</span><span>·</span>
+      <span>🍫 By the Kilo</span><span>·</span>
+      <span lang="ar" dir="rtl">بالكيلو</span><span>·</span>
+      <span>🎁 Custom Mixes Welcome</span><span>·</span>
+      <span>🍫 Stuffed Chocolate</span><span>·</span>
+      <span lang="ar" dir="rtl">شكولاتة محشية</span><span>·</span>
+      <span>🥜 Snickers Signature</span><span>·</span>
+    </div>
+  </div>
+
+  <!-- ===================== ABOUT ===================== -->
+  <section id="about" class="about">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow" data-i18n="about.eyebrow">Our Story</span>
+        <h2 class="section-title" data-i18n="about.title">Sweet moments, made by hand</h2>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card reveal" data-delay="0">
+          <div class="about-icon">🌱</div>
+          <h3 data-i18n="about.fresh">Fresh Ingredients</h3>
+          <p data-i18n="about.fresh.d">We source the finest cocoa, butter, and seasonal fruits to craft every single bite.</p>
+        </div>
+        <div class="about-card reveal" data-delay="100">
+          <div class="about-icon">👩‍🍳</div>
+          <h3 data-i18n="about.handmade">Handmade Daily</h3>
+          <p data-i18n="about.handmade.d">Every piece is made by hand in small batches.</p>
+        </div>
+        <div class="about-card reveal" data-delay="200">
+          <div class="about-icon">💝</div>
+          <h3 data-i18n="about.love">Made With Love</h3>
+          <p data-i18n="about.love.d">Recipes passed down and perfected — we treat every order like it's for family.</p>
+        </div>
+        <div class="about-card reveal" data-delay="300">
+          <div class="about-icon">🚚</div>
+          <h3 data-i18n="about.delivery">Made Fresh, Just for You</h3>
+          <p data-i18n="about.delivery.d">Every order is hand-made from scratch — please plan 3 to 4 days ahead. Pick your delivery day at checkout; we bake it the same week.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== CATEGORIES ===================== -->
+  <section class="categories">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow" data-i18n="cat.eyebrow">Explore</span>
+        <h2 class="section-title" data-i18n="cat.title">Shop by category</h2>
+      </div>
+      <div class="categories-grid">
+        <a href="menu.html?cat=chocolate" class="category-card reveal" data-delay="0">
+          <div class="cat-emoji">🍫</div>
+          <h3 data-i18n="cat.stuffed">Stuffed Chocolate</h3>
+          <p data-i18n="cat.stuffed.desc">10 fillings to choose from</p>
+        </a>
+        <a href="menu.html?cat=chocolate" class="category-card reveal" data-delay="80">
+          <div class="cat-emoji">🍫</div>
+          <h3 data-i18n="cat.plain">Plain Chocolate</h3>
+          <p data-i18n="cat.plain.desc">Pure premium cocoa</p>
+        </a>
+        <a href="menu.html?cat=chocolate" class="category-card reveal" data-delay="160">
+          <div class="cat-emoji">🥜</div>
+          <h3 data-i18n="cat.snickers">Snickers Chocolate</h3>
+          <p data-i18n="cat.snickers.desc">Peanut &amp; caramel signature</p>
+        </a>
+        <a href="menu.html?cat=chocolate" class="category-card reveal" data-delay="240">
+          <div class="cat-emoji">🍬</div>
+          <h3 data-i18n="cat.mixed">Mixed Box</h3>
+          <p data-i18n="cat.mixed.desc">A taste of everything</p>
+        </a>
+        <a href="menu.html?cat=biscuits" class="category-card reveal" data-delay="320">
+          <div class="cat-emoji">🍪</div>
+          <h3 data-i18n="cat.biscuits">Biscuits</h3>
+          <p data-i18n="cat.biscuits.desc">Soft, buttery, handmade</p>
+        </a>
+        <a href="menu.html?cat=biscuits" class="category-card reveal" data-delay="400">
+          <div class="cat-emoji">🌾</div>
+          <h3 data-i18n="cat.diet">Diet Biscuits</h3>
+          <p data-i18n="cat.diet.desc">Lower-sugar, full flavor</p>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FEATURED PRODUCTS ===================== -->
+  <section id="featured" class="featured">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow" data-i18n="featured.eyebrow">Bestsellers</span>
+        <h2 class="section-title" data-i18n="featured.title">This week's favorites</h2>
+        <p class="section-sub" data-i18n="featured.sub">Hand-picked treats our customers can't get enough of</p>
+      </div>
+
+      <div class="products-grid" id="featuredProducts">
+        <!-- Injected by script.js -->
+      </div>
+
+      <div class="center-cta reveal">
+        <a href="menu.html" class="btn btn-primary">
+          <span data-i18n="featured.cta">View Full Menu</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== HOW IT WORKS ===================== -->
+  <section class="how-it-works">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow" data-i18n="how.eyebrow">Easy Peasy</span>
+        <h2 class="section-title" data-i18n="how.title">How it works</h2>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">1</div>
+          <div class="step-icon">🛒</div>
+          <h3 data-i18n="how.s1">Pick Your Treats</h3>
+          <p data-i18n="how.s1.d">Browse our menu and add your favorites to the cart.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step reveal" data-delay="150">
+          <div class="step-num">2</div>
+          <div class="step-icon">💳</div>
+          <h3 data-i18n="how.s2">Checkout Safely</h3>
+          <p data-i18n="how.s2.d">Pay with InstaPay, Vodafone Cash, or cash on delivery.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step reveal" data-delay="300">
+          <div class="step-num">3</div>
+          <div class="step-icon">👩‍🍳</div>
+          <h3 data-i18n="how.s3">We Bake It</h3>
+          <p data-i18n="how.s3.d">We start crafting your order fresh, the moment it comes in.</p>
+        </div>
+        <div class="step-arrow">→</div>
+        <div class="step reveal" data-delay="450">
+          <div class="step-num">4</div>
+          <div class="step-icon">🎁</div>
+          <h3 data-i18n="how.s4">Delivered Fresh</h3>
+          <p data-i18n="how.s4.d">Your treats arrive at your door — fresh and beautifully packed.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== TESTIMONIALS ===================== -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow" data-i18n="testi.eyebrow">Sweet Words</span>
+        <h2 class="section-title" data-i18n="testi.title">What our customers say</h2>
+      </div>
+
+      <div class="testimonial-track" id="testimonialTrack">
+        <div class="testimonial-card reveal">
+          <div class="stars">★★★★★</div>
+          <p>"Honestly bought a box as a gift for my sister and ended up keeping half of it for myself. The dark chocolate one is dangerous 😅"</p>
+          <div class="testimonial-author">
+            <div class="avatar">S</div>
+            <div>
+              <strong>Soha.S</strong>
+              <span>Verified Customer</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal" data-delay="120">
+          <div class="stars">★★★★★</div>
+          <p>"Ordered for my engagement and everyone kept asking where they were from. The packaging alone made it feel like a real gift."</p>
+          <div class="testimonial-author">
+            <div class="avatar">E</div>
+            <div>
+              <strong>Esraa.S</strong>
+              <span>Verified Customer</span>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card reveal" data-delay="240">
+          <div class="stars">★★★★★</div>
+          <p>"I'm not really a sweets person, but the diet biscuits got me hooked. They actually arrive fresh, which I didn't expect."</p>
+          <div class="testimonial-author">
+            <div class="avatar">A</div>
+            <div>
+              <strong>Aya Osama</strong>
+              <span>Verified Customer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== NEWSLETTER / CTA ===================== -->
+  <section class="newsletter reveal">
+    <div class="container newsletter-inner">
+      <div class="newsletter-text">
+        <h2 data-i18n="newsletter.title">Fresh from the kitchen — be the first to know</h2>
+        <p data-i18n="newsletter.desc">New flavors, holiday boxes, and limited drops. Drop your email and we'll let you know before they sell out.</p>
+      </div>
+      <form class="newsletter-form" id="newsletterForm">
+        <input type="email" data-i18n-placeholder="newsletter.email" placeholder="your@email.com" required />
+        <button type="submit" class="btn btn-primary" data-i18n="newsletter.cta">Subscribe</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== CONTACT ===================== -->
+  <section id="contact" class="contact">
+    <div class="container">
+      <div class="section-header reveal">
+        <span class="section-eyebrow" data-i18n="contact.eyebrow">Get In Touch</span>
+        <h2 class="section-title" data-i18n="contact.title">We'd love to hear from you</h2>
+      </div>
+
+      <div class="contact-grid">
+        <div class="contact-info reveal">
+          <div class="info-item">
+            <div class="info-icon">🚚</div>
+            <div>
+              <strong data-i18n="contact.delivery_only">Delivery only</strong>
+              <p data-i18n="contact.delivery_only.desc">We're a delivery-first kitchen across Egypt. Order online, we'll bring the sweets to you.</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">📞</div>
+            <div>
+              <strong data-i18n="contact.whatsapp">WhatsApp / Call</strong>
+              <p>+20 109 021 0256</p>
+            </div>
+          </div>
+          <div class="info-item">
+            <div class="info-icon">⏰</div>
+            <div>
+              <strong data-i18n="contact.hours_anytime">Order anytime</strong>
+              <p data-i18n="contact.hours_desc">Place orders 24/7 — we deliver fresh during business hours.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="contact-cta reveal" data-delay="150">
+          <div class="contact-cta-icon">💬</div>
+          <h3 data-i18n="contact.cta.title">Talk to us on WhatsApp</h3>
+          <p data-i18n="contact.cta.body">Custom orders, large quantities, special requests — message us directly. We reply within minutes during business hours.</p>
+          <a id="contactWhatsapp" href="https://wa.me/201090210256" target="_blank" rel="noopener" class="btn btn-primary btn-block" style="background:#25D366;">
+            <span>💬 <span data-i18n="contact.cta.button">Open WhatsApp chat</span></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-col">
+        <a href="index.html" class="nav-logo">
+          <img src="assets/images/logo.jpg" alt="ChocoDoDo" loading="lazy" onerror="this.onerror=null;this.src='assets/images/logo.svg';" />
+          <span class="nav-brand">Choco<em>DoDo</em></span>
+        </a>
+        <p data-i18n="footer.tagline">Handcrafted chocolates, biscuits, and bakery treats — from our kitchen to you.</p>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.shop">Shop</h4>
+        <a href="menu.html?cat=chocolate" data-i18n="cat.stuffed">Stuffed Chocolate</a>
+        <a href="menu.html?cat=chocolate" data-i18n="cat.plain">Plain Chocolate</a>
+        <a href="menu.html?cat=chocolate" data-i18n="cat.snickers">Snickers Chocolate</a>
+        <a href="menu.html?cat=biscuits" data-i18n="cat.biscuits">Biscuits</a>
+        <a href="menu.html?cat=biscuits" data-i18n="cat.diet">Diet Biscuits</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.company">Company</h4>
+        <a href="#about" data-i18n="footer.about">About</a>
+        <a href="#contact" data-i18n="nav.contact">Contact</a>
+        <a href="#" data-i18n="footer.custom">Custom Orders</a>
+      </div>
+      <div class="footer-col">
+        <h4 data-i18n="footer.help">Help</h4>
+        <a href="#" data-i18n="footer.shipping">Shipping</a>
+        <a href="#" data-i18n="footer.returns">Returns</a>
+        <a href="#" data-i18n="footer.faq">FAQ</a>
+        <a href="#" data-i18n="footer.privacy">Privacy</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year">2026</span> <bdi class="brand-ltr">ChocoDoDo</bdi> · From our kitchen to you · Made with 🍫 and love</p>
+    </div>
+  </footer>
+
+  <!-- ===================== CART DRAWER ===================== -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">×</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <p class="cart-empty">Your cart is empty 🍩<br/><small>Add some sweet treats!</small></p>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-total">
+        <span>Total:</span>
+        <strong id="cartTotal">$0.00</strong>
+      </div>
+      <a href="pages/checkout.html" class="btn btn-primary btn-block">Checkout</a>
+    </div>
+  </div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <!-- ===================== TOAST ===================== -->
+  <div class="toast" id="toast"></div>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>

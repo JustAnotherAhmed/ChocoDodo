@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Accept Staff Invite — ChocoDoDo</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+</head>
+<body>
+
+<nav class="navbar scrolled">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em> · <small>Staff</small></span>
+    </a>
+  </div>
+</nav>
+
+<main class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="section-eyebrow">🍫 Welcome to the team</span>
+      <h1>Accept your invite</h1>
+      <p>Set your name and a password to activate your staff account.</p>
+    </div>
+    <form id="inviteForm" class="auth-form">
+      <label class="form-field">
+        <span>Your Name</span>
+        <input id="iv_name" type="text" required autocomplete="name" />
+      </label>
+      <label class="form-field">
+        <span>Password (min 8 chars)</span>
+        <input id="iv_password" type="password" required minlength="8" autocomplete="new-password" />
+      </label>
+      <label class="form-field">
+        <span>Confirm Password</span>
+        <input id="iv_confirm" type="password" required minlength="8" autocomplete="new-password" />
+      </label>
+      <div class="auth-error" id="iv_error" role="alert"></div>
+      <button type="submit" class="btn btn-primary btn-block">Activate account</button>
+    </form>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+const API_BASE = window.CHOCODODO_API_BASE || 'http://localhost:4242';
+const $ = s => document.querySelector(s);
+const params = new URLSearchParams(location.search);
+const token = params.get('token');
+if (!token) {
+  $('#inviteForm').style.display = 'none';
+  $('#iv_error').textContent = 'No invite token in URL';
+  $('#iv_error').style.display = 'block';
+}
+$('#inviteForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const pw = $('#iv_password').value;
+  if (pw !== $('#iv_confirm').value) {
+    $('#iv_error').textContent = 'Passwords do not match';
+    $('#iv_error').style.display = 'block';
+    return;
+  }
+  try {
+    const r = await fetch(API_BASE + '/api/staff/accept-invite', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token, name: $('#iv_name').value.trim(), password: pw }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+    location.href = 'admin.html';
+  } catch (err) {
+    $('#iv_error').textContent = err.message;
+    $('#iv_error').style.display = 'block';
+  }
+});
+</script>
+</body>
+</html>

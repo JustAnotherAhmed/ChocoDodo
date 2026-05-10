@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu — ChocoDoDo</title>
+  <meta name="description" content="Browse the full ChocoDoDo menu — chocolates, donuts, cakes, macarons, cookies, and pastries." />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="ChocoDoDo" />
+  <meta property="og:title" content="The ChocoDoDo Menu — every treat we make" />
+  <meta property="og:description" content="Stuffed chocolate, plain chocolate, biscuits, diet biscuits, snickers signature — pick your treats." />
+  <meta property="og:image" content="assets/images/logo.jpg" />
+  <meta property="og:image:alt" content="ChocoDoDo logo" />
+
+  <!-- Twitter / X card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="The ChocoDoDo Menu" />
+  <meta name="twitter:description" content="Stuffed chocolate, biscuits, snickers signature — pick your treats and get them delivered fresh." />
+  <meta name="twitter:image" content="assets/images/logo.jpg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/styles.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.jpg" />
+  <script src="assets/themes.js"></script>
+  <script src="assets/i18n.js"></script>
+</head>
+<body>
+
+  <a href="#main" class="skip-link">Skip to main content</a>
+
+  <!-- NAV -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <img src="assets/images/logo.jpg" alt="ChocoDoDo" loading="lazy" onerror="this.onerror=null;this.src='assets/images/logo.svg';" />
+        <span class="nav-brand">Choco<em>DoDo</em></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="index.html" class="nav-link">Home</a></li>
+        <li><a href="index.html#about" class="nav-link">About</a></li>
+        <li><a href="menu.html" class="nav-link active">Menu</a></li>
+        <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions" data-lang-toggle-mount>
+        <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <a id="main" tabindex="-1" class="sr-only">Main content</a>
+
+  <!-- HERO -->
+  <section class="menu-page-hero">
+    <div class="hero-bg">
+      <div class="floating-item donut-1"></div>
+      <div class="floating-item donut-2"></div>
+      <div class="floating-item macaron-1"></div>
+      <div class="floating-item heart-1"></div>
+      <div class="floating-item sprinkle-1"></div>
+      <div class="floating-item sprinkle-2"></div>
+    </div>
+    <div style="position:relative; z-index:2;">
+      <span class="section-eyebrow"><span lang="en">Our Menu</span><span lang="ar" dir="rtl">المنيو</span></span>
+      <h1>Sweet things await</h1>
+      <p lang="ar" dir="rtl" style="font-size:1.2rem; color:var(--berry); margin-bottom:8px;">حلويات تنتظرك</p>
+      <p>Everything we make, all in one place. Fresh, made by hand, delivered with love.</p>
+    </div>
+  </section>
+
+  <!-- FILTERS -->
+  <div class="menu-filters">
+    <button class="filter-btn active" data-cat="all"><span lang="en">All</span><span lang="ar" dir="rtl">الكل</span></button>
+    <button class="filter-btn" data-cat="chocolate">🍫 <span lang="en">Chocolate</span><span lang="ar" dir="rtl">شكولاتة</span></button>
+    <button class="filter-btn" data-cat="biscuits">🍪 <span lang="en">Biscuits</span><span lang="ar" dir="rtl">بسكويت</span></button>
+  </div>
+
+  <!-- GRID -->
+  <section class="menu-grid">
+    <div class="container">
+      <div class="products-grid" id="menuGrid" style="transition:opacity 0.3s;"></div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="container footer-inner">
+      <div class="footer-col">
+        <a href="index.html" class="nav-logo">
+          <img src="assets/images/logo.jpg" alt="ChocoDoDo" loading="lazy" onerror="this.onerror=null;this.src='assets/images/logo.svg';" />
+          <span class="nav-brand">Choco<em>DoDo</em></span>
+        </a>
+        <p>Handcrafted chocolates, donuts, and bakery treats — from our kitchen to you.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="menu.html?cat=chocolate">Stuffed Chocolate</a>
+        <a href="menu.html?cat=chocolate">Plain Chocolate</a>
+        <a href="menu.html?cat=chocolate">Snickers</a>
+        <a href="menu.html?cat=biscuits">Biscuits</a>
+        <a href="menu.html?cat=biscuits">Diet Biscuits</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="index.html#about">About</a>
+        <a href="index.html#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Help</h4>
+        <a href="#">Shipping</a>
+        <a href="#">FAQ</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="year">2026</span> <bdi class="brand-ltr">ChocoDoDo</bdi> · From our kitchen to you · Made with 🍫 and love</p>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">×</button>
+    </div>
+    <div class="cart-items" id="cartItems">
+      <p class="cart-empty">Your cart is empty 🍩<br/><small>Add some sweet treats!</small></p>
+    </div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-total">
+        <span>Total:</span>
+        <strong id="cartTotal">$0.00</strong>
+      </div>
+      <a href="pages/checkout.html" class="btn btn-primary btn-block">Checkout</a>
+    </div>
+  </div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
+
+  <script src="assets/script.js"></script>
+</body>
+</html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Account — ChocoDoDo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body class="account-body">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+      <li><a href="account.html" class="nav-link active">Account</a></li>
+      <li id="navAdminLink" style="display:none;"><a href="admin.html" class="nav-link">Admin</a></li>
+      <li><a href="#" id="logoutLink" class="nav-link">Sign out</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="account-page">
+  <div class="container">
+    <div class="account-header">
+      <h1>Hi, <span id="acctName">there</span> 👋</h1>
+      <p>Manage your profile, password, and orders.</p>
+    </div>
+
+    <div id="verifyBanner" class="verify-banner hidden" role="status">
+      <div>
+        <strong>📧 Verify your email</strong>
+        <p>We sent a verification link to your inbox. Tap it (or paste the 6-digit code) to confirm your account.</p>
+      </div>
+      <a id="goVerifyBtn" href="verify-account.html" class="btn btn-primary">Verify now →</a>
+    </div>
+
+    <div class="account-grid">
+      <!-- Profile -->
+      <section class="account-panel">
+        <h2>Profile</h2>
+        <form id="profileForm" class="auth-form">
+          <label class="form-field">
+            <span>Email</span>
+            <input id="ac_email" type="email" disabled />
+          </label>
+          <label class="form-field">
+            <span>Full Name</span>
+            <input id="ac_name" type="text" required />
+          </label>
+          <label class="form-field">
+            <span>Phone (Egyptian mobile)</span>
+            <div class="eg-phone-input">
+              <span class="eg-phone-prefix">🇪🇬 +20</span>
+              <input id="ac_phone" type="tel" inputmode="numeric" maxlength="11"
+                     placeholder="01012345678" autocomplete="tel" />
+            </div>
+            <small class="form-hint">e.g. 01012345678</small>
+          </label>
+          <button type="submit" class="btn btn-primary">Save profile</button>
+        </form>
+      </section>
+
+      <!-- Address Book -->
+      <section class="account-panel account-addresses">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+          <h2>📍 Address Book</h2>
+          <button class="btn btn-ghost" id="addAddrBtn">+ Add address</button>
+        </div>
+        <p class="muted" style="margin-bottom:16px;font-size:13px;">
+          Save addresses for faster checkout. Mark one as default.
+        </p>
+        <div id="addressList"><p class="muted">Loading…</p></div>
+      </section>
+
+      <!-- Password -->
+      <section class="account-panel">
+        <h2>Change password</h2>
+        <form id="pwForm" class="auth-form">
+          <label class="form-field">
+            <span>Current password</span>
+            <input id="pw_current" type="password" required autocomplete="current-password" />
+          </label>
+          <label class="form-field">
+            <span>New password (min 8 chars)</span>
+            <input id="pw_new" type="password" required minlength="8" autocomplete="new-password" />
+          </label>
+          <div class="auth-error" id="pw_error" role="alert" aria-live="polite"></div>
+          <button type="submit" class="btn btn-primary">Update password</button>
+        </form>
+      </section>
+
+      <!-- Orders -->
+      <section class="account-panel account-orders">
+        <h2>Your orders</h2>
+        <div id="ordersList" class="orders-list">
+          <p class="muted">Loading…</p>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<!-- Address modal -->
+<div class="modal-overlay" id="addrModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-labelledby="addrTitle" aria-modal="true">
+    <div class="modal-header">
+      <h2 id="addrTitle">New address</h2>
+      <button class="modal-close" data-modal-close aria-label="Close">×</button>
+    </div>
+    <form id="addrForm" class="modal-body">
+      <input type="hidden" id="addr_id" value="" />
+      <div class="form-grid">
+        <label class="form-field">
+          <span>Label</span>
+          <input id="addr_label" type="text" placeholder="e.g. Home / Office" required />
+        </label>
+        <label class="form-field">
+          <span>Default?</span>
+          <select id="addr_default">
+            <option value="0">No</option>
+            <option value="1">Make default</option>
+          </select>
+        </label>
+        <label class="form-field full">
+          <span>Recipient name (optional)</span>
+          <input id="addr_full_name" type="text" />
+        </label>
+        <label class="form-field full">
+          <span>Phone (Egyptian mobile)</span>
+          <div class="eg-phone-input">
+            <span class="eg-phone-prefix">🇪🇬 +20</span>
+            <input id="addr_phone" type="tel" inputmode="numeric" maxlength="11"
+                   placeholder="01012345678" />
+          </div>
+        </label>
+        <label class="form-field full">
+          <span>Address</span>
+          <input id="addr_line1" type="text" placeholder="Street, building, apartment, floor" required />
+        </label>
+        <label class="form-field">
+          <span>City / Area</span>
+          <input id="addr_city" type="text" placeholder="e.g. Cairo, Giza" />
+        </label>
+        <label class="form-field">
+          <span>Notes</span>
+          <input id="addr_notes" type="text" placeholder="Landmark, gate code, etc." />
+        </label>
+      </div>
+      <div class="modal-error" id="addr_error" role="alert"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+        <button type="button" class="btn btn-ghost danger" id="addr_delete" style="display:none;">Delete</button>
+        <button type="submit" class="btn btn-primary">Save address</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../assets/auth-pages.js"></script>
+</body>
+</html>

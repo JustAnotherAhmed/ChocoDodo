@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify Email — ChocoDoDo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="login.html" class="nav-link">Sign in</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="auth-page">
+  <div class="auth-card">
+    <div id="ve_loading" style="text-align:center;padding:24px;">
+      <div style="font-size:3rem;">⏳</div>
+      <h1 style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);margin:12px 0;">Verifying…</h1>
+    </div>
+    <div id="ve_success" style="display:none;text-align:center;padding:24px;">
+      <div style="font-size:3rem;">✅</div>
+      <h1 style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);margin:12px 0;">Email verified!</h1>
+      <p>Your email <strong id="ve_email"></strong> is now verified. Welcome to <bdi class="brand-ltr">ChocoDoDo</bdi> 🍫</p>
+      <a href="account.html" class="btn btn-primary" style="margin-top:16px;">Go to my account</a>
+    </div>
+    <div id="ve_error" style="display:none;text-align:center;padding:24px;">
+      <div style="font-size:3rem;">⚠️</div>
+      <h1 style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);margin:12px 0;">Verification failed</h1>
+      <p id="ve_error_msg" class="muted">The link may be invalid or expired.</p>
+      <a href="account.html" class="btn btn-ghost" style="margin-top:16px;">Resend from account</a>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="../assets/auth-pages.js"></script>
+</body>
+</html>

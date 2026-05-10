@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verify your account — ChocoDoDo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body class="verify-account-body">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="auth-page">
+  <div class="auth-card verify-card">
+
+    <!-- Loading -->
+    <div id="vaLoading" style="text-align:center;padding:24px;" aria-live="polite">
+      <div style="font-size:3rem;" aria-hidden="true">⏳</div>
+      <h1 style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);">Loading…</h1>
+    </div>
+
+    <!-- ============= MAIN: email verification ============= -->
+    <div id="vaMain" class="hidden">
+      <div class="auth-header">
+        <span class="section-eyebrow" aria-hidden="true">📧 Verify your email</span>
+        <h1>Check your inbox</h1>
+        <p>
+          We sent a verification email to
+          <strong id="vaEmail" style="color:var(--berry);">your email</strong>.
+          Click the link inside, or paste the 6-digit code below.
+        </p>
+      </div>
+
+      <form id="vaCodeForm" class="auth-form" novalidate>
+        <label class="form-field" for="vaCodeInput">
+          <span>Verification code</span>
+          <input id="vaCodeInput" name="code" type="text" inputmode="numeric" maxlength="6"
+                 pattern="[0-9]{6}" required
+                 class="verify-code-input"
+                 placeholder="••••••"
+                 autocomplete="one-time-code"
+                 aria-describedby="vaCodeHint vaCodeError" />
+          <small id="vaCodeHint" class="form-hint">6 digits, from the email we just sent.</small>
+        </label>
+        <div class="auth-error" id="vaCodeError" role="alert" aria-live="polite"></div>
+        <button type="submit" class="btn btn-primary btn-block">Verify my email</button>
+
+        <div class="verify-actions" style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:12px;font-size:13px;">
+          <span class="muted">Didn't get it?</span>
+          <button type="button" class="btn-link" id="vaResend">Resend email</button>
+          <span aria-hidden="true">·</span>
+          <a href="../menu.html" class="btn-link">Skip for now</a>
+        </div>
+      </form>
+
+      <div class="verify-tips" style="margin-top:24px;padding:14px 16px;background:var(--cream);border-radius:12px;font-size:13px;color:var(--choc);">
+        <strong>Can't find it?</strong>
+        <ul style="margin:8px 0 0;padding-inline-start:18px;line-height:1.7;">
+          <li>Check your <strong>spam / junk</strong> folder.</li>
+          <li>Add <strong>Fromchocododo@gmail.com</strong> to your contacts so future emails land in your inbox.</li>
+          <li>Wait up to 60 seconds — sometimes Gmail is slow on the first email.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- ============= SUCCESS ============= -->
+    <div id="vaSuccess" class="hidden" style="text-align:center;padding:24px;" aria-live="polite">
+      <div style="font-size:3.5rem;" aria-hidden="true">✅</div>
+      <h1 style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);margin:12px 0;">Verified!</h1>
+      <p>Your <bdi class="brand-ltr">ChocoDoDo</bdi> account is active. Welcome 🍫</p>
+      <a href="../menu.html" class="btn btn-primary" style="margin-top:16px;">Browse the menu</a>
+      <a href="account.html" class="btn btn-ghost" style="margin-top:8px;">Go to my account</a>
+    </div>
+
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function() {
+  const API_BASE = window.CHOCODODO_API_BASE || '';
+  const $ = (s) => document.querySelector(s);
+  const show = (id) => {
+    ['vaLoading','vaMain','vaSuccess'].forEach(x => {
+      const el = document.getElementById(x);
+      if (el) el.classList.toggle('hidden', x !== id);
+    });
+  };
+
+  let state = { user: null, sentOnLoad: false };
+  let _pollTimer = null;
+
+  init();
+
+  async function init() {
+    try {
+      const me = await fetch(API_BASE + '/api/auth/me', { credentials: 'include' });
+      if (!me.ok) { location.href = 'login.html'; return; }
+      const data = await me.json();
+      state.user = data.user;
+
+      if (state.user.email_verified) {
+        show('vaSuccess');
+        return;
+      }
+
+      // Show the email address we'll be sending to
+      $('#vaEmail').textContent = state.user.email || 'your email';
+
+      // Auto-send a fresh verification email when the page loads (idempotent —
+      // it just regenerates the code if they had one).
+      try {
+        await fetch(API_BASE + '/api/auth/start-verification', {
+          method: 'POST', credentials: 'include',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({}),
+        });
+      } catch {}
+
+      show('vaMain');
+      $('#vaCodeInput').focus();
+      startPolling();
+    } catch {
+      $('#vaLoading').innerHTML = '<p class="muted">Could not load. Please refresh the page.</p>';
+    }
+  }
+
+  // Submit code
+  $('#vaCodeForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    showErr('vaCodeError', '');
+    const code = $('#vaCodeInput').value.trim();
+    if (!/^\d{6}$/.test(code)) {
+      showErr('vaCodeError', 'Code must be 6 digits.');
+      return;
+    }
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true; btn.textContent = 'Checking…';
+    try {
+      const r = await fetch(API_BASE + '/api/auth/confirm-code', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || "That code doesn't match. Try again.");
+      stopPolling();
+      show('vaSuccess');
+    } catch (err) {
+      showErr('vaCodeError', err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Verify my email';
+    }
+  });
+
+  // Resend the email
+  $('#vaResend').addEventListener('click', async () => {
+    const btn = $('#vaResend');
+    btn.disabled = true;
+    btn.textContent = 'Sending…';
+    try {
+      const r = await fetch(API_BASE + '/api/auth/start-verification', {
+        method: 'POST', credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (!r.ok) {
+        const data = await r.json().catch(() => ({}));
+        throw new Error(data.error || 'Could not resend');
+      }
+      const t = $('#toast');
+      t.textContent = '📧 Sent — check your inbox';
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2200);
+    } catch (err) {
+      showErr('vaCodeError', err.message);
+    } finally {
+      setTimeout(() => {
+        btn.disabled = false;
+        btn.textContent = 'Resend email';
+      }, 1500);
+    }
+  });
+
+  // Helpers
+  function showErr(id, msg) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = msg || '';
+    el.classList.toggle('hidden', !msg);
+  }
+
+  // Auto-detect if the user verified via the email link (in another tab)
+  function startPolling() {
+    stopPolling();
+    _pollTimer = setInterval(async () => {
+      try {
+        const r = await fetch(API_BASE + '/api/auth/verification-status', { credentials: 'include' });
+        if (!r.ok) return;
+        const data = await r.json();
+        if (data.verified) {
+          stopPolling();
+          show('vaSuccess');
+        }
+      } catch {}
+    }, 3500);
+  }
+  function stopPolling() {
+    if (_pollTimer) clearInterval(_pollTimer);
+    _pollTimer = null;
+  }
+})();
+</script>
+</body>
+</html>

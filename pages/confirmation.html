@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Order Confirmed — ChocoDoDo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/png" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body class="confirmation-body">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+        <span class="nav-brand">Choco<em>DoDo</em></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html" class="nav-link">Home</a></li>
+        <li><a href="../menu.html" class="nav-link">Menu</a></li>
+        <li><a href="../index.html#contact" class="nav-link">Contact</a></li>
+      </ul>
+      <div class="nav-actions">
+        <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main" class="confirmation">
+    <div class="hero-bg">
+      <div class="floating-item donut-1"></div>
+      <div class="floating-item donut-2"></div>
+      <div class="floating-item macaron-1"></div>
+      <div class="floating-item macaron-2"></div>
+      <div class="floating-item heart-1"></div>
+      <div class="floating-item heart-2"></div>
+      <div class="floating-item sprinkle-1"></div>
+      <div class="floating-item sprinkle-2"></div>
+      <div class="floating-item sprinkle-3"></div>
+    </div>
+
+    <div style="position:relative; z-index:2;">
+      <div class="check">✓</div>
+      <h1>Thank you!</h1>
+      <p>Your order is in our hands and we're already firing up the ovens.</p>
+
+      <div class="order-id">Order ID: <span id="orderId">CD-XXXXXX</span></div>
+      <div style="margin:-12px 0 24px; font-size:14px; color:var(--choc);">
+        Status: <strong id="orderStatus">Confirming…</strong>
+      </div>
+
+      <div id="loyaltyBadge" style="display:none;margin:0 auto 24px;max-width:440px;background:linear-gradient(135deg,#FFF4D0,#FFE19E);padding:16px;border-radius:16px;border-left:4px solid var(--gold);">
+        <strong>🎁 You earned <span id="ptsEarned">0</span> loyalty points!</strong>
+        <small style="display:block;color:var(--choc);margin-top:4px;">Sign in to redeem them on future orders.</small>
+      </div>
+
+      <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+        <a id="trackLink" href="#" class="btn btn-primary">📦 Track my order</a>
+        <a id="whatsappShareLink" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="background:#25D366;display:none;">
+          <span>💬 Save on WhatsApp</span>
+        </a>
+        <a href="../menu.html" class="btn btn-ghost">Order Again</a>
+      </div>
+
+      <!-- Full receipt the customer can copy/share -->
+      <div id="receiptCard" style="display:none;margin:32px auto 0;max-width:540px;background:white;border-radius:24px;box-shadow:var(--shadow-md);padding:28px;text-align:left;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">
+          <h3 style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);margin:0;">🍫 <bdi class="brand-ltr">ChocoDoDo</bdi> · Receipt</h3>
+          <button class="btn-link" id="copyReceiptBtn" type="button">📋 Copy</button>
+        </div>
+        <pre id="receiptText" style="white-space:pre-wrap;background:var(--cream);border-radius:12px;padding:14px;font-family:'Quicksand',sans-serif;font-size:13px;color:var(--choc-deep);margin:0;line-height:1.7;"></pre>
+        <p style="margin-top:14px;font-size:12px;color:var(--choc);text-align:center;">
+          Tap <strong>Save on WhatsApp</strong> to forward this receipt to yourself or anyone — even your family. No email required.
+        </p>
+      </div>
+
+      <div style="margin-top:48px; padding:24px; background:white; border-radius:var(--radius); box-shadow:var(--shadow-sm); max-width:480px; margin-left:auto; margin-right:auto;">
+        <h3 style="font-family:'Fredoka', sans-serif; color:var(--choc-deep); margin-bottom:16px;">What happens next?</h3>
+        <div style="display:flex; flex-direction:column; gap:12px; text-align:left;">
+          <div style="display:flex; gap:12px; align-items:center;">
+            <span style="font-size:1.5rem;">📦</span>
+            <span>Track your order live anytime — bookmark the page above</span>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <span style="font-size:1.5rem;">👩‍🍳</span>
+            <span>We start preparing your order fresh, by hand</span>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <span style="font-size:1.5rem;">🛵</span>
+            <span>Out for delivery within your chosen slot</span>
+          </div>
+          <div style="display:flex; gap:12px; align-items:center;">
+            <span style="font-size:1.5rem;">😋</span>
+            <span>Enjoy! Tag us on Instagram <strong>@chocododo</strong></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <p>© <span id="year">2026</span> <bdi class="brand-ltr">ChocoDoDo</bdi> · From our kitchen to you · Made with 🍫 and love</p>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">×</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-total"><span>Total:</span><strong id="cartTotal">$0.00</strong></div>
+      <a href="checkout.html" class="btn btn-primary btn-block">Checkout</a>
+    </div>
+  </div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/script.js"></script>
+</body>
+</html>

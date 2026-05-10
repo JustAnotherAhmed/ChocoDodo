@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Staff Sign-in — ChocoDoDo</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+</head>
+<body class="staff-auth-body">
+
+<nav class="navbar scrolled">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em> · <small>Staff</small></span>
+    </a>
+  </div>
+</nav>
+
+<main class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="section-eyebrow">🛡️ Staff Portal</span>
+      <h1>Staff Sign-in</h1>
+      <p>Customer accounts use the <a href="login.html">customer login</a>.</p>
+    </div>
+    <form id="staffLoginForm" class="auth-form">
+      <label class="form-field">
+        <span>Email</span>
+        <input id="sl_email" type="email" required autocomplete="email" />
+      </label>
+      <label class="form-field">
+        <span>Password</span>
+        <input id="sl_password" type="password" required autocomplete="current-password" />
+      </label>
+      <div class="auth-error" id="sl_error" role="alert" aria-live="polite"></div>
+      <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+      <p class="auth-alt"><a href="staff-forgot-password.html">Forgot password?</a></p>
+    </form>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+const API_BASE = window.CHOCODODO_API_BASE || 'http://localhost:4242';
+const $ = s => document.querySelector(s);
+const showError = (id, msg) => {
+  const el = $('#' + id);
+  if (!el) return; el.textContent = msg || '';
+  el.style.display = msg ? 'block' : 'none';
+};
+$('#staffLoginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  showError('sl_error', '');
+  const btn = e.target.querySelector('button');
+  btn.disabled = true;
+  try {
+    const r = await fetch(API_BASE + '/api/staff/login', {
+      method: 'POST', credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: $('#sl_email').value.trim(), password: $('#sl_password').value }),
+    });
+    const data = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error(data.error || `HTTP ${r.status}`);
+    location.href = 'admin.html';
+  } catch (err) {
+    showError('sl_error', err.message);
+    btn.disabled = false;
+  }
+});
+</script>
+</body>
+</html>

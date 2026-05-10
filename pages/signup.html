@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up — ChocoDoDo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+      <li><a href="login.html" class="nav-link">Sign In</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <span class="section-eyebrow">Welcome · <span lang="ar" dir="rtl">أهلاً</span></span>
+      <h1>Create your account</h1>
+      <p>Join <bdi class="brand-ltr">ChocoDoDo</bdi> for faster checkout, order history & exclusive offers.</p>
+    </div>
+    <form id="signupForm" class="auth-form">
+      <label class="form-field">
+        <span>Full Name *</span>
+        <input id="su_name" type="text" required autocomplete="name" />
+      </label>
+      <label class="form-field">
+        <span>Email *</span>
+        <input id="su_email" type="email" required autocomplete="email" />
+      </label>
+      <label class="form-field">
+        <span>Phone (Egyptian mobile) *</span>
+        <div class="eg-phone-input">
+          <span class="eg-phone-prefix">🇪🇬 +20</span>
+          <input id="su_phone" type="tel" required inputmode="numeric" maxlength="11"
+                 placeholder="01012345678"
+                 pattern="^(\+?20|0)?1[0125][0-9]{8}$"
+                 autocomplete="tel" />
+        </div>
+        <small class="form-hint">Used for delivery and order updates. e.g. 01012345678</small>
+      </label>
+      <label class="form-field">
+        <span>Password (min 8 characters) *</span>
+        <input id="su_password" type="password" required minlength="8" autocomplete="new-password" />
+      </label>
+      <div class="auth-error" id="su_error" role="alert" aria-live="polite"></div>
+      <button type="submit" class="btn btn-primary btn-block">
+        <span>Create Account</span>
+      </button>
+      <p class="auth-alt" style="font-size:12px;color:var(--choc);background:var(--cream-2);padding:10px;border-radius:8px;">
+        📧 After signup we'll send a verification email to confirm it's you. Check your inbox (and spam folder, just in case) for a 6-digit code or a one-tap link.
+      </p>
+      <p class="auth-alt">Already have an account? <a href="login.html">Sign in</a></p>
+    </form>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script src="../assets/countries.js"></script>
+<script src="../assets/auth-pages.js"></script>
+</body>
+</html>

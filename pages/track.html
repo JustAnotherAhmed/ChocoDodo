@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Track Order — ChocoDoDo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body class="track-body">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="track-page">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:32px;">
+      <span class="section-eyebrow">📦 Track your order</span>
+      <h1 class="section-title">Where's <em>my chocolate?</em></h1>
+    </div>
+
+    <!-- Signed-in users see their orders here automatically -->
+    <div id="myOrdersWrap" style="display:none;max-width:640px;margin:0 auto 28px;">
+      <h2 style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);text-align:center;margin-bottom:14px;">📦 Your orders</h2>
+      <div id="myOrdersList" class="my-orders-list"></div>
+      <div class="track-divider"><span>or look up by order ID</span></div>
+    </div>
+
+    <form id="trackForm" class="track-search">
+      <input id="trackId" type="text" placeholder="CD-XXXXXXX" required />
+      <button type="submit" class="btn btn-primary">Track</button>
+    </form>
+
+    <div id="trackResult" style="display:none;">
+      <div class="track-card">
+        <div class="track-header">
+          <div>
+            <span class="muted">Order</span>
+            <h2 id="trackOrderId" style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);"></h2>
+            <span class="live-badge"><span class="live-dot"></span>LIVE — updates automatically</span>
+          </div>
+          <div class="track-total">
+            <span class="muted">Total</span>
+            <strong id="trackTotal"></strong>
+          </div>
+        </div>
+
+        <div class="track-timeline">
+          <div class="track-step" data-step="received">
+            <div class="track-dot">📝</div>
+            <div class="track-step-info">
+              <strong>Order received</strong>
+              <small>We've got your order!</small>
+            </div>
+          </div>
+          <div class="track-step" data-step="preparing">
+            <div class="track-dot">👩‍🍳</div>
+            <div class="track-step-info">
+              <strong>Preparing</strong>
+              <small>Hand-making your treats</small>
+            </div>
+          </div>
+          <div class="track-step" data-step="out_for_delivery">
+            <div class="track-dot">🛵</div>
+            <div class="track-step-info">
+              <strong>Out for delivery</strong>
+              <small>On the way to you</small>
+            </div>
+          </div>
+          <div class="track-step" data-step="delivered">
+            <div class="track-dot">🎉</div>
+            <div class="track-step-info">
+              <strong>Delivered</strong>
+              <small>Enjoy! 💝</small>
+            </div>
+          </div>
+        </div>
+
+        <div id="trackItems" class="track-items"></div>
+
+        <div id="trackDeposit" class="track-deposit" style="display:none;"></div>
+
+        <a id="trackWhatsapp" href="#" target="_blank" rel="noopener" class="btn btn-primary btn-block" style="display:none;margin-top:16px;">
+          <span>💬 Message us on WhatsApp</span>
+        </a>
+      </div>
+    </div>
+
+    <div id="trackError" class="muted" style="display:none;text-align:center;padding:32px;"></div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+<script>
+(function() {
+  const API_BASE = window.CHOCODODO_API_BASE || 'http://localhost:4242';
+  const $ = (s) => document.querySelector(s);
+  const fmtMoney = (cents) => {
+    const v = cents / 100;
+    return `${Number.isInteger(v) ? v : v.toFixed(2)} EGP`;
+  };
+
+  // ----- Confetti shower (CSS-only, generated once per visit) -----
+  let _confettiFired = false;
+  function launchConfetti() {
+    if (_confettiFired) return;
+    _confettiFired = true;
+    const colors = ['#F5B7B1', '#A8DADC', '#D4AF37', '#C2185B', '#5DADE2', '#F4C97B', '#80DEEA'];
+    const layer = document.createElement('div');
+    layer.className = 'confetti-shower';
+    layer.setAttribute('aria-hidden', 'true');
+    for (let i = 0; i < 60; i++) {
+      const piece = document.createElement('span');
+      piece.className = 'confetti-piece';
+      piece.style.left = (Math.random() * 100) + 'vw';
+      piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+      piece.style.animationDuration = (2.5 + Math.random() * 2.5) + 's';
+      piece.style.animationDelay = (Math.random() * 0.6) + 's';
+      piece.style.transform = `rotate(${Math.random() * 360}deg)`;
+      layer.appendChild(piece);
+    }
+    document.body.appendChild(layer);
+    // Clean up after the longest fall
+    setTimeout(() => layer.remove(), 6000);
+  }
+
+  // Live tracking — when an order is shown, poll every 8s so the
+  // customer sees status changes (Preparing → Out for delivery → Delivered)
+  // without having to refresh the page.
+  let _liveTimer = null;
+  let _liveOrderId = null;
+  let _lastStatus = null;
+
+  // ----- If signed in, show the user's orders without needing an ID -----
+  loadMyOrders();
+  async function loadMyOrders() {
+    try {
+      const r = await fetch(`${API_BASE}/api/auth/orders`, { credentials: 'include' });
+      if (!r.ok) return;
+      const { orders } = await r.json();
+      if (!orders || orders.length === 0) return;
+      const wrap = $('#myOrdersWrap');
+      const list = $('#myOrdersList');
+      const TRACK_LABELS = {
+        received: '📝 Received',
+        preparing: '👩‍🍳 Preparing',
+        out_for_delivery: '🛵 On the way',
+        delivered: '🎉 Delivered',
+        cancelled: '❌ Cancelled',
+      };
+      list.innerHTML = orders.map(o => {
+        const cancelled = o.tracking_status === 'cancelled' || o.status === 'cancelled';
+        const tLabel = TRACK_LABELS[o.tracking_status || 'received'] || '📝 Received';
+        const date = new Date(o.created_at + 'Z').toLocaleString();
+        const itemSummary = o.items.map(i => `${i.name} × ${i.qty}`).join(', ');
+        return `
+          <div class="my-order-row ${cancelled ? 'cancelled' : ''}" data-pick="${o.id}">
+            <div class="my-order-row-top">
+              <strong>${o.id}</strong>
+              <span class="my-order-status ${cancelled ? 'fail' : 'ok'}">${cancelled ? '❌ Cancelled' : tLabel}</span>
+            </div>
+            <div class="muted" style="font-size:12px;">${date}</div>
+            <div class="my-order-items">${itemSummary}</div>
+            <button type="button" class="btn btn-primary my-order-btn">📦 Track this order</button>
+          </div>
+        `;
+      }).join('');
+      wrap.style.display = 'block';
+      // Wire click → load that order
+      list.querySelectorAll('[data-pick]').forEach(row => {
+        row.addEventListener('click', () => {
+          const id = row.dataset.pick;
+          $('#trackId').value = id;
+          history.replaceState(null, '', '?id=' + encodeURIComponent(id));
+          startLive(id);
+          // Smooth scroll to result
+          setTimeout(() => {
+            $('#trackResult')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 200);
+        });
+      });
+    } catch { /* not signed in or network — ignore */ }
+  }
+
+  // Read order ID from URL or input
+  const params = new URLSearchParams(location.search);
+  const initialId = params.get('id');
+  if (initialId) {
+    $('#trackId').value = initialId;
+    startLive(initialId);
+  }
+
+  $('#trackForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const id = $('#trackId').value.trim();
+    if (id) {
+      history.replaceState(null, '', '?id=' + encodeURIComponent(id));
+      startLive(id);
+    }
+  });
+
+  // Pause polling when tab is hidden, resume when visible
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopLive();
+    else if (_liveOrderId) startLive(_liveOrderId, true);
+  });
+
+  function startLive(id, silent = false) {
+    stopLive();
+    _liveOrderId = id;
+    _lastStatus = null;
+    if (!silent) {
+      $('#trackResult').style.display = 'none';
+      $('#trackError').style.display = 'none';
+    }
+    fetchOrder(id, true);  // immediate
+    _liveTimer = setInterval(() => fetchOrder(id, false), 8000);
+  }
+  function stopLive() {
+    if (_liveTimer) clearInterval(_liveTimer);
+    _liveTimer = null;
+  }
+
+  async function fetchOrder(id, isFirst) {
+    try {
+      const r = await fetch(`${API_BASE}/api/order/${encodeURIComponent(id)}`);
+      if (!r.ok) {
+        if (isFirst) throw new Error('Order not found. Double-check the ID.');
+        return;
+      }
+      const o = await r.json();
+      render(o);
+      // If status changed, briefly highlight the timeline
+      if (_lastStatus && _lastStatus !== o.tracking_status) {
+        const el = document.querySelector(`.track-step[data-step="${o.tracking_status}"]`);
+        if (el) {
+          el.classList.add('just-updated');
+          setTimeout(() => el.classList.remove('just-updated'), 2400);
+        }
+      }
+      _lastStatus = o.tracking_status;
+    } catch (err) {
+      if (isFirst) {
+        $('#trackError').textContent = err.message;
+        $('#trackError').style.display = 'block';
+        stopLive();
+      }
+    }
+  }
+
+  function render(o) {
+    $('#trackOrderId').textContent = o.id;
+    $('#trackTotal').textContent = fmtMoney(o.total_cents);
+    $('#trackResult').style.display = 'block';
+
+    const card = document.querySelector('.track-card');
+    const cancelled = o.tracking_status === 'cancelled' || o.status === 'cancelled';
+    const delivered = o.tracking_status === 'delivered';
+
+    // ----- Cancelled banner -----
+    let cancelBanner = $('#trackCancelledBanner');
+    if (cancelled) {
+      if (!cancelBanner) {
+        cancelBanner = document.createElement('div');
+        cancelBanner.id = 'trackCancelledBanner';
+        cancelBanner.className = 'track-cancelled-banner';
+        cancelBanner.innerHTML = `
+          <div class="track-cancelled-icon">❌</div>
+          <div>
+            <strong>Order cancelled</strong>
+            <p>This order has been cancelled. If this is a mistake, message us on WhatsApp.</p>
+          </div>
+        `;
+        card.insertBefore(cancelBanner, card.querySelector('.track-timeline'));
+      }
+      card.classList.add('order-cancelled');
+      stopLive();
+    } else if (cancelBanner) {
+      cancelBanner.remove();
+      card.classList.remove('order-cancelled');
+    }
+
+    // ----- Delivered celebration -----
+    let deliveredBanner = $('#trackDeliveredBanner');
+    if (delivered && !cancelled) {
+      if (!deliveredBanner) {
+        deliveredBanner = document.createElement('div');
+        deliveredBanner.id = 'trackDeliveredBanner';
+        deliveredBanner.className = 'track-delivered-banner';
+        deliveredBanner.innerHTML = `
+          <div class="track-delivered-icon">🎉</div>
+          <div>
+            <strong>Enjoy your treats!</strong>
+            <p>Your order was delivered. We hope every bite makes you smile 💕</p>
+            <div class="track-delivered-actions">
+              <a id="trackOrderAgain" href="../menu.html" class="btn btn-primary" style="background:var(--berry);">🍫 Order again</a>
+              <a id="trackShareLink" href="#" target="_blank" rel="noopener" class="btn btn-ghost">💬 Tell a friend</a>
+            </div>
+          </div>
+        `;
+        card.insertBefore(deliveredBanner, card.querySelector('.track-timeline'));
+        // Pre-fill share link
+        const shareText = `Just got my order from ChocoDoDo 🍫 — handmade chocolates and biscuits delivered fresh. Try it: ${location.origin}`;
+        $('#trackShareLink').href = `https://wa.me/?text=${encodeURIComponent(shareText)}`;
+      }
+      card.classList.add('order-delivered');
+      // Trigger confetti shower (idempotent — only first time per visit)
+      launchConfetti();
+      // Stop polling — order journey is complete
+      stopLive();
+    } else if (deliveredBanner && !delivered) {
+      deliveredBanner.remove();
+      card.classList.remove('order-delivered');
+    }
+
+    // ----- Timeline -----
+    const stages = ['received', 'preparing', 'out_for_delivery', 'delivered'];
+    const current = o.tracking_status || 'received';
+    const idx = stages.indexOf(current);
+    document.querySelectorAll('.track-step').forEach(el => {
+      const stage = el.dataset.step;
+      const stageIdx = stages.indexOf(stage);
+      el.classList.remove('done', 'current', 'final');
+      if (cancelled) return;
+      if (delivered) {
+        // All steps look done; add a special "final" class to delivered
+        el.classList.add('done');
+        if (stage === 'delivered') el.classList.add('final');
+        return;
+      }
+      if (stageIdx < idx) el.classList.add('done');
+      else if (stageIdx === idx) el.classList.add('current');
+    });
+
+    // Items
+    $('#trackItems').innerHTML = '<h3 style="font-family:Fredoka,sans-serif;color:var(--choc-deep);margin-bottom:8px;">Items</h3>' +
+      o.items.map(i => `<div class="track-item-row"><span>${i.name} × ${i.qty}</span><span>${fmtMoney(i.price_cents * i.qty)}</span></div>`).join('');
+
+    // Deposit summary
+    if (o.payment_mode === 'deposit' && o.deposit_cents) {
+      $('#trackDeposit').style.display = 'block';
+      $('#trackDeposit').innerHTML = `
+        <div class="deposit-line"><span>💎 Paid (deposit)</span><span>${fmtMoney(o.deposit_cents)}</span></div>
+        <div class="remaining-line"><span>Due on delivery</span><span>${fmtMoney(o.remaining_cents)}</span></div>
+      `;
+    }
+
+    // WhatsApp
+    if (o.whatsapp_link) {
+      $('#trackWhatsapp').href = o.whatsapp_link;
+      $('#trackWhatsapp').style.display = 'flex';
+    }
+  }
+})();
+</script>
+</body>
+</html>

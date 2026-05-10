@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — ChocoDoDo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/png" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body class="checkout-body">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+  <nav class="navbar scrolled" id="navbar">
+    <div class="nav-container">
+      <a href="../index.html" class="nav-logo">
+        <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+        <span class="nav-brand">Choco<em>DoDo</em></span>
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="../index.html" class="nav-link">Home</a></li>
+        <li><a href="../menu.html" class="nav-link">Menu</a></li>
+      </ul>
+      <div class="nav-actions" data-lang-toggle-mount>
+        <button class="cart-btn" id="cartBtn" aria-label="Open cart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+          <span class="cart-count" id="cartCount">0</span>
+        </button>
+        <button class="hamburger" id="hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <main id="main" class="checkout-page">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:40px;">
+        <span class="section-eyebrow" data-i18n="checkout.eyebrow">Almost there!</span>
+        <h1 class="section-title">
+          <span data-i18n="checkout.title">Complete your</span> <em data-i18n="checkout.title.em">order</em>
+        </h1>
+      </div>
+
+      <!-- Sign-in nudge for guests -->
+      <div id="guestPromptBanner" class="verify-banner" style="display:none; margin-bottom:24px;">
+        <div>
+          <strong>💡 <span data-i18n="checkout.guest">Have an account?</span></strong>
+          <p>
+            <a href="login.html?next=/pages/checkout.html" data-i18n="checkout.guest.signin">Sign in</a>
+            <span data-i18n="checkout.guest.benefit"> to autofill your details and use saved addresses.</span>
+          </p>
+        </div>
+      </div>
+
+      <form id="checkoutForm" class="checkout-grid">
+        <div class="checkout-panel">
+
+          <!-- STEP 1: CONTACT -->
+          <div class="checkout-step">
+            <div class="step-label">
+              <span class="num">1</span>
+              <h3 data-i18n="checkout.contact">Contact Details</h3>
+            </div>
+            <div class="form-grid">
+              <label class="form-field full">
+                <span data-i18n="checkout.full_name">Full Name</span>
+                <input id="fullName" type="text" required placeholder="Your full name" autocomplete="name" />
+              </label>
+              <label class="form-field">
+                <span data-i18n="checkout.email">Email</span>
+                <input id="email" type="email" required placeholder="you@example.com" autocomplete="email" />
+              </label>
+              <label class="form-field">
+                <span data-i18n="checkout.phone">Phone (Egyptian mobile)</span>
+                <div class="eg-phone-input">
+                  <span class="eg-phone-prefix">🇪🇬 +20</span>
+                  <input id="phone" type="tel" required inputmode="numeric"
+                         maxlength="11"
+                         placeholder="01012345678"
+                         pattern="^(\+?20|0)?1[0125][0-9]{8}$"
+                         autocomplete="tel" />
+                </div>
+                <small class="form-hint">e.g. 01012345678 or 1012345678</small>
+              </label>
+            </div>
+          </div>
+
+          <!-- STEP 2: DELIVERY -->
+          <div class="checkout-step">
+            <div class="step-label">
+              <span class="num">2</span>
+              <h3 data-i18n="checkout.delivery">Delivery</h3>
+            </div>
+
+            <!-- Saved addresses (signed-in users) -->
+            <div id="savedAddrPicker" style="display:none; margin-bottom:16px;">
+              <label class="form-field full">
+                <span data-i18n="checkout.saved_addr">Use a saved address</span>
+                <select id="savedAddrSelect"></select>
+              </label>
+            </div>
+
+            <div class="form-grid">
+              <label class="form-field full">
+                <span data-i18n="checkout.address">Delivery Address</span>
+                <input id="address" type="text" required placeholder="Street, building, apartment, floor"
+                       autocomplete="street-address" />
+              </label>
+              <label class="form-field">
+                <span data-i18n="checkout.city">City / Area</span>
+                <input id="city" type="text" placeholder="e.g. Cairo, Giza, Alexandria" autocomplete="address-level2" />
+              </label>
+              <label class="form-field">
+                <span data-i18n="checkout.save_addr">Save this address?</span>
+                <select id="saveAddr">
+                  <option value="" data-i18n="checkout.dont_save">Don't save</option>
+                  <option value="Home">Save as "Home"</option>
+                  <option value="Work">Save as "Work"</option>
+                  <option value="Other">Save as "Other"</option>
+                </select>
+              </label>
+              <label class="form-field full">
+                <span data-i18n="checkout.notes">Notes for the kitchen (optional)</span>
+                <textarea id="orderNotes" rows="3" placeholder="Allergies, special requests, gift message, fillings..."></textarea>
+              </label>
+            </div>
+          </div>
+
+          <!-- STEP 3: DELIVERY DATE -->
+          <div class="checkout-step">
+            <div class="step-label">
+              <span class="num">3</span>
+              <h3 data-i18n="checkout.when">When should we deliver?</h3>
+            </div>
+            <div class="lead-time-notice">
+              <strong>📅 <span data-i18n="checkout.lead.title">Heads up — we don't do same-day delivery</span></strong>
+              <p data-i18n="checkout.lead.body">Everything is hand-made fresh, so please pick a slot at least 3–4 days from today.</p>
+            </div>
+            <div id="slotsWrap" class="slots-grid">
+              <p class="muted">Loading available slots…</p>
+            </div>
+            <input type="hidden" id="deliverySlotId" />
+          </div>
+
+          <!-- STEP 4: PAYMENT MODE (deposit vs full) -->
+          <div class="checkout-step">
+            <div class="step-label">
+              <span class="num">4</span>
+              <h3 data-i18n="checkout.paymode">How much would you like to pay now?</h3>
+            </div>
+            <div class="pay-mode-options">
+              <label class="pay-mode-option">
+                <input type="radio" name="payMode" value="deposit" checked />
+                <div class="pay-mode-bubble">
+                  <div class="pay-mode-title">💎 <span data-i18n="checkout.deposit_only">Deposit only</span> <span class="pill new" data-i18n="checkout.required">required</span></div>
+                  <div class="pay-mode-desc">
+                    <span data-i18n="checkout.pay_now">Pay</span> <strong id="depositAmount">—</strong> <span data-i18n="checkout.now_50">now (50%)</span><br/>
+                    <span data-i18n="checkout.remaining">Remaining</span> <strong id="depositRemaining">—</strong> <span data-i18n="checkout.due_delivery">due on delivery</span>
+                  </div>
+                </div>
+              </label>
+              <label class="pay-mode-option">
+                <input type="radio" name="payMode" value="full" />
+                <div class="pay-mode-bubble">
+                  <div class="pay-mode-title">✨ <span data-i18n="checkout.pay_in_full">Pay in full</span></div>
+                  <div class="pay-mode-desc">
+                    <span data-i18n="checkout.now">Pay</span> <strong id="fullAmount">—</strong> <span data-i18n="checkout.now_full">now</span><br/>
+                    <span data-i18n="checkout.nothing_left">Nothing left to pay on delivery</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+            <p class="muted" style="font-size:12px;margin-top:8px;" data-i18n="checkout.note">
+              📌 Every order requires a deposit to confirm — it locks in your slot and ingredients.
+            </p>
+          </div>
+
+          <!-- STEP 5: PAYMENT METHOD -->
+          <div class="checkout-step">
+            <div class="step-label">
+              <span class="num">5</span>
+              <h3 data-i18n="checkout.method">Payment Method</h3>
+            </div>
+            <div class="payment-options">
+              <div class="payment-option" data-method="instapay">
+                <span class="pay-emoji">🏦</span>
+                <span data-i18n="checkout.method.instapay">InstaPay</span>
+              </div>
+              <div class="payment-option" data-method="vcash">
+                <span class="pay-emoji">📱</span>
+                <span data-i18n="checkout.method.vcash">Vodafone Cash</span>
+              </div>
+              <div class="payment-option" data-method="cod">
+                <span class="pay-emoji">💵</span>
+                <span data-i18n="checkout.method.cod">Cash on Delivery</span>
+              </div>
+            </div>
+            <input type="hidden" id="paymentMethod" value="instapay" />
+
+            <div id="instapayNotice" class="muted" style="display:none; font-size:13px; margin-top:12px; padding:14px; background:#E3F2FD; border-radius:10px; border-left:4px solid #1565C0;">
+              <strong style="color:#0D47A1;">🏦 InstaPay instructions</strong>
+              <p style="margin:6px 0;">After placing your order, transfer the deposit via InstaPay to:</p>
+              <p style="font-family:'Fredoka',sans-serif;font-size:1.1rem;color:#0D47A1;margin:4px 0;">
+                <strong id="instapayHandle">@chocododo</strong> · phone <strong id="instapayPhone">+20 1XX XXX XXXX</strong>
+              </p>
+              <p style="margin:6px 0;">Include your <strong>order ID</strong> in the transfer note. We'll confirm within 30 minutes.</p>
+            </div>
+
+            <div id="vcashNotice" class="muted" style="display:none; font-size:13px; margin-top:12px; padding:14px; background:#FFE0E6; border-radius:10px; border-left:4px solid #C2185B;">
+              <strong style="color:var(--berry);">📱 Vodafone Cash instructions</strong>
+              <p style="margin:6px 0;">After placing your order, send the deposit amount to:</p>
+              <p style="font-family:'Fredoka',sans-serif;font-size:1.1rem;color:var(--berry);margin:4px 0;"><strong id="vcashNumber">+20 1XX XXX XXXX</strong></p>
+              <p style="margin:6px 0;">Include your <strong>order ID</strong> in the message. We'll confirm within 30 minutes.</p>
+            </div>
+
+            <p id="codNotice" class="muted" style="display:none; font-size:13px; margin-top:12px; padding:12px; background:var(--pink-soft); border-radius:8px;">
+              💡 With Cash on Delivery, the deposit is collected in cash on the same delivery as the rest of the order.
+            </p>
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px;">
+            <span data-i18n="checkout.place">Place Order</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="10"/></svg>
+          </button>
+        </div>
+
+        <!-- ORDER SUMMARY -->
+        <aside class="summary-panel">
+          <h3 data-i18n="checkout.summary">Order Summary</h3>
+          <div id="summaryItems"></div>
+          <div id="summaryTotals" style="margin-top:16px; padding-top:16px; border-top:1px dashed var(--pink);">
+            <div class="summary-line"><span data-i18n="checkout.subtotal">Subtotal</span><span id="sumSubtotal">—</span></div>
+            <div class="summary-line"><span data-i18n="checkout.delivery_fee">Delivery</span><span id="sumDelivery">—</span></div>
+            <div class="summary-line" id="sumTaxLine" style="display:none;"><span data-i18n="checkout.tax">Tax</span><span id="sumTax">—</span></div>
+            <div class="summary-line total"><span data-i18n="cart.total">Total</span><span id="sumTotal">—</span></div>
+            <div class="summary-line deposit-line" id="sumDepositLine" style="display:none;">
+              <span>💎 <span data-i18n="checkout.deposit">Pay now (deposit)</span></span><span id="sumDeposit">—</span>
+            </div>
+            <div class="summary-line remaining-line" id="sumRemainingLine" style="display:none;">
+              <span data-i18n="checkout.due">Due on delivery</span><span id="sumRemaining">—</span>
+            </div>
+          </div>
+          <p style="margin-top:20px; font-size:12px; color:var(--choc); text-align:center;" data-i18n="checkout.secure">
+            🔒 Your information is encrypted and secure
+          </p>
+        </aside>
+      </form>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-bottom">
+      <p>© <span id="year">2026</span> <bdi class="brand-ltr">ChocoDoDo</bdi> · From our kitchen to you · Made with 🍫 and love</p>
+    </div>
+  </footer>
+
+  <!-- CART DRAWER -->
+  <div class="cart-drawer" id="cartDrawer">
+    <div class="cart-header">
+      <h3>Your Cart</h3>
+      <button class="cart-close" id="cartClose" aria-label="Close cart">×</button>
+    </div>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-footer" id="cartFooter" style="display:none;">
+      <div class="cart-total">
+        <span>Total:</span>
+        <strong id="cartTotal">$0.00</strong>
+      </div>
+      <a href="checkout.html" class="btn btn-primary btn-block">Checkout</a>
+    </div>
+  </div>
+  <div class="cart-overlay" id="cartOverlay"></div>
+
+  <div class="toast" id="toast"></div>
+
+  <script src="../assets/script.js"></script>
+</body>
+</html>

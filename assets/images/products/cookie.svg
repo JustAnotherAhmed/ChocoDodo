@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="bg-cook" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#FCE4EC"/>
+      <stop offset="100%" stop-color="#F5E6D3"/>
+    </radialGradient>
+    <radialGradient id="cookie-grad" cx="35%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#E8B97A"/>
+      <stop offset="60%" stop-color="#C68B47"/>
+      <stop offset="100%" stop-color="#8B5A3C"/>
+    </radialGradient>
+    <radialGradient id="chip-grad" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#6B4423"/>
+      <stop offset="100%" stop-color="#3E2723"/>
+    </radialGradient>
+    <filter id="shadow-cook" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="5"/>
+      <feOffset dx="0" dy="7" result="off"/>
+      <feFlood flood-color="#3E2723" flood-opacity="0.22"/>
+      <feComposite in2="off" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg-cook)"/>
+  <ellipse cx="200" cy="252" rx="120" ry="14" fill="#3E2723" opacity="0.18"/>
+
+  <g filter="url(#shadow-cook)">
+    <!-- cookie bumpy edge -->
+    <path d="M 200 60
+             C 240 60 270 75 280 95
+             C 305 100 325 120 322 145
+             C 340 165 335 195 312 205
+             C 315 225 295 245 270 240
+             C 255 258 215 258 200 245
+             C 185 258 145 258 130 240
+             C 105 245 85 225 88 205
+             C 65 195 60 165 78 145
+             C 75 120 95 100 120 95
+             C 130 75 160 60 200 60 Z"
+          fill="url(#cookie-grad)"/>
+    <!-- inner texture -->
+    <ellipse cx="200" cy="155" rx="120" ry="92" fill="#8B5A3C" opacity="0.15"/>
+    <!-- speckles -->
+    <circle cx="160" cy="100" r="3" fill="#5C3317" opacity="0.5"/>
+    <circle cx="240" cy="115" r="2" fill="#5C3317" opacity="0.5"/>
+    <circle cx="180" cy="200" r="2" fill="#5C3317" opacity="0.5"/>
+    <circle cx="270" cy="180" r="3" fill="#5C3317" opacity="0.5"/>
+    <circle cx="120" cy="170" r="2" fill="#5C3317" opacity="0.5"/>
+    <circle cx="220" cy="220" r="3" fill="#5C3317" opacity="0.5"/>
+
+    <!-- chocolate chips -->
+    <g>
+      <ellipse cx="155" cy="130" rx="13" ry="11" fill="url(#chip-grad)"/>
+      <ellipse cx="151" cy="126" rx="4" ry="2" fill="#fff" opacity="0.25"/>
+    </g>
+    <g>
+      <ellipse cx="225" cy="115" rx="14" ry="11" fill="url(#chip-grad)"/>
+      <ellipse cx="221" cy="111" rx="4" ry="2" fill="#fff" opacity="0.25"/>
+    </g>
+    <g>
+      <ellipse cx="265" cy="155" rx="13" ry="10" fill="url(#chip-grad)"/>
+      <ellipse cx="261" cy="151" rx="4" ry="2" fill="#fff" opacity="0.25"/>
+    </g>
+    <g>
+      <ellipse cx="195" cy="170" rx="14" ry="11" fill="url(#chip-grad)"/>
+      <ellipse cx="191" cy="166" rx="4" ry="2" fill="#fff" opacity="0.25"/>
+    </g>
+    <g>
+      <ellipse cx="135" cy="180" rx="12" ry="10" fill="url(#chip-grad)"/>
+      <ellipse cx="131" cy="176" rx="3" ry="2" fill="#fff" opacity="0.25"/>
+    </g>
+    <g>
+      <ellipse cx="240" cy="200" rx="13" ry="10" fill="url(#chip-grad)"/>
+      <ellipse cx="236" cy="196" rx="4" ry="2" fill="#fff" opacity="0.25"/>
+    </g>
+    <g>
+      <ellipse cx="170" cy="220" rx="12" ry="10" fill="url(#chip-grad)"/>
+      <ellipse cx="166" cy="216" rx="3" ry="2" fill="#fff" opacity="0.25"/>
+    </g>
+
+    <!-- highlight -->
+    <ellipse cx="160" cy="100" rx="40" ry="14" fill="#fff" opacity="0.18"/>
+  </g>
+
+  <!-- crumbs -->
+  <circle cx="80" cy="240" r="4" fill="#C68B47" opacity="0.7"/>
+  <circle cx="90" cy="250" r="3" fill="#8B5A3C" opacity="0.7"/>
+  <circle cx="320" cy="245" r="4" fill="#C68B47" opacity="0.7"/>
+  <circle cx="335" cy="252" r="3" fill="#8B5A3C" opacity="0.7"/>
+  <!-- decorations -->
+  <circle cx="55" cy="60" r="5" fill="#F5B7B1" opacity="0.6"/>
+  <circle cx="350" cy="60" r="5" fill="#A8DADC" opacity="0.6"/>
+  <g transform="translate(50 180)" fill="#D4AF37">
+    <path d="M0 -8 L1.5 -1.5 L8 0 L1.5 1.5 L0 8 L-1.5 1.5 L-8 0 L-1.5 -1.5 Z"/>
+  </g>
+  <g transform="translate(360 200)" fill="#F5B7B1">
+    <path d="M0 -8 L1.5 -1.5 L8 0 L1.5 1.5 L0 8 L-1.5 1.5 L-8 0 L-1.5 -1.5 Z"/>
+  </g>
+</svg>

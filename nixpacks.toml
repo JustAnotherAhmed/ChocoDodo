@@ -1,0 +1,16 @@
+# Nixpacks build config — used by Railway and Render.
+# Tells the builder this is a Node.js app, where to install deps,
+# and how to start the server. SQLite needs persistent storage —
+# mount a volume at /data and set DATA_DIR=/data in env vars.
+
+[phases.setup]
+nixPkgs = ["nodejs_20"]
+
+[phases.install]
+cmds = ["cd backend && npm ci --omit=dev"]
+
+[phases.build]
+cmds = ["echo 'No build step needed — static frontend served directly.'"]
+
+[start]
+cmd = "node backend/server.js"

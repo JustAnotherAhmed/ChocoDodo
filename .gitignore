@@ -1,0 +1,52 @@
+# ============================================
+# ChocoDoDo — root .gitignore
+# Anything matching these patterns is excluded from git.
+# ============================================
+
+# Dependencies
+node_modules/
+backend/node_modules/
+
+# Environment / secrets — NEVER commit
+.env
+.env.local
+.env.*.local
+backend/.env
+backend/.env.local
+
+# Database (SQLite) — local data, not source code
+backend/data/
+backend/data/*.db
+backend/data/*.db-journal
+backend/data/*.db-wal
+backend/data/*.db-shm
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS noise
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Build artifacts (none today, future-proofing)
+dist/
+build/
+
+# Uploaded files (user-generated, not code)
+backend/uploads/
+assets/images/uploads/
+
+# Stripe CLI cache
+.stripe/
+
+# Misc claude session files (shouldn't be in repo anyway)
+*.jsonl
+last_*_lines_sample.txt

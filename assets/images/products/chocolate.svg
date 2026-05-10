@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300">
+  <defs>
+    <radialGradient id="bg-c" cx="50%" cy="50%" r="60%">
+      <stop offset="0%" stop-color="#F5E6D3"/>
+      <stop offset="100%" stop-color="#FCE4EC"/>
+    </radialGradient>
+    <linearGradient id="bar-grad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#8B5A3C"/>
+      <stop offset="100%" stop-color="#3E2723"/>
+    </linearGradient>
+    <linearGradient id="bar-shine" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="50%" stop-color="#fff" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </linearGradient>
+    <filter id="shadow-c" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+      <feOffset dx="0" dy="6" result="off"/>
+      <feFlood flood-color="#3E2723" flood-opacity="0.22"/>
+      <feComposite in2="off" operator="in"/>
+      <feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+  <rect width="400" height="300" fill="url(#bg-c)"/>
+  <ellipse cx="200" cy="245" rx="120" ry="14" fill="#3E2723" opacity="0.15"/>
+  <!-- bar tilted -->
+  <g transform="translate(200 160) rotate(-8) translate(-200 -160)" filter="url(#shadow-c)">
+    <!-- foil wrapper background -->
+    <rect x="100" y="80" width="200" height="160" rx="14" fill="#D4AF37"/>
+    <!-- chocolate bar -->
+    <rect x="115" y="95" width="170" height="130" rx="10" fill="url(#bar-grad)"/>
+    <!-- segments -->
+    <g stroke="#3E2723" stroke-width="3" fill="none" opacity="0.5">
+      <line x1="115" y1="138" x2="285" y2="138"/>
+      <line x1="115" y1="181" x2="285" y2="181"/>
+      <line x1="172" y1="95" x2="172" y2="225"/>
+      <line x1="228" y1="95" x2="228" y2="225"/>
+    </g>
+    <!-- inner squares highlights -->
+    <rect x="120" y="100" width="48" height="33" rx="4" fill="#fff" opacity="0.08"/>
+    <rect x="232" y="186" width="48" height="33" rx="4" fill="#000" opacity="0.15"/>
+    <!-- shine -->
+    <rect x="115" y="95" width="170" height="130" rx="10" fill="url(#bar-shine)"/>
+    <!-- foil edge -->
+    <rect x="100" y="80" width="200" height="160" rx="14" fill="none" stroke="#A37D1F" stroke-width="2" opacity="0.5"/>
+  </g>
+  <!-- truffle accents -->
+  <g filter="url(#shadow-c)">
+    <circle cx="80" cy="220" r="22" fill="url(#bar-grad)"/>
+    <circle cx="74" cy="213" r="6" fill="#fff" opacity="0.25"/>
+  </g>
+  <g filter="url(#shadow-c)">
+    <circle cx="330" cy="90" r="18" fill="#6B4423"/>
+    <circle cx="325" cy="84" r="5" fill="#fff" opacity="0.3"/>
+  </g>
+  <!-- dust particles -->
+  <circle cx="50" cy="60" r="4" fill="#C2185B" opacity="0.5"/>
+  <circle cx="360" cy="200" r="5" fill="#F5B7B1" opacity="0.6"/>
+  <circle cx="40" cy="150" r="3" fill="#D4AF37" opacity="0.6"/>
+  <circle cx="370" cy="250" r="4" fill="#A8DADC" opacity="0.6"/>
+</svg>

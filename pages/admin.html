@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Panel — ChocoDoDo</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/i18n.js"></script>
+</head>
+<body class="admin-body">
+
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em> · <small>Admin</small></span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="../index.html" class="nav-link">Site</a></li>
+      <li><a href="account.html" class="nav-link">Account</a></li>
+      <li><a href="#" id="logoutLink" class="nav-link">Sign out</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="admin-page">
+  <aside class="admin-sidebar">
+    <h2 class="admin-title">Admin tools</h2>
+    <nav class="admin-nav">
+      <button class="admin-tab active" data-tab="dash">📊 Dashboard</button>
+      <button class="admin-tab" data-tab="products">🍫 Products</button>
+      <button class="admin-tab" data-tab="categories">🗂️ Categories</button>
+      <button class="admin-tab" data-tab="orders">🛒 Orders</button>
+      <button class="admin-tab" data-tab="customers">🧁 Customers</button>
+      <button class="admin-tab" data-tab="staff">🛡️ Staff</button>
+      <button class="admin-tab" data-tab="reviews">⭐ Reviews</button>
+      <button class="admin-tab" data-tab="slots">🕐 Delivery Slots</button>
+      <button class="admin-tab" data-tab="settings">⚙️ Settings</button>
+    </nav>
+    <p class="admin-foot">Signed in as<br/><strong id="meEmail">…</strong></p>
+  </aside>
+
+  <section class="admin-main" id="adminMain">
+
+    <!-- DASHBOARD -->
+    <div class="admin-section active" data-section="dash">
+      <h1>Dashboard</h1>
+      <div class="stat-grid" id="statGrid">
+        <div class="stat-card"><div class="stat-num" id="statRevenue">…</div><div class="stat-label">Revenue (EGP)</div></div>
+        <div class="stat-card"><div class="stat-num" id="statOrdersToday">…</div><div class="stat-label">Orders today</div></div>
+        <div class="stat-card"><div class="stat-num" id="statOrdersTotal">…</div><div class="stat-label">Orders total</div></div>
+        <div class="stat-card"><div class="stat-num" id="statPaid">…</div><div class="stat-label">Paid orders</div></div>
+        <div class="stat-card"><div class="stat-num" id="statPending">…</div><div class="stat-label">Pending</div></div>
+        <div class="stat-card"><div class="stat-num" id="statProducts">…</div><div class="stat-label">Products</div></div>
+        <div class="stat-card"><div class="stat-num" id="statUsers">…</div><div class="stat-label">Users</div></div>
+      </div>
+      <div id="lowStockWidget" class="low-stock-widget" style="display:none;">
+        <h2>⚠️ Low stock</h2>
+        <div id="lowStockList"></div>
+      </div>
+
+      <h2 style="margin-top:32px">Recent orders</h2>
+      <div id="recentOrders" class="admin-table-wrap"></div>
+    </div>
+
+    <!-- PRODUCTS -->
+    <div class="admin-section" data-section="products">
+      <div class="admin-section-head">
+        <h1>Products</h1>
+        <button class="btn btn-primary" id="addProductBtn">+ Add product</button>
+      </div>
+      <div id="productsTable" class="admin-table-wrap"><p>Loading…</p></div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <div class="admin-section" data-section="categories">
+      <div class="admin-section-head">
+        <h1>Categories</h1>
+        <button class="btn btn-primary" id="addCategoryBtn">+ Add category</button>
+      </div>
+      <p class="muted">Categories show up in your menu filters and product picker. Add as many as you need.</p>
+      <div id="categoriesTable" class="admin-table-wrap"><p>Loading…</p></div>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="admin-section" data-section="orders">
+      <h1>Orders</h1>
+      <div id="ordersTable" class="admin-table-wrap"><p>Loading…</p></div>
+    </div>
+
+    <!-- CUSTOMERS — full CRUD -->
+    <div class="admin-section" data-section="customers">
+      <div class="admin-section-head">
+        <h1>Customers</h1>
+        <button class="btn btn-primary" id="addCustomerBtn">+ Add customer</button>
+      </div>
+      <p class="muted">Stored in a separate, locked-down table. Click any name to edit. Use Reset to generate a fresh password when a customer is locked out.</p>
+      <div id="customersTable" class="admin-table-wrap"><p>Loading…</p></div>
+    </div>
+
+    <!-- STAFF (admins + employees) -->
+    <div class="admin-section" data-section="staff">
+      <div class="admin-section-head">
+        <h1>Staff</h1>
+        <button class="btn btn-primary" id="inviteUserBtn">+ Invite staff</button>
+      </div>
+      <p class="muted">Invite teammates as admins or staff. Each gets a one-time link to set their password. Staff and customers use entirely separate auth.</p>
+      <div id="usersTable" class="admin-table-wrap"><p>Loading…</p></div>
+    </div>
+
+    <!-- REVIEWS -->
+    <div class="admin-section" data-section="reviews">
+      <h1>Reviews</h1>
+      <p class="muted">Customer reviews appear automatically on product pages. Use this list to remove anything inappropriate.</p>
+      <div id="reviewsTable" class="admin-table-wrap"><p>Loading…</p></div>
+    </div>
+
+    <!-- DELIVERY SLOTS -->
+    <div class="admin-section" data-section="slots">
+      <div class="admin-section-head">
+        <h1>Delivery Slots</h1>
+        <button class="btn btn-primary" id="addSlotBtn">+ Add slot</button>
+      </div>
+      <p class="muted">Define delivery windows customers can book at checkout. Each slot has a capacity to prevent over-booking.</p>
+      <div id="slotsTable" class="admin-table-wrap"><p>Loading…</p></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div class="admin-section" data-section="settings">
+      <h1>Settings</h1>
+      <div class="settings-grid">
+        <div class="settings-card">
+          <h2>🎨 Festive theme</h2>
+          <p>The theme switches automatically based on the date in Egypt. Override it here to force a specific look.</p>
+          <label class="form-field">
+            <span>Active theme</span>
+            <select id="themeOverride">
+              <option value="auto">🤖 Auto (detect from Cairo date)</option>
+              <option value="default">Default brand</option>
+              <option value="ramadan">🌙 Ramadan</option>
+              <option value="eid-fitr">🕌 Eid al-Fitr</option>
+              <option value="eid-adha">🐑 Eid al-Adha</option>
+              <option value="moulid">🍬 Moulid (Mawlid)</option>
+              <option value="christmas">🎄 Christmas</option>
+              <option value="newyear">🎆 New Year</option>
+              <option value="valentine">💕 Valentine's</option>
+              <option value="mothers">💐 Mother's Day</option>
+              <option value="summer">☀️ Summer</option>
+              <option value="halloween">🎃 Halloween</option>
+            </select>
+          </label>
+          <small id="themeAutoLabel" class="muted"></small>
+          <button id="saveThemeBtn" class="btn btn-primary" style="margin-top:12px;">Save theme</button>
+        </div>
+
+        <div class="settings-card">
+          <h2>📱 Notifications</h2>
+          <p>Owner alerts (you) + customer order confirmations.</p>
+          <table class="admin-table">
+            <tr><th>Telegram bot (owner)</th><td id="cfgTelegram">…</td></tr>
+            <tr><th>WhatsApp (CallMeBot, owner)</th><td id="cfgWhatsapp">…</td></tr>
+            <tr><th>WhatsApp link (customer)</th><td id="cfgWaLink">…</td></tr>
+            <tr><th>Email (SMTP, customer)</th><td id="cfgSmtp">…</td></tr>
+          </table>
+          <button class="btn btn-primary" id="testNotifyBtn" style="margin-top:14px;">🧪 Send test notification</button>
+          <pre id="testNotifyResult" class="mono" style="margin-top:12px;display:none;background:var(--cream);padding:12px;border-radius:8px;font-size:12px;white-space:pre-wrap;"></pre>
+          <small class="muted" style="display:block;margin-top:8px;">Configure these in the server's <code>.env</code> file. Restart after changes.<br/>📖 Open the <code>SETUP_NOTIFICATIONS.md</code> file in your project for step-by-step setup.</small>
+        </div>
+
+        <div class="settings-card">
+          <h2>💵 Server config</h2>
+          <table class="admin-table">
+            <tr><th>Currency</th><td id="cfgCurrency">…</td></tr>
+            <tr><th>Delivery fee</th><td id="cfgDelivery">…</td></tr>
+            <tr><th>Tax rate</th><td id="cfgTax">…</td></tr>
+            <tr><th>Deposit %</th><td id="cfgDeposit">…</td></tr>
+          </table>
+        </div>
+
+        <div class="settings-card">
+          <h2>🔗 Quick links</h2>
+          <ul class="settings-actions">
+            <li><a href="../index.html" target="_blank">🏠 View live home</a></li>
+            <li><a href="../menu.html" target="_blank">🛍 View live menu</a></li>
+            <li><a href="track.html" target="_blank">📦 Track an order</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</main>
+
+<!-- ============= PRODUCT EDIT MODAL ============= -->
+<div class="modal-overlay" id="productModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-labelledby="pmTitle" aria-modal="true">
+    <div class="modal-header">
+      <h2 id="pmTitle">Add product</h2>
+      <button class="modal-close" data-modal-close aria-label="Close">×</button>
+    </div>
+    <form id="productForm" class="modal-body">
+      <input type="hidden" id="pf_mode" value="create" />
+      <div class="form-grid">
+        <label class="form-field">
+          <span>ID (unique slug, lowercase)</span>
+          <input id="pf_id" type="text" pattern="[a-z0-9_-]{2,32}" required />
+        </label>
+        <label class="form-field">
+          <span>Category</span>
+          <select id="pf_cat" required>
+            <option value="">— loading —</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Sub-type (optional)</span>
+          <input id="pf_sub" type="text" placeholder="stuffed / plain / snickers / mixed / regular / diet" />
+        </label>
+        <label class="form-field">
+          <span>Price (EGP)</span>
+          <input id="pf_price" type="number" min="0" step="any" required />
+        </label>
+        <label class="form-field full">
+          <span>Name (English)</span>
+          <input id="pf_name" type="text" required />
+        </label>
+        <label class="form-field full">
+          <span>Name (Arabic)</span>
+          <input id="pf_name_ar" type="text" dir="rtl" />
+        </label>
+        <label class="form-field full">
+          <span>Description (English)</span>
+          <textarea id="pf_desc" rows="2"></textarea>
+        </label>
+        <label class="form-field full">
+          <span>Description (Arabic)</span>
+          <textarea id="pf_desc_ar" rows="2" dir="rtl"></textarea>
+        </label>
+        <label class="form-field">
+          <span>Emoji (fallback icon)</span>
+          <div class="emoji-input-wrap">
+            <input id="pf_emoji" type="text" maxlength="4" />
+            <button type="button" class="emoji-trigger" data-emoji-picker data-emoji-target="#pf_emoji" title="Pick emoji">😀</button>
+          </div>
+        </label>
+        <label class="form-field">
+          <span>Badge</span>
+          <select id="pf_badge">
+            <option value="">none</option>
+            <option value="hot">🔥 Hot</option>
+            <option value="new">✨ New</option>
+          </select>
+        </label>
+        <div class="form-field full">
+          <span>Product image</span>
+          <div class="image-upload">
+            <div class="image-preview" id="pf_imagePreview">
+              <span class="image-preview-empty">No image yet</span>
+            </div>
+            <div class="image-upload-actions">
+              <input id="pf_imageFile" type="file" accept="image/jpeg,image/png,image/webp,image/gif" style="display:none;" />
+              <button type="button" class="btn btn-ghost" id="pf_uploadBtn">📷 Upload image</button>
+              <small class="muted">JPG / PNG / WebP / GIF · max 5 MB</small>
+            </div>
+          </div>
+          <input id="pf_image" type="text" placeholder="…or paste a path manually" style="margin-top:8px;" />
+        </div>
+        <label class="form-field">
+          <span>Sort order</span>
+          <input id="pf_sort" type="number" value="0" />
+        </label>
+        <label class="form-field">
+          <span>Published</span>
+          <select id="pf_pub">
+            <option value="1">Published</option>
+            <option value="0">Draft (hidden)</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Track stock</span>
+          <select id="pf_trackStock">
+            <option value="0">No (unlimited)</option>
+            <option value="1">Yes (enforce stock)</option>
+          </select>
+        </label>
+        <label class="form-field">
+          <span>Stock (units)</span>
+          <input id="pf_stock" type="number" min="0" step="1" value="0" />
+        </label>
+        <label class="form-field">
+          <span>Low-stock threshold</span>
+          <input id="pf_lowAt" type="number" min="0" step="1" value="5" />
+        </label>
+        <div class="form-field full">
+          <span>Customization options</span>
+          <small class="muted" style="margin-bottom:8px;display:block;">
+            Add option groups customers must pick from before adding to cart (e.g. "Choose your filling"). Click the buttons — no JSON needed.
+          </small>
+          <div id="pf_optionsBuilder" data-options-builder></div>
+        </div>
+      </div>
+      <div class="modal-error" id="pf_error" role="alert"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+        <button type="button" class="btn btn-ghost danger" id="pf_delete" style="display:none;">Delete</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============= CATEGORY MODAL ============= -->
+<div class="modal-overlay" id="categoryModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-labelledby="cmTitle" aria-modal="true">
+    <div class="modal-header">
+      <h2 id="cmTitle">Add category</h2>
+      <button class="modal-close" data-modal-close aria-label="Close">×</button>
+    </div>
+    <form id="categoryForm" class="modal-body">
+      <input type="hidden" id="cf_mode" value="create" />
+      <div class="form-grid">
+        <label class="form-field">
+          <span>ID (lowercase, e.g. "cakes")</span>
+          <input id="cf_id" type="text" pattern="[a-z0-9_-]{2,24}" required />
+        </label>
+        <label class="form-field">
+          <span>Sort order</span>
+          <input id="cf_sort" type="number" value="100" />
+        </label>
+        <label class="form-field full">
+          <span>Name (English)</span>
+          <input id="cf_name_en" type="text" required />
+        </label>
+        <label class="form-field full">
+          <span>Name (Arabic)</span>
+          <input id="cf_name_ar" type="text" dir="rtl" />
+        </label>
+        <label class="form-field">
+          <span>Emoji</span>
+          <div class="emoji-input-wrap">
+            <input id="cf_emoji" type="text" value="🍫" maxlength="4" />
+            <button type="button" class="emoji-trigger" data-emoji-picker data-emoji-target="#cf_emoji" title="Pick emoji">😀</button>
+          </div>
+        </label>
+        <label class="form-field">
+          <span>Published</span>
+          <select id="cf_pub">
+            <option value="1">Published</option>
+            <option value="0">Hidden</option>
+          </select>
+        </label>
+      </div>
+      <div class="modal-error" id="cf_error" role="alert"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+        <button type="button" class="btn btn-ghost danger" id="cf_delete" style="display:none;">Delete</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============= INVITE USER MODAL ============= -->
+<div class="modal-overlay" id="inviteModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-labelledby="invTitle" aria-modal="true">
+    <div class="modal-header">
+      <h2 id="invTitle">Invite a user</h2>
+      <button class="modal-close" data-modal-close aria-label="Close">×</button>
+    </div>
+    <form id="inviteForm" class="modal-body">
+      <p class="muted" style="margin-bottom:16px;">They'll receive an email with a link to set their own password and finish creating their account.</p>
+      <div class="form-grid">
+        <label class="form-field full">
+          <span>Email</span>
+          <input id="iv_email" type="email" required />
+        </label>
+        <label class="form-field full">
+          <span>Name (optional)</span>
+          <input id="iv_name" type="text" />
+        </label>
+        <label class="form-field full">
+          <span>Role</span>
+          <select id="iv_role">
+            <option value="staff">Staff (limited access)</option>
+            <option value="admin">Admin (full access)</option>
+          </select>
+        </label>
+      </div>
+      <div class="modal-error" id="iv_error" role="alert"></div>
+      <div id="iv_success" style="display:none; padding:14px; background:#C8E6C9; color:#1B5E20; border-radius:12px; margin-top:12px;">
+        <strong>Invitation sent ✓</strong>
+        <p style="font-size:13px;margin:6px 0 0;">If the email doesn't arrive, copy this link and send it manually:</p>
+        <code id="iv_link" style="display:block;word-break:break-all;background:#fff;padding:8px;border-radius:6px;margin-top:8px;font-size:12px;"></code>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-modal-close>Close</button>
+        <button type="submit" class="btn btn-primary">Send invitation</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add slot modal -->
+<!-- Customer create/edit modal -->
+<div class="modal-overlay" id="customerModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-labelledby="cmsTitle" aria-modal="true">
+    <div class="modal-header">
+      <h2 id="cmsTitle">Add customer</h2>
+      <button class="modal-close" data-modal-close aria-label="Close">×</button>
+    </div>
+    <form id="customerForm" class="modal-body">
+      <input type="hidden" id="cms_id" value="" />
+      <div class="form-grid">
+        <label class="form-field full">
+          <span>Full Name *</span>
+          <input id="cms_name" type="text" required minlength="2" />
+        </label>
+        <label class="form-field full">
+          <span>Email *</span>
+          <input id="cms_email" type="email" required />
+        </label>
+        <label class="form-field full">
+          <span>Phone (Egyptian mobile) *</span>
+          <div class="eg-phone-input">
+            <span class="eg-phone-prefix">🇪🇬 +20</span>
+            <input id="cms_phone" type="tel" required inputmode="numeric" maxlength="11"
+                   placeholder="01012345678" />
+          </div>
+        </label>
+        <label class="form-field full" id="cms_pwField">
+          <span>Temporary password (leave blank to auto-generate)</span>
+          <input id="cms_password" type="text" placeholder="Auto-generated if blank" />
+        </label>
+      </div>
+      <div class="modal-error" id="cms_error" role="alert"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+        <button type="button" class="btn btn-ghost danger" id="cms_delete" style="display:none;">🗑 Delete account</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="slotModal" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <h2>New delivery slot</h2>
+      <button class="modal-close" data-modal-close aria-label="Close">×</button>
+    </div>
+    <form id="slotForm" class="modal-body">
+      <div class="form-grid">
+        <label class="form-field full">
+          <span>Label (what customers see)</span>
+          <input id="slot_label" type="text" placeholder="e.g. Today 6–8 PM" required />
+        </label>
+        <label class="form-field">
+          <span>Starts at</span>
+          <input id="slot_starts" type="datetime-local" required />
+        </label>
+        <label class="form-field">
+          <span>Capacity</span>
+          <input id="slot_capacity" type="number" min="1" value="5" required />
+        </label>
+      </div>
+      <div class="modal-error" id="slot_error" role="alert"></div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" data-modal-close>Cancel</button>
+        <button type="submit" class="btn btn-primary">Create slot</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="../assets/emoji-picker.js"></script>
+<script src="../assets/options-builder.js"></script>
+<script src="../assets/admin.js"></script>
+</body>
+</html>
