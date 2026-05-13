@@ -873,9 +873,13 @@ section {
 .product-fav:hover { transform: scale(1.2); background: var(--pink-soft); }
 .product-fav.active { color: var(--berry); }
 .product-info {
-  padding: 20px;
+  padding: 22px 22px 20px;
   display: flex; flex-direction: column;
   flex: 1;
+  /* Soft dashed divider between the image area and the text — cleaner
+     visual separation than the previous hard edge. */
+  border-top: 1px dashed var(--cream-2);
+  background: #fff;
 }
 .product-cat {
   font-size: 11px;
@@ -883,7 +887,8 @@ section {
   text-transform: uppercase;
   letter-spacing: 1.5px;
   color: var(--berry);
-  margin-bottom: 6px;
+  margin-bottom: 8px;
+  display: inline-block;
 }
 .product-name {
   font-family: 'Fredoka', sans-serif;
@@ -965,16 +970,22 @@ section {
 }
 .product-footer {
   display: flex; align-items: center; justify-content: space-between;
+  gap: 16px;
   margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--cream-2);
 }
 .product-price {
   font-family: 'Fredoka', sans-serif;
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--choc-deep);
+  line-height: 1;
+  padding-inline-end: 8px;
 }
 .product-add {
-  width: 40px; height: 40px;
+  flex-shrink: 0;
+  width: 44px; height: 44px;
   border-radius: 50%;
   background: var(--choc-deep);
   color: var(--cream);
@@ -983,10 +994,12 @@ section {
   font-weight: 700;
   transition: all 0.3s var(--bounce);
   box-shadow: var(--shadow-sm);
+  margin-inline-start: auto;
 }
 .product-add:hover {
   background: var(--berry);
-  transform: scale(1.15) rotate(90deg);
+  transform: scale(1.12) rotate(90deg);
+  box-shadow: 0 6px 18px rgba(194, 24, 91, 0.35);
 }
 
 /* ============================================
@@ -1509,14 +1522,75 @@ section {
   margin: 0 auto;
 }
 .menu-filters {
-  display: flex; flex-wrap: wrap;
-  justify-content: center;
-  gap: 10px;
-  padding: 32px 24px;
+  display: flex; flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 28px 24px 24px;
   background: var(--cream);
   position: sticky;
   top: 76px;
   z-index: 100;
+  border-bottom: 1px solid var(--cream-2);
+}
+.menu-filters-row {
+  display: flex; flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Search bar inside the menu filters */
+.menu-search-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+}
+.menu-search-wrap input[type="search"] {
+  width: 100%;
+  padding: 12px 44px 12px 44px;
+  font-size: 16px;
+  font-family: inherit;
+  border: 2px solid var(--cream-2);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--choc-deep);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  /* Hide the native (X) clear icon in WebKit; we have our own button */
+  -webkit-appearance: none; appearance: none;
+}
+.menu-search-wrap input[type="search"]::-webkit-search-cancel-button { display: none; }
+.menu-search-wrap input[type="search"]:focus {
+  border-color: var(--berry);
+  box-shadow: 0 0 0 4px rgba(194, 24, 91, 0.12);
+}
+.menu-search-wrap input[type="search"]::placeholder {
+  color: var(--choc);
+  opacity: 0.6;
+}
+.menu-search-icon {
+  position: absolute;
+  inset-inline-start: 16px;
+  top: 50%; transform: translateY(-50%);
+  font-size: 16px;
+  pointer-events: none;
+}
+.menu-search-clear {
+  position: absolute;
+  inset-inline-end: 12px;
+  top: 50%; transform: translateY(-50%);
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  border: none;
+  background: var(--choc-deep);
+  color: var(--cream);
+  font-size: 18px; line-height: 1;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.menu-search-clear:hover { background: var(--berry); }
+@media (max-width: 720px) {
+  .menu-filters { padding: 20px 14px 18px; }
+  .menu-search-wrap input[type="search"] { font-size: 16px; padding-inline-start: 40px; }
 }
 .filter-btn {
   padding: 10px 20px;

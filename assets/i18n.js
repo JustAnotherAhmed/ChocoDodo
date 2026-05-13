@@ -95,6 +95,7 @@ window.CHOCODODO_I18N = (function () {
       'menu.all':         'All',
       'menu.chocolate':   'Chocolate',
       'menu.biscuits':    'Biscuits',
+      'menu.search':      "Search treats — try 'chocolate', 'biscuits', 'coffee'…",
 
       // Checkout
       'checkout.eyebrow':       'Almost there!',
@@ -281,6 +282,7 @@ window.CHOCODODO_I18N = (function () {
       'menu.all':         'الكل',
       'menu.chocolate':   'شكولاتة',
       'menu.biscuits':    'بسكويت',
+      'menu.search':      'ابحث عن حلوياتك — جرّب «شكولاتة»، «بسكويت»، «قهوة»…',
 
       // Checkout
       'checkout.eyebrow':       'اقتربت!',

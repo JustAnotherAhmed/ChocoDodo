@@ -375,34 +375,102 @@ async function renderFeatured() {
 }
 
 /* ---------- RENDER MENU (menu page) ---------- */
+// Current view state — the menu re-renders whenever either changes.
+let _menuCat = 'all';
+let _menuQuery = '';
+
 function setupMenu() {
   const menuGrid = $('#menuGrid');
   if (!menuGrid) return;
   const params = new URLSearchParams(location.search);
-  const initialCat = params.get('cat') || 'all';
+  _menuCat = params.get('cat') || 'all';
+
+  // Category filter buttons
   $$('.filter-btn').forEach(btn => {
-    if (btn.dataset.cat === initialCat) {
+    if (btn.dataset.cat === _menuCat) {
       $$('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
     }
     btn.addEventListener('click', () => {
       $$('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      renderMenu(btn.dataset.cat);
+      _menuCat = btn.dataset.cat;
+      renderMenu();
     });
   });
-  renderMenu(initialCat);
+
+  // Search input — debounced so typing feels responsive without thrashing
+  const search = $('#menuSearch');
+  const clear = $('#menuSearchClear');
+  if (search) {
+    let timer = null;
+    search.addEventListener('input', () => {
+      const v = search.value;
+      if (clear) clear.classList.toggle('hidden', !v);
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        _menuQuery = v;
+        renderMenu();
+      }, 120);
+    });
+    // Esc clears the search
+    search.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && search.value) {
+        search.value = '';
+        if (clear) clear.classList.add('hidden');
+        _menuQuery = '';
+        renderMenu();
+      }
+    });
+  }
+  if (clear) {
+    clear.addEventListener('click', () => {
+      if (search) search.value = '';
+      clear.classList.add('hidden');
+      _menuQuery = '';
+      renderMenu();
+      if (search) search.focus();
+    });
+  }
+
+  renderMenu();
 }
 
-function renderMenu(cat) {
+function renderMenu(cat, query) {
   const menuGrid = $('#menuGrid');
   if (!menuGrid) return;
-  const filtered = cat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === cat);
+  // Back-compat: callers may pass a single category arg
+  if (cat !== undefined) _menuCat = cat;
+  if (query !== undefined) _menuQuery = query;
+
+  let filtered = _menuCat === 'all' ? PRODUCTS : PRODUCTS.filter(p => p.cat === _menuCat);
+
+  const q = String(_menuQuery || '').trim().toLowerCase();
+  if (q) {
+    filtered = filtered.filter(p => {
+      const hay = [
+        p.id, p.cat, p.sub,
+        p.name, p.name_ar,
+        p.desc, p.desc_ar,
+      ].filter(Boolean).join(' ').toLowerCase();
+      return hay.includes(q);
+    });
+  }
+
   menuGrid.style.opacity = '0';
   setTimeout(() => {
-    menuGrid.innerHTML = filtered.length
-      ? filtered.map(productCard).join('')
-      : `<p class="muted" style="grid-column:1/-1;text-align:center;padding:40px;">No items in this category yet.</p>`;
+    if (filtered.length) {
+      menuGrid.innerHTML = filtered.map(productCard).join('');
+    } else {
+      // Friendly empty state — different copy for "no results" vs "empty category"
+      const emptyMsg = q
+        ? `<div style="grid-column:1/-1;text-align:center;padding:60px 20px;">
+             <div style="font-size:3rem;margin-bottom:12px;">🔍</div>
+             <p class="muted"><span lang="en">No treats match "<strong>${escapeHtml(q)}</strong>". Try a shorter word.</span><span lang="ar" dir="rtl">لم نجد حلويات تطابق «<strong>${escapeHtml(q)}</strong>». جرّب كلمة أقصر.</span></p>
+           </div>`
+        : `<p class="muted" style="grid-column:1/-1;text-align:center;padding:40px;">No items in this category yet.</p>`;
+      menuGrid.innerHTML = emptyMsg;
+    }
     $$('.product-card.reveal', menuGrid).forEach(el => el.classList.add('visible'));
     attachProductHandlers(menuGrid);
     menuGrid.style.opacity = '1';
