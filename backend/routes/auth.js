@@ -21,6 +21,18 @@ const resetLimiter = rateLimit({
   standardHeaders: true, legacyHeaders: false,
   message: { error: 'Too many password reset requests. Try again later.' },
 });
+// New: signup limiter. Stops mass account-creation abuse (someone scripting
+// hundreds of throwaway accounts to spam verification emails or fill the DB).
+const signupLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, max: 5,
+  standardHeaders: true, legacyHeaders: false,
+  message: { error: 'Too many signups from this connection. Try again in an hour.' },
+});
+const verifyLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, max: 8,
+  standardHeaders: true, legacyHeaders: false,
+  message: { error: 'Too many verification attempts. Wait 15 minutes and try again.' },
+});
 
 function isValidEmail(s) {
   return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
@@ -45,7 +57,7 @@ function generateVerifyCode() {
 // ----- POST /api/auth/signup (customer) -----
 //   Required: name, email, phone (EG mobile), password
 //   Email verification: a 6-digit code + magic link is emailed to the customer.
-router.post('/signup', async (req, res) => {
+router.post('/signup', signupLimiter, async (req, res) => {
   try {
     const { email, password, name, phone } = req.body || {};
     if (!name || name.trim().length < 2) return res.status(400).json({ error: 'Name required' });
@@ -208,7 +220,7 @@ router.get('/verification-status', auth.attachCustomer, auth.requireCustomer, (r
 // Customer asks for a fresh verification email. We mint a new 6-digit code,
 // store it as the customer's verify_token, and send an email containing both
 // the code and a clickable "verify" link.
-router.post('/start-verification', auth.attachCustomer, auth.requireCustomer, async (req, res) => {
+router.post('/start-verification', verifyLimiter, auth.attachCustomer, auth.requireCustomer, async (req, res) => {
   const full = dbApi.getCustomerByIdFull(req.customer.id);
   if (full.email_verified) return res.json({ ok: true, already: true });
 
@@ -235,7 +247,7 @@ ${escapeHtml(full.name)} · ${escapeHtml(full.email)} · code <code>${code}</cod
 });
 
 // Customer enters the 6-digit code they received on the verify page.
-router.post('/confirm-code', auth.attachCustomer, auth.requireCustomer, (req, res) => {
+router.post('/confirm-code', verifyLimiter, auth.attachCustomer, auth.requireCustomer, (req, res) => {
   const { code } = req.body || {};
   if (!code || !/^\d{6}$/.test(String(code).trim())) {
     return res.status(400).json({ error: 'Enter the 6-digit code we sent you' });

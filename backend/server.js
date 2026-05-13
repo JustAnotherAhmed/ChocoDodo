@@ -10,6 +10,8 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
 const rateLimit = require('express-rate-limit');
+const compression = require('compression');
+const helmet = require('helmet');
 
 const dbApi = require('./lib/db');
 const productApi = require('./lib/products');
@@ -31,12 +33,59 @@ const PORT          = Number(process.env.PORT || 4242);
 const FRONTEND_URL  = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
 const CURRENCY      = (process.env.CURRENCY || 'egp').toLowerCase();
 const ADMIN_KEY     = process.env.ADMIN_KEY || 'change-me';
+const IS_PROD       = process.env.NODE_ENV === 'production';
 
 const app = express();
 app.set('trust proxy', 1);
+// Hide the "X-Powered-By: Express" header — small but reduces fingerprinting.
+app.disable('x-powered-by');
+
+// ---------- Security headers (helmet) ----------
+// Sets X-Frame-Options, X-Content-Type-Options, Referrer-Policy, HSTS, etc.
+// CSP is configured permissively for our inline styles + Google Fonts;
+// tighten over time once we know all script/style sources.
+app.use(helmet({
+  contentSecurityPolicy: {
+    useDefaults: true,
+    directives: {
+      "default-src": ["'self'"],
+      // We use inline styles for theme overrides and ad-hoc spacing.
+      "style-src": ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      "font-src": ["'self'", "https://fonts.gstatic.com", "data:"],
+      // Inline scripts are used in a few small pages (verify-account etc.).
+      "script-src": ["'self'", "'unsafe-inline'"],
+      // Allow data: URIs for SVGs/SVG fallbacks plus blob: for image previews.
+      "img-src": ["'self'", "data:", "blob:", "https:"],
+      // Same-origin XHR + Telegram bot API calls from backend (server-side, not blocked).
+      "connect-src": ["'self'"],
+      "frame-ancestors": ["'none'"],
+      "form-action": ["'self'"],
+      "base-uri": ["'self'"],
+      "object-src": ["'none'"],
+    },
+  },
+  // HSTS only kicks in over HTTPS — Railway terminates SSL so it'll apply
+  // to your production traffic automatically.
+  hsts: IS_PROD ? { maxAge: 15552000, includeSubDomains: true, preload: false } : false,
+  // We don't embed others, but allow same-origin (for our own iframes if any).
+  crossOriginEmbedderPolicy: false,
+  // OG image previews from WhatsApp/Telegram need this off.
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+}));
+
+// ---------- Response compression ----------
+// gzip+brotli text responses. Easy 60–80% size reduction on HTML/CSS/JS/JSON.
+app.use(compression({
+  filter: (req, res) => {
+    // Don't compress responses with the no-transform Cache-Control directive.
+    if (req.headers['x-no-compression']) return false;
+    return compression.filter(req, res);
+  },
+  threshold: 1024,  // skip tiny responses (overhead > benefit)
+}));
 
 // ---------- CORS ----------
-const IS_PROD = process.env.NODE_ENV === 'production';
+// (IS_PROD declared earlier near helmet for HSTS gating)
 const allowedOrigins = FRONTEND_URL.split(',').map(s => s.trim());
 app.use(cors({
   origin: (origin, cb) => {
@@ -396,7 +445,42 @@ function decrementStockForOrder(order) {
 }
 
 // ---------- Static frontend ----------
-app.use(express.static(path.join(__dirname, '..')));
+// 🔒 Block source/sensitive paths BEFORE static handler.
+// Without this, requests to /backend/server.js leak the server source code.
+const BLOCKED_PREFIXES = ['/backend', '/.git', '/.env', '/.claude', '/node_modules', '/data'];
+app.use((req, res, next) => {
+  const p = req.path.toLowerCase();
+  for (const prefix of BLOCKED_PREFIXES) {
+    if (p === prefix || p.startsWith(prefix + '/')) {
+      return res.status(404).end();
+    }
+  }
+  // Also block any dotfile or backup-looking pattern.
+  if (/(^|\/)\.[^/]+$/.test(p) || /\.(bak|swp|orig|log|sql)$/i.test(p)) {
+    return res.status(404).end();
+  }
+  next();
+});
+
+app.use(express.static(path.join(__dirname, '..'), {
+  // Defense in depth: refuse dotfiles entirely (express default is 'ignore',
+  // which 404s on dotfiles but only at the find stage. 'deny' returns 403.)
+  dotfiles: 'deny',
+  // Cache strategy:
+  //   • /assets/* (fonts, css, js, images) → long cache; we change filenames
+  //     when we change content rarely enough that this is fine. Browsers will
+  //     also revalidate when the file hashes differ (ETag default ON).
+  //   • HTML files → never cache long; we want users to see fresh edits.
+  setHeaders(res, filePath) {
+    const lower = filePath.toLowerCase();
+    if (lower.endsWith('.html')) {
+      res.setHeader('Cache-Control', 'no-cache, must-revalidate');
+    } else if (lower.match(/\.(css|js|svg|jpg|jpeg|png|webp|woff2?|ttf|ico)$/)) {
+      // 1 week, public, allow CDN caching
+      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
+    }
+  },
+}));
 
 // ---------- 404 fallback for unmatched non-API requests ----------
 // Anything that didn't match a route OR a static file ends up here. API
