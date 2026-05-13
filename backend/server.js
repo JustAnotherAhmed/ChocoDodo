@@ -14,7 +14,7 @@ const rateLimit = require('express-rate-limit');
 const dbApi = require('./lib/db');
 const productApi = require('./lib/products');
 const auth = require('./lib/auth');
-const { priceCart, currentDeliveryMinor, currentTaxRate, currentDepositPct } = require('./lib/pricing');
+const { priceCart, currentDeliveryMinor, currentTaxRate, currentDepositPct, currentLeadDays } = require('./lib/pricing');
 
 const authRoutes = require('./routes/auth');
 const staffAuthRoutes = require('./routes/staff-auth');
@@ -25,6 +25,7 @@ const reviewsRoutes = require('./routes/reviews');
 const slotsRoutes = require('./routes/slots');
 const notify = require('./lib/notify');
 const telegramBot = require('./lib/telegram-bot');
+const reminders = require('./lib/reminders');
 
 const PORT          = Number(process.env.PORT || 4242);
 const FRONTEND_URL  = process.env.FRONTEND_URL || `http://localhost:${PORT}`;
@@ -128,6 +129,7 @@ app.get('/api/config', (req, res) => {
     delivery_minor: currentDeliveryMinor(),
     tax_rate: currentTaxRate(),
     deposit_pct: currentDepositPct(),
+    lead_days: currentLeadDays(),
     notifications: {
       telegram: notify.isTelegramConfigured(),
       whatsapp: notify.isCallMeBotConfigured(),
@@ -186,7 +188,7 @@ const checkoutLimiter = rateLimit({
 
 app.post('/api/checkout', checkoutLimiter, async (req, res) => {
   try {
-    const { items, customer, payment_method, payment_mode, delivery_slot_id } = req.body || {};
+    const { items, customer, payment_method, payment_mode, delivery_date, delivery_window, delivery_slot_id } = req.body || {};
     if (!customer?.name || !customer?.email) {
       return res.status(400).json({ error: 'Name and email required' });
     }
@@ -200,7 +202,30 @@ app.post('/api/checkout', checkoutLimiter, async (req, res) => {
     // Default to deposit; only allow 'full' explicitly
     const mode = payment_mode === 'full' ? 'full' : 'deposit';
 
-    // Validate slot if provided
+    // Validate delivery date (must be at least lead_days from today, Cairo TZ)
+    let cleanDate = null;
+    let cleanWindow = null;
+    if (delivery_date) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(String(delivery_date))) {
+        return res.status(400).json({ error: 'Delivery date must be YYYY-MM-DD' });
+      }
+      const leadDays = currentLeadDays();
+      // "Today" anchored to Cairo so we don't penalise late-evening orderers
+      const cairoToday = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Cairo' }));
+      cairoToday.setHours(0, 0, 0, 0);
+      const minDate = new Date(cairoToday.getTime() + leadDays * 86400000);
+      const chosen = new Date(delivery_date + 'T00:00:00');
+      if (isNaN(chosen.getTime()) || chosen < minDate) {
+        return res.status(400).json({
+          error: `Delivery date must be at least ${leadDays} day${leadDays === 1 ? '' : 's'} from today.`,
+        });
+      }
+      cleanDate = delivery_date;
+      const validWindows = ['morning', 'afternoon', 'evening'];
+      cleanWindow = validWindows.includes(delivery_window) ? delivery_window : 'afternoon';
+    }
+
+    // Legacy slot-id support (back-compat for any cached client)
     let slotId = null;
     if (delivery_slot_id) {
       const slot = dbApi.getSlot(Number(delivery_slot_id));
@@ -241,8 +266,8 @@ app.post('/api/checkout', checkoutLimiter, async (req, res) => {
       };
       dbApi.insertOrder(row);
       dbApi.db.prepare(`
-        UPDATE orders SET payment_mode = ?, deposit_cents = ?, remaining_cents = ?, deposit_pct = ?, customer_id = ?, delivery_slot_id = ?, tracking_status = 'received'
-        WHERE id = ?`).run(mode, depositCents, remainingCents, mode === 'full' ? 100 : currentDepositPct(), customerId, slotId, orderId);
+        UPDATE orders SET payment_mode = ?, deposit_cents = ?, remaining_cents = ?, deposit_pct = ?, customer_id = ?, delivery_slot_id = ?, delivery_date = ?, delivery_window = ?, tracking_status = 'received'
+        WHERE id = ?`).run(mode, depositCents, remainingCents, mode === 'full' ? 100 : currentDepositPct(), customerId, slotId, cleanDate, cleanWindow, orderId);
       if (slotId) dbApi.bookSlot(slotId);
       const stored = dbApi.getOrder(orderId);
       decrementStockForOrder(stored);
@@ -401,6 +426,8 @@ async function boot() {
     // It listens for inline-button taps so the owner can update
     // order status straight from the chat.
     telegramBot.start().catch(e => console.error('telegram bot start error:', e.message));
+    // Daily delivery digest reminders (8:00 + 18:00 Cairo).
+    reminders.start();
   });
 }
 boot().catch(err => { console.error('Boot failed:', err); process.exit(1); });

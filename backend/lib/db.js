@@ -211,6 +211,10 @@ ensureColumn('orders', 'customer_id',     'INTEGER');
 ensureColumn('orders', 'delivery_slot_id','INTEGER');
 ensureColumn('orders', 'tracking_status', 'TEXT');     // 'received' | 'preparing' | 'out_for_delivery' | 'delivered'
 ensureColumn('orders', 'points_earned',   'INTEGER', '0');
+// Auto-calendar fields (replace manual slot system). delivery_date is ISO
+// YYYY-MM-DD, delivery_window is one of 'morning' | 'afternoon' | 'evening'.
+ensureColumn('orders', 'delivery_date',   'TEXT');
+ensureColumn('orders', 'delivery_window', 'TEXT');
 
 // One-time migration: copy from users → customers / staff if any rows exist there
 (function migrateUsersToSplitTables() {

@@ -1854,6 +1854,35 @@ section {
 .hidden { display: none !important; }
 
 /* ============================================
+   DELIVERY DATE PICKER (checkout step 3)
+   ============================================ */
+.delivery-pickers {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 12px;
+}
+.delivery-pickers input[type="date"],
+.delivery-pickers select {
+  font-size: 16px;
+  padding: 12px 14px;
+  border: 2px solid var(--cream-2);
+  border-radius: var(--radius-sm);
+  background: var(--cream);
+  color: var(--choc-deep);
+  font-family: inherit;
+}
+.delivery-pickers input[type="date"]:focus,
+.delivery-pickers select:focus {
+  outline: none;
+  border-color: var(--berry);
+  background: white;
+}
+@media (max-width: 720px) {
+  .delivery-pickers { grid-template-columns: 1fr; }
+}
+
+/* ============================================
    POLICY PAGES (Privacy, Terms, Returns, FAQ, Shipping)
    ============================================ */
 .policy-page {

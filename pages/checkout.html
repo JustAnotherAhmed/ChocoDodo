@@ -140,11 +140,37 @@
             </div>
             <div class="lead-time-notice">
               <strong>📅 <span data-i18n="checkout.lead.title">Heads up — we don't do same-day delivery</span></strong>
-              <p data-i18n="checkout.lead.body">Everything is hand-made fresh, so please pick a slot at least 3–4 days from today.</p>
+              <p>
+                <span lang="en">Every order is hand-made fresh, so please pick a date <strong>at least <span id="leadDaysLabel">3</span> days from today</strong>. Earlier dates are blocked.</span>
+                <span lang="ar" dir="rtl">كل طلب يُصنع طازجاً يدوياً، يُرجى اختيار تاريخ <strong>بعد <span id="leadDaysLabelAr">٣</span> أيام على الأقل من اليوم</strong>. التواريخ الأقرب مغلقة تلقائياً.</span>
+              </p>
             </div>
-            <div id="slotsWrap" class="slots-grid">
-              <p class="muted">Loading available slots…</p>
+            <div class="delivery-pickers">
+              <label class="form-field">
+                <span><span lang="en">Delivery date</span><span lang="ar" dir="rtl">تاريخ التوصيل</span></span>
+                <input type="date" id="deliveryDate" required />
+                <small class="form-hint" id="deliveryDateHint">
+                  <span lang="en">Earliest available: <strong id="earliestDate">—</strong></span>
+                  <span lang="ar" dir="rtl">أقرب موعد متاح: <strong id="earliestDateAr">—</strong></span>
+                </small>
+              </label>
+
+              <label class="form-field">
+                <span><span lang="en">Time window</span><span lang="ar" dir="rtl">فترة التوصيل</span></span>
+                <select id="deliveryWindow" required>
+                  <option value="morning">
+                    <span lang="en">🌅 Morning · 10:00 – 13:00</span>
+                  </option>
+                  <option value="afternoon" selected>
+                    <span lang="en">☀️ Afternoon · 14:00 – 17:00</span>
+                  </option>
+                  <option value="evening">
+                    <span lang="en">🌙 Evening · 18:00 – 21:00</span>
+                  </option>
+                </select>
+              </label>
             </div>
+            <!-- Kept for back-compat — never set by new flow -->
             <input type="hidden" id="deliverySlotId" />
           </div>
 

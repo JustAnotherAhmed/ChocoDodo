@@ -984,50 +984,47 @@ async function initCheckout() {
   $$('input[name="payMode"]').forEach(r => r.addEventListener('change', renderOrderSummary));
 }
 
-/* Load available delivery slots and render them as picker chips.
-   Shows only slots ≥ 3 days from now (we don't do same-day). */
+/* Set up the auto-calendar delivery picker.
+   Calls /api/config to read the current lead_days, then sets the date
+   input's `min` so the user literally cannot select an invalid date. */
 async function loadDeliverySlots() {
-  const wrap = $('#slotsWrap');
-  if (!wrap) return;
+  const dateInput = $('#deliveryDate');
+  const earliestEn = $('#earliestDate');
+  const earliestAr = $('#earliestDateAr');
+  const leadLabel = $('#leadDaysLabel');
+  const leadLabelAr = $('#leadDaysLabelAr');
+  if (!dateInput) return;
+
   try {
-    const { slots } = await api('/api/slots');
-    const minDeliveryAt = Date.now() + 3 * 24 * 60 * 60 * 1000;  // 3-day minimum lead
-    const eligible = (slots || []).filter(s => {
-      const t = new Date(s.starts_at + (s.starts_at.endsWith('Z') ? '' : 'Z')).getTime();
-      return t >= minDeliveryAt && !s.full;
-    });
-    if (eligible.length === 0) {
-      wrap.innerHTML = `
-        <p class="muted" style="padding:12px;background:var(--cream-2);border-radius:10px;text-align:center;">
-          No delivery slots are open right now. Place your order anyway — we'll WhatsApp you to schedule.
-        </p>
-      `;
-      return;
-    }
-    wrap.innerHTML = eligible.map(s => {
-      const d = new Date(s.starts_at + (s.starts_at.endsWith('Z') ? '' : 'Z'));
-      const dateStr = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
-      const timeStr = d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', hour12: false });
-      const left = s.capacity - s.booked;
-      return `
-        <label class="slot-option">
-          <input type="radio" name="slotPick" value="${s.id}" />
-          <div class="slot-bubble">
-            <strong>${escapeHtml(s.label)}</strong>
-            <small>${dateStr} · ${timeStr}</small>
-            <span class="slot-capacity">${left} of ${s.capacity} left</span>
-          </div>
-        </label>
-      `;
-    }).join('');
-    $$('input[name="slotPick"]', wrap).forEach(r => {
-      r.addEventListener('change', () => {
-        $('#deliverySlotId').value = r.value;
-        $$('.slot-option', wrap).forEach(o => o.classList.toggle('selected', o.querySelector('input').checked));
-      });
-    });
+    const cfg = await fetch(`${API_BASE}/api/config`).then(r => r.ok ? r.json() : null);
+    const leadDays = Math.max(0, Number(cfg?.lead_days ?? 3));
+
+    // Anchor to Cairo "today" so late-evening browsers in other TZs still match
+    const cairoNow = new Date(new Date().toLocaleString('en-US', { timeZone: 'Africa/Cairo' }));
+    cairoNow.setHours(0, 0, 0, 0);
+    const minMs = cairoNow.getTime() + leadDays * 86400000;
+    const min = new Date(minMs);
+
+    const pad = n => String(n).padStart(2, '0');
+    const minIso = `${min.getFullYear()}-${pad(min.getMonth() + 1)}-${pad(min.getDate())}`;
+    // Cap at 60 days out — keep the picker focused, customers can call for further
+    const maxMs = cairoNow.getTime() + 60 * 86400000;
+    const max = new Date(maxMs);
+    const maxIso = `${max.getFullYear()}-${pad(max.getMonth() + 1)}-${pad(max.getDate())}`;
+
+    dateInput.min = minIso;
+    dateInput.max = maxIso;
+    if (!dateInput.value || dateInput.value < minIso) dateInput.value = minIso;
+
+    const prettyEn = min.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'long' });
+    const prettyAr = min.toLocaleDateString('ar-EG', { weekday: 'long', day: 'numeric', month: 'long' });
+    if (earliestEn) earliestEn.textContent = prettyEn;
+    if (earliestAr) earliestAr.textContent = prettyAr;
+    if (leadLabel) leadLabel.textContent = leadDays;
+    if (leadLabelAr) leadLabelAr.textContent = leadDays.toLocaleString('ar-EG');
   } catch (err) {
-    wrap.innerHTML = `<p class="muted">Couldn't load slots: ${err.message}</p>`;
+    // Non-fatal — the date input still works; only the helper labels won't refresh.
+    console.warn('Lead-time config load failed:', err.message);
   }
 }
 
@@ -1245,6 +1242,8 @@ async function handleCheckout(e) {
     },
     payment_method: $('#paymentMethod')?.value || 'vcash',
     payment_mode: payMode,
+    delivery_date: $('#deliveryDate')?.value || null,
+    delivery_window: $('#deliveryWindow')?.value || null,
     delivery_slot_id: $('#deliverySlotId')?.value ? Number($('#deliverySlotId').value) : null,
   };
 

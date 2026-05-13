@@ -175,8 +175,16 @@
             <tr><th>Email (SMTP, customer)</th><td id="cfgSmtp">…</td></tr>
           </table>
           <button class="btn btn-primary" id="testNotifyBtn" style="margin-top:14px;">🧪 Send test notification</button>
-          <pre id="testNotifyResult" class="mono" style="margin-top:12px;display:none;background:var(--cream);padding:12px;border-radius:8px;font-size:12px;white-space:pre-wrap;"></pre>
-          <small class="muted" style="display:block;margin-top:8px;">Configure these in the server's <code>.env</code> file. Restart after changes.<br/>📖 Open the <code>SETUP_NOTIFICATIONS.md</code> file in your project for step-by-step setup.</small>
+          <pre id="testNotifyResult" class="mono hidden" style="margin-top:12px;background:var(--cream);padding:12px;border-radius:8px;font-size:12px;white-space:pre-wrap;"></pre>
+
+          <hr style="border:none;border-top:1px dashed var(--cream-2);margin:18px 0 14px;" />
+          <h3 style="margin:0 0 6px;font-family:'Fredoka',sans-serif;font-size:1rem;">📅 Delivery digest reminders</h3>
+          <p style="margin:0 0 10px;font-size:13px;">Auto-sent to Telegram at <strong>08:00 Cairo</strong> (today's deliveries) and <strong>18:00 Cairo</strong> (tomorrow's deliveries — prep ahead).</p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-ghost" data-reminder-test="today">📤 Preview today's digest</button>
+            <button class="btn btn-ghost" data-reminder-test="tomorrow">📤 Preview tomorrow's digest</button>
+          </div>
+          <pre id="reminderTestResult" class="mono hidden" style="margin-top:12px;background:var(--cream);padding:12px;border-radius:8px;font-size:12px;white-space:pre-wrap;"></pre>
         </div>
 
         <div class="settings-card">
@@ -205,6 +213,12 @@
             <span>Deposit % required to confirm an order</span>
             <input id="cfgDepositInput" type="number" min="1" max="100" step="1" placeholder="50" />
             <small class="form-hint">A higher % protects you from no-shows; a lower % feels friendlier. 50 is the default.</small>
+          </label>
+
+          <label class="form-field">
+            <span>Lead time (days before customers can pick a delivery date)</span>
+            <input id="cfgLeadDaysInput" type="number" min="0" max="14" step="1" placeholder="3" />
+            <small class="form-hint">The customer's calendar will block out the next N days. 3 means "earliest delivery is 3 days from today". Set 0 if you want to allow same-day delivery.</small>
           </label>
 
           <button class="btn btn-primary" id="saveServerCfgBtn" style="margin-top:6px;">Save server config</button>

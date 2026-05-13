@@ -1105,6 +1105,7 @@ async function loadSettings() {
     if ($('#cfgDeliveryInput')) $('#cfgDeliveryInput').value = Math.round((cfg.delivery_minor || 0) / 100);
     if ($('#cfgTaxInput')) $('#cfgTaxInput').value = ((cfg.tax_rate || 0) * 100).toFixed(1).replace(/\.0$/, '');
     if ($('#cfgDepositInput')) $('#cfgDepositInput').value = cfg.deposit_pct || 50;
+    if ($('#cfgLeadDaysInput')) $('#cfgLeadDaysInput').value = cfg.lead_days ?? 3;
 
     $('#saveServerCfgBtn')?.addEventListener('click', async () => {
       const status = $('#saveServerCfgStatus');
@@ -1115,22 +1116,25 @@ async function loadSettings() {
         const delivery = Number($('#cfgDeliveryInput').value);
         const tax = Number($('#cfgTaxInput').value);
         const deposit = Number($('#cfgDepositInput').value);
+        const leadDays = Number($('#cfgLeadDaysInput').value);
 
         if (isNaN(delivery) || delivery < 0) throw new Error('Delivery fee must be 0 or more.');
         if (isNaN(tax) || tax < 0 || tax > 100) throw new Error('Tax rate must be between 0 and 100.');
         if (isNaN(deposit) || deposit < 1 || deposit > 100) throw new Error('Deposit % must be between 1 and 100.');
+        if (isNaN(leadDays) || leadDays < 0 || leadDays > 14) throw new Error('Lead days must be between 0 and 14.');
 
         const updates = [
           ['cfg_delivery_minor', Math.round(delivery * 100)],   // EGP → piastres
           ['cfg_tax_rate',       (tax / 100).toString()],       // % → 0.0–1.0 decimal
           ['cfg_deposit_pct',    Math.round(deposit)],
+          ['cfg_lead_days',      Math.round(leadDays)],
         ];
         for (const [key, value] of updates) {
           await api('/api/admin/settings/' + key, {
             method: 'PUT', body: JSON.stringify({ value }),
           });
         }
-        status.textContent = `✅ Saved — new orders use ${delivery} EGP delivery, ${tax}% tax, ${deposit}% deposit.`;
+        status.textContent = `✅ Saved — new orders use ${delivery} EGP delivery, ${tax}% tax, ${deposit}% deposit, ${leadDays}-day lead time.`;
         toast('Server config saved ✓');
       } catch (err) {
         status.textContent = '❌ ' + err.message;
@@ -1208,6 +1212,35 @@ async function loadSettings() {
       } finally {
         btn.disabled = false; btn.textContent = '🧪 Send test notification';
       }
+    });
+
+    // Delivery-digest preview buttons (sends a manual reminder Telegram message)
+    document.querySelectorAll('[data-reminder-test]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const which = btn.dataset.reminderTest;
+        const out = $('#reminderTestResult');
+        out.classList.remove('hidden');
+        out.textContent = `📤 Sending ${which}'s digest to Telegram…`;
+        btn.disabled = true;
+        try {
+          const r = await api('/api/admin/notify/reminder-test', {
+            method: 'POST', body: JSON.stringify({ which }),
+          });
+          const orders = r.result?.sent ?? 0;
+          const skipped = r.result?.skipped;
+          if (skipped) {
+            out.textContent = `⚠️  Skipped: ${skipped}`;
+          } else {
+            out.textContent = `✅ ${which} digest sent for ${orders} order${orders === 1 ? '' : 's'}. Check Telegram.`;
+            toast(`📤 ${which} digest sent — check Telegram`);
+          }
+        } catch (err) {
+          out.textContent = `❌ ${err.message}`;
+          toast(err.message, '⚠️');
+        } finally {
+          btn.disabled = false;
+        }
+      });
     });
 
     $('#saveThemeBtn').addEventListener('click', async () => {

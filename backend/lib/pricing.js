@@ -31,6 +31,14 @@ function currentDepositPct() {
   }
   return Number(process.env.DEPOSIT_PCT || 50);
 }
+function currentLeadDays() {
+  const fromDb = dbApi.getSetting('cfg_lead_days', null);
+  if (fromDb !== null && fromDb !== '') {
+    const n = Number(fromDb);
+    if (!isNaN(n) && n >= 0 && n <= 60) return n;
+  }
+  return Number(process.env.LEAD_DAYS || 3);
+}
 
 const toMinor = (egp) => Math.round(egp * 100);
 
@@ -159,4 +167,5 @@ module.exports = {
   currentTaxRate,
   currentDeliveryMinor,
   currentDepositPct,
+  currentLeadDays,
 };

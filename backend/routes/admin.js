@@ -528,6 +528,19 @@ If you see this on Telegram/WhatsApp/email — your setup is working ✓`;
   });
 });
 
+// Test the delivery-digest reminder so the owner can preview the format.
+// POST { which: 'today' | 'tomorrow' }
+router.post('/notify/reminder-test', async (req, res) => {
+  const which = req.body?.which === 'tomorrow' ? 'tomorrow' : 'today';
+  try {
+    const reminders = require('../lib/reminders');
+    const result = await reminders.sendNow(which);
+    res.json({ ok: true, which, result });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
 // ===========================================================
 // SETTINGS (key/value — themes, deposit %, etc.)
 // ===========================================================
