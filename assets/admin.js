@@ -1109,13 +1109,45 @@ async function loadSettings() {
     $('#cfgWaLink').textContent = cfg.notifications?.wa_link ? '✅ WHATSAPP_OWNER_NUMBER set' : '⚠️  set WHATSAPP_OWNER_NUMBER in .env';
     $('#cfgSmtp').textContent = cfg.notifications?.smtp ? '✅ configured' : '⚠️  prints to console (silent fallback)';
 
-    // Theme override
+    // Theme override + Store info (both read from /api/admin/settings)
     const adminSettings = await api('/api/admin/settings');
-    const current = adminSettings.settings.theme_override || 'auto';
+    const settings = adminSettings.settings || {};
+    const current = settings.theme_override || 'auto';
     $('#themeOverride').value = current;
     if (window.CHOCODODO_THEMES) {
       $('#themeAutoLabel').textContent = `Auto would currently pick: ${window.CHOCODODO_THEMES.detectTheme()}`;
     }
+
+    // Store info fields
+    if ($('#setStoreName'))      $('#setStoreName').value      = settings.store_name      || '';
+    if ($('#setInstapayHandle')) $('#setInstapayHandle').value = settings.instapay_handle || '';
+    if ($('#setInstagramHandle')) $('#setInstagramHandle').value = settings.instagram_handle || '';
+
+    $('#saveStoreInfoBtn')?.addEventListener('click', async () => {
+      const status = $('#saveStoreInfoStatus');
+      const btn = $('#saveStoreInfoBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      status.textContent = '';
+      try {
+        const updates = [
+          ['store_name',       $('#setStoreName').value.trim()],
+          ['instapay_handle',  $('#setInstapayHandle').value.trim()],
+          ['instagram_handle', $('#setInstagramHandle').value.trim()],
+        ];
+        for (const [key, value] of updates) {
+          await api('/api/admin/settings/' + key, {
+            method: 'PUT', body: JSON.stringify({ value }),
+          });
+        }
+        status.textContent = '✅ Saved — customers see these on the next page load.';
+        toast('Store info saved ✓');
+      } catch (err) {
+        status.textContent = '❌ ' + err.message;
+        toast(err.message, '⚠️');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save store info';
+      }
+    });
     // Test notification button
     $('#testNotifyBtn')?.addEventListener('click', async () => {
       const btn = $('#testNotifyBtn');

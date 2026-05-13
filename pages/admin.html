@@ -188,6 +188,33 @@
             <tr><th>Tax rate</th><td id="cfgTax">…</td></tr>
             <tr><th>Deposit %</th><td id="cfgDeposit">…</td></tr>
           </table>
+          <small class="muted" style="display:block;margin-top:8px;">Change these by editing the <code>.env</code> on Railway (CURRENCY, DELIVERY_MINOR_UNITS, TAX_RATE, DEPOSIT_PCT) and redeploying.</small>
+        </div>
+
+        <div class="settings-card">
+          <h2>🏪 Store info</h2>
+          <p>What customers see across the site. Updated live — no redeploy needed.</p>
+
+          <label class="form-field">
+            <span>Store name</span>
+            <input id="setStoreName" type="text" placeholder="ChocoDoDo" />
+            <small class="form-hint">Shown in the navbar, page titles, emails, and receipts.</small>
+          </label>
+
+          <label class="form-field">
+            <span>InstaPay handle / number</span>
+            <input id="setInstapayHandle" type="text" placeholder="e.g. 01090210256 or chocododo@bank" />
+            <small class="form-hint">What customers see at checkout under "Send the deposit to". Use your InstaPay username or phone — whichever you registered with.</small>
+          </label>
+
+          <label class="form-field">
+            <span>Instagram handle</span>
+            <input id="setInstagramHandle" type="text" placeholder="e.g. @chocododo or chocododo" />
+            <small class="form-hint">Shown on the order confirmation page so customers can tag you.</small>
+          </label>
+
+          <button class="btn btn-primary" id="saveStoreInfoBtn" style="margin-top:6px;">Save store info</button>
+          <small id="saveStoreInfoStatus" class="muted" style="display:block;margin-top:8px;"></small>
         </div>
 
         <div class="settings-card">

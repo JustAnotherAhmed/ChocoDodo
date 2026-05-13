@@ -141,9 +141,10 @@ app.get('/api/config', (req, res) => {
 app.get('/api/config-public', async (req, res) => {
   res.json({
     theme_override: dbApi.getSetting('theme_override', 'auto'),
-    store_name: dbApi.getSetting('store_name', 'ChocoDoDo'),
-    whatsapp_number: notify.ownerWhatsappNumber() || null,
-    instapay_handle: dbApi.getSetting('instapay_handle', '@chocododo'),
+    store_name:        dbApi.getSetting('store_name', 'ChocoDoDo'),
+    whatsapp_number:   notify.ownerWhatsappNumber() || null,
+    instapay_handle:   dbApi.getSetting('instapay_handle', ''),
+    instagram_handle:  dbApi.getSetting('instagram_handle', ''),
     telegram_bot_username: await telegramBot.botUsername(),
   });
 });
