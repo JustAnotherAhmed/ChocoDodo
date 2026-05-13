@@ -1521,31 +1521,42 @@ section {
   max-width: 600px;
   margin: 0 auto;
 }
+/* Sticky filter + search bar above the product grid.
+   Explicit box-sizing + display rules so the search input cannot overflow. */
 .menu-filters {
-  display: flex; flex-direction: column;
+  display: flex !important;
+  flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 28px 24px 24px;
+  padding: 24px 20px 20px;
   background: var(--cream);
   position: sticky;
   top: 76px;
   z-index: 100;
   border-bottom: 1px solid var(--cream-2);
+  width: 100%;
+  box-sizing: border-box;
 }
 .menu-filters-row {
-  display: flex; flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
+  width: 100%;
 }
 
 /* Search bar inside the menu filters */
 .menu-search-wrap {
   position: relative;
+  display: block;
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
+  box-sizing: border-box;
 }
 .menu-search-wrap input[type="search"] {
   width: 100%;
+  display: block;
+  box-sizing: border-box;
   padding: 12px 44px 12px 44px;
   font-size: 16px;
   font-family: inherit;
@@ -1555,42 +1566,56 @@ section {
   color: var(--choc-deep);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  /* Hide the native (X) clear icon in WebKit; we have our own button */
-  -webkit-appearance: none; appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  margin: 0;
 }
-.menu-search-wrap input[type="search"]::-webkit-search-cancel-button { display: none; }
+.menu-search-wrap input[type="search"]::-webkit-search-cancel-button,
+.menu-search-wrap input[type="search"]::-webkit-search-decoration {
+  -webkit-appearance: none;
+  display: none;
+}
 .menu-search-wrap input[type="search"]:focus {
   border-color: var(--berry);
-  box-shadow: 0 0 0 4px rgba(194, 24, 91, 0.12);
+  box-shadow: 0 0 0 4px rgba(194, 24, 91, 0.15);
 }
 .menu-search-wrap input[type="search"]::placeholder {
   color: var(--choc);
-  opacity: 0.6;
+  opacity: 0.55;
 }
 .menu-search-icon {
   position: absolute;
   inset-inline-start: 16px;
-  top: 50%; transform: translateY(-50%);
+  top: 50%;
+  transform: translateY(-50%);
   font-size: 16px;
   pointer-events: none;
+  z-index: 1;
 }
 .menu-search-clear {
   position: absolute;
-  inset-inline-end: 12px;
-  top: 50%; transform: translateY(-50%);
-  width: 26px; height: 26px;
+  inset-inline-end: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 28px;
+  height: 28px;
   border-radius: 50%;
   border: none;
   background: var(--choc-deep);
   color: var(--cream);
-  font-size: 18px; line-height: 1;
+  font-size: 18px;
+  line-height: 1;
   cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  z-index: 2;
 }
 .menu-search-clear:hover { background: var(--berry); }
 @media (max-width: 720px) {
-  .menu-filters { padding: 20px 14px 18px; }
-  .menu-search-wrap input[type="search"] { font-size: 16px; padding-inline-start: 40px; }
+  .menu-filters { padding: 16px 12px 14px; }
+  .menu-search-wrap input[type="search"] { padding: 10px 40px 10px 40px; }
 }
 .filter-btn {
   padding: 10px 20px;
@@ -1926,6 +1951,57 @@ section {
 .mt-4 { margin-top: 32px; }
 .mb-4 { margin-bottom: 32px; }
 .hidden { display: none !important; }
+
+/* ============================================
+   CHECKOUT — deposit card (replaces the old deposit/full radio toggle)
+   ============================================ */
+.deposit-card {
+  background: linear-gradient(135deg, #FFF7F2, #fff);
+  border: 2px solid var(--pink, #F5B7B1);
+  border-radius: 18px;
+  padding: 18px 22px;
+  display: flex; flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.deposit-row {
+  display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;
+}
+.deposit-label {
+  font-family: 'Quicksand', sans-serif;
+  font-size: 14px;
+  color: var(--choc, #6B4423);
+  flex: 0 0 auto;
+}
+.deposit-amount {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--berry, #C2185B);
+  margin-inline-start: auto;
+}
+.deposit-row-remaining {
+  font-size: 13px;
+  border-top: 1px dashed var(--cream-2, #EFE2D3);
+  padding-top: 10px;
+  color: var(--choc, #6B4423);
+}
+.deposit-remaining {
+  font-family: 'Fredoka', sans-serif;
+  font-weight: 600;
+  color: var(--choc-deep, #3E2723);
+  margin-inline-start: auto;
+}
+.deposit-due { font-size: 12px; opacity: 0.7; }
+.checkout-confirm-note {
+  margin: 6px 0 0;
+  padding: 12px 16px;
+  background: var(--cream, #FFF8E7);
+  border-radius: 12px;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--choc-deep, #3E2723);
+}
 
 /* ============================================
    DELIVERY DATE PICKER (checkout step 3)

@@ -199,8 +199,9 @@ app.post('/api/checkout', checkoutLimiter, async (req, res) => {
       return res.status(400).json({ error: 'Delivery address is required' });
     }
 
-    // Default to deposit; only allow 'full' explicitly
-    const mode = payment_mode === 'full' ? 'full' : 'deposit';
+    // Deposit is the only mode now — pay-in-full was removed.
+    // We keep accepting the field for back-compat but always force 'deposit'.
+    const mode = 'deposit';
 
     // Validate delivery date (must be at least lead_days from today, Cairo TZ)
     let cleanDate = null;

@@ -174,37 +174,29 @@
             <input type="hidden" id="deliverySlotId" />
           </div>
 
-          <!-- STEP 4: PAYMENT MODE (deposit vs full) -->
+          <!-- STEP 4: DEPOSIT -->
           <div class="checkout-step">
             <div class="step-label">
               <span class="num">4</span>
-              <h3 data-i18n="checkout.paymode">How much would you like to pay now?</h3>
+              <h3 data-i18n="checkout.deposit_title">Deposit to confirm your order</h3>
             </div>
-            <div class="pay-mode-options">
-              <label class="pay-mode-option">
-                <input type="radio" name="payMode" value="deposit" checked />
-                <div class="pay-mode-bubble">
-                  <div class="pay-mode-title">💎 <span data-i18n="checkout.deposit_only">Deposit only</span> <span class="pill new" data-i18n="checkout.required">required</span></div>
-                  <div class="pay-mode-desc">
-                    <span data-i18n="checkout.pay_now">Pay</span> <strong id="depositAmount">—</strong> <span data-i18n="checkout.now_50">now (50%)</span><br/>
-                    <span data-i18n="checkout.remaining">Remaining</span> <strong id="depositRemaining">—</strong> <span data-i18n="checkout.due_delivery">due on delivery</span>
-                  </div>
-                </div>
-              </label>
-              <label class="pay-mode-option">
-                <input type="radio" name="payMode" value="full" />
-                <div class="pay-mode-bubble">
-                  <div class="pay-mode-title">✨ <span data-i18n="checkout.pay_in_full">Pay in full</span></div>
-                  <div class="pay-mode-desc">
-                    <span data-i18n="checkout.now">Pay</span> <strong id="fullAmount">—</strong> <span data-i18n="checkout.now_full">now</span><br/>
-                    <span data-i18n="checkout.nothing_left">Nothing left to pay on delivery</span>
-                  </div>
-                </div>
-              </label>
+            <div class="deposit-card">
+              <div class="deposit-row">
+                <span class="deposit-label" data-i18n="checkout.pay_now_label">Pay now</span>
+                <span class="deposit-amount" id="depositAmount">—</span>
+              </div>
+              <div class="deposit-row deposit-row-remaining">
+                <span class="deposit-label" data-i18n="checkout.remaining">Remaining</span>
+                <span class="deposit-remaining" id="depositRemaining">—</span>
+                <span class="deposit-due" data-i18n="checkout.due_delivery">due on delivery</span>
+              </div>
             </div>
-            <p class="muted" style="font-size:12px;margin-top:8px;" data-i18n="checkout.note">
-              📌 Every order requires a deposit to confirm — it locks in your slot and ingredients.
+            <p class="checkout-confirm-note">
+              <span lang="en">✨ Your order is confirmed when we receive your deposit — you'll see the status change to <strong>Preparing</strong>.</span>
+              <span lang="ar" dir="rtl">✨ سيتم تأكيد طلبك بمجرد استلام المقدم — وستلاحظ تغيير الحالة إلى <strong>قيد التحضير</strong>.</span>
             </p>
+            <!-- Hidden — payment_mode is always 'deposit' now (pay-in-full was removed) -->
+            <input type="hidden" name="payMode" id="payModeInput" value="deposit" />
           </div>
 
           <!-- STEP 5: PAYMENT METHOD -->
@@ -232,56 +224,95 @@
             <div id="instapayNotice" class="pay-notice pay-notice-instapay hidden" role="region" aria-label="InstaPay payment instructions">
               <div class="pay-notice-head">
                 <img src="../assets/images/payments/instapay.svg" alt="" class="pay-notice-logo" />
-                <strong>How to pay with InstaPay</strong>
+                <strong>
+                  <span lang="en">How to pay with InstaPay</span>
+                  <span lang="ar" dir="rtl">كيف تدفع عبر إنستاباي</span>
+                </strong>
               </div>
-              <ol class="pay-steps">
+              <ol class="pay-steps" lang="en">
                 <li>Open your bank app → InstaPay section.</li>
                 <li>
-                  Send the deposit to this handle:
-                  <span class="pay-copyrow">
-                    <span class="pay-copyval" id="instapayHandle">—</span>
-                    <button type="button" class="pay-copybtn" data-copy="#instapayHandle" aria-label="Copy InstaPay handle">📋 Copy</button>
-                  </span>
-                </li>
-                <li>
-                  Or send to this phone number:
+                  Send the deposit to this phone number:
                   <span class="pay-copyrow">
                     <span class="pay-copyval" id="instapayPhone">—</span>
                     <button type="button" class="pay-copybtn" data-copy="#instapayPhone" aria-label="Copy phone number">📋 Copy</button>
                   </span>
                 </li>
+                <li>Put your <strong>order ID</strong> in the transfer note. (You'll see it on the confirmation page.)</li>
+                <li>Done — once we receive your deposit, your order status changes to <strong>Preparing</strong>. That's your confirmation.</li>
+              </ol>
+              <ol class="pay-steps" lang="ar" dir="rtl">
+                <li>افتح تطبيق البنك → قسم إنستاباي.</li>
                 <li>
-                  Put your <strong>order ID</strong> in the transfer note. (You'll see it on the confirmation page.)
+                  حوّل المقدم إلى هذا الرقم:
+                  <span class="pay-copyrow">
+                    <span class="pay-copyval" id="instapayPhoneAr">—</span>
+                    <button type="button" class="pay-copybtn" data-copy="#instapayPhoneAr" aria-label="انسخ الرقم">📋 انسخ</button>
+                  </span>
                 </li>
-                <li>Done — we confirm within 30 minutes on Telegram/WhatsApp.</li>
+                <li>اكتب <strong>رقم الطلب</strong> في خانة الملاحظات (ستراه في صفحة التأكيد).</li>
+                <li>تم — بمجرد استلامنا للمقدم، تتغير حالة طلبك إلى <strong>قيد التحضير</strong>. هذا هو التأكيد.</li>
               </ol>
             </div>
 
             <div id="vcashNotice" class="pay-notice pay-notice-vcash hidden" role="region" aria-label="Vodafone Cash payment instructions">
               <div class="pay-notice-head">
                 <img src="../assets/images/payments/vodafone-cash.svg" alt="" class="pay-notice-logo" />
-                <strong>How to pay with Vodafone Cash</strong>
+                <strong>
+                  <span lang="en">How to pay with Vodafone Cash</span>
+                  <span lang="ar" dir="rtl">كيف تدفع عبر فودافون كاش</span>
+                </strong>
               </div>
-              <ol class="pay-steps">
+              <ol class="pay-steps" lang="en">
                 <li>Open the Vodafone Cash app or dial <strong>*9*</strong>.</li>
                 <li>
-                  Send the deposit to this number:
+                  Send the deposit to this phone number:
                   <span class="pay-copyrow">
                     <span class="pay-copyval" id="vcashNumber">—</span>
                     <button type="button" class="pay-copybtn" data-copy="#vcashNumber" aria-label="Copy Vodafone Cash number">📋 Copy</button>
                   </span>
                 </li>
-                <li>Put your <strong>order ID</strong> in the message field. (You'll see it on the confirmation page.)</li>
-                <li>Done — we confirm within 30 minutes on Telegram/WhatsApp.</li>
+                <li>Put your <strong>order ID</strong> in the message field.</li>
+                <li>Done — once we receive your deposit, your order status changes to <strong>Preparing</strong>. That's your confirmation.</li>
+              </ol>
+              <ol class="pay-steps" lang="ar" dir="rtl">
+                <li>افتح تطبيق فودافون كاش أو اطلب <strong>*9*</strong>.</li>
+                <li>
+                  حوّل المقدم إلى هذا الرقم:
+                  <span class="pay-copyrow">
+                    <span class="pay-copyval" id="vcashNumberAr">—</span>
+                    <button type="button" class="pay-copybtn" data-copy="#vcashNumberAr" aria-label="انسخ الرقم">📋 انسخ</button>
+                  </span>
+                </li>
+                <li>اكتب <strong>رقم الطلب</strong> في خانة الرسالة.</li>
+                <li>تم — بمجرد استلامنا للمقدم، تتغير حالة طلبك إلى <strong>قيد التحضير</strong>. هذا هو التأكيد.</li>
               </ol>
             </div>
 
             <div id="codNotice" class="pay-notice pay-notice-cod hidden" role="region" aria-label="Cash on Delivery information">
               <div class="pay-notice-head">
                 <img src="../assets/images/payments/cod.svg" alt="" class="pay-notice-logo" />
-                <strong>Cash on Delivery</strong>
+                <strong>
+                  <span lang="en">Cash on Delivery — but deposit comes first</span>
+                  <span lang="ar" dir="rtl">الدفع عند الاستلام — والمقدم أولاً</span>
+                </strong>
               </div>
-              <p>Pay the full amount in cash to our delivery rider when your order arrives. Please have the exact amount ready if possible.</p>
+              <div lang="en">
+                <p><strong>Important:</strong> Even if you choose Cash on Delivery, the <strong>deposit must be paid first</strong> via InstaPay or Vodafone Cash. Without it, the kitchen doesn't start your order.</p>
+                <ol class="pay-steps">
+                  <li>Send the deposit via InstaPay or Vodafone Cash (numbers above — switch the payment method to see them).</li>
+                  <li>Once we receive your deposit, your order status changes to <strong>Preparing</strong>. That's when we begin baking.</li>
+                  <li>Pay the <strong>remaining balance in cash</strong> directly to our rider when your order arrives.</li>
+                </ol>
+              </div>
+              <div lang="ar" dir="rtl">
+                <p><strong>هام:</strong> حتى لو اخترت الدفع عند الاستلام، يجب دفع <strong>المقدم أولاً</strong> عبر إنستاباي أو فودافون كاش. بدونه لن يبدأ المطبخ في تحضير طلبك.</p>
+                <ol class="pay-steps">
+                  <li>حوّل المقدم عبر إنستاباي أو فودافون كاش (الأرقام أعلاه — بدّل طريقة الدفع لرؤيتها).</li>
+                  <li>بمجرد استلامنا للمقدم، تتغير حالة طلبك إلى <strong>قيد التحضير</strong>. وعندها نبدأ في الخبز.</li>
+                  <li>ادفع <strong>المبلغ المتبقي نقداً</strong> مباشرة للمندوب عند وصول طلبك.</li>
+                </ol>
+              </div>
             </div>
           </div>
 

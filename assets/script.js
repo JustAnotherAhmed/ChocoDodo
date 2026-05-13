@@ -1048,8 +1048,8 @@ async function initCheckout() {
   $('#checkoutForm')?.addEventListener('submit', handleCheckout);
 
   renderOrderSummary();
-  // Re-render summary when payMode changes
-  $$('input[name="payMode"]').forEach(r => r.addEventListener('change', renderOrderSummary));
+  // (Pay-in-full was removed — no more radio-driven summary re-renders needed.
+  // The summary updates whenever the cart changes via renderOrderSummary().)
 }
 
 /* Set up the auto-calendar delivery picker.
@@ -1181,23 +1181,23 @@ function renderOrderSummary() {
   $('#sumTax').textContent = formatPrice(tax);
   $('#sumTotal').textContent = formatPrice(total);
 
-  // Deposit math
-  const mode = (document.querySelector('input[name="payMode"]:checked')?.value) || 'deposit';
-  const deposit = mode === 'full' ? total : Math.ceil(total * (DEPOSIT_PCT / 100));
+  // Deposit math — payment mode is always 'deposit' now (pay-in-full removed)
+  const deposit = Math.ceil(total * (DEPOSIT_PCT / 100));
   const remaining = total - deposit;
 
-  $('#depositAmount').textContent = formatPrice(Math.ceil(total * (DEPOSIT_PCT / 100)));
-  $('#depositRemaining').textContent = formatPrice(total - Math.ceil(total * (DEPOSIT_PCT / 100)));
-  $('#fullAmount').textContent = formatPrice(total);
+  if ($('#depositAmount'))    $('#depositAmount').textContent    = formatPrice(deposit);
+  if ($('#depositRemaining')) $('#depositRemaining').textContent = formatPrice(remaining);
 
-  if (mode === 'deposit' && remaining > 0) {
-    $('#sumDepositLine').style.display = 'flex';
-    $('#sumRemainingLine').style.display = 'flex';
-    $('#sumDeposit').textContent = formatPrice(deposit);
-    $('#sumRemaining').textContent = formatPrice(remaining);
-  } else {
-    $('#sumDepositLine').style.display = 'none';
-    $('#sumRemainingLine').style.display = 'none';
+  if ($('#sumDepositLine') && $('#sumRemainingLine')) {
+    if (remaining > 0) {
+      $('#sumDepositLine').style.display   = 'flex';
+      $('#sumRemainingLine').style.display = 'flex';
+      $('#sumDeposit').textContent  = formatPrice(deposit);
+      $('#sumRemaining').textContent = formatPrice(remaining);
+    } else {
+      $('#sumDepositLine').style.display   = 'none';
+      $('#sumRemainingLine').style.display = 'none';
+    }
   }
 }
 
@@ -1252,33 +1252,25 @@ function initPaymentSelector() {
     });
   });
 
-  // Populate Vodafone / InstaPay numbers from public config
+  // Populate Vodafone / InstaPay phone numbers from public config (EN + AR copies)
   fetch(`${API_BASE}/api/config-public`)
     .then(r => r.ok ? r.json() : null)
     .then(c => {
       if (c?.whatsapp_number) {
         const num = '+' + c.whatsapp_number;
-        if ($('#vcashNumber')) $('#vcashNumber').textContent = num;
-        if ($('#instapayPhone')) $('#instapayPhone').textContent = num;
-      }
-      if (c?.instapay_handle && $('#instapayHandle')) {
-        $('#instapayHandle').textContent = c.instapay_handle;
+        const setText = (id) => { const el = $('#' + id); if (el) el.textContent = num; };
+        setText('vcashNumber');
+        setText('vcashNumberAr');
+        setText('instapayPhone');
+        setText('instapayPhoneAr');
       }
     })
     .catch(() => {});
 }
 
 function initPayModeSelector() {
-  $$('.pay-mode-option').forEach(opt => {
-    const radio = opt.querySelector('input[type="radio"]');
-    opt.addEventListener('click', () => {
-      radio.checked = true;
-      $$('.pay-mode-option').forEach(o => o.classList.toggle('selected', o.querySelector('input').checked));
-      renderOrderSummary();
-    });
-  });
-  // Initial state
-  $$('.pay-mode-option').forEach(o => o.classList.toggle('selected', o.querySelector('input').checked));
+  // Pay-in-full was removed — deposit is the only option now.
+  // This stub stays so existing call sites don't break; it's a no-op.
 }
 
 async function handleCheckout(e) {
@@ -1296,7 +1288,7 @@ async function handleCheckout(e) {
   const original = submitBtn?.innerHTML;
   if (submitBtn) { submitBtn.disabled = true; submitBtn.innerHTML = '<span>Processing…</span>'; }
 
-  const payMode = (document.querySelector('input[name="payMode"]:checked')?.value) || 'deposit';
+  const payMode = 'deposit';  // Pay-in-full was removed — deposit is always required.
   const saveAddrAs = $('#saveAddr')?.value;
 
   const payload = {
