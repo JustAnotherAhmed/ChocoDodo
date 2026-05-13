@@ -171,7 +171,6 @@
           <p>Owner alerts (you) + customer order confirmations.</p>
           <table class="admin-table">
             <tr><th>Telegram bot (owner)</th><td id="cfgTelegram">…</td></tr>
-            <tr><th>WhatsApp (CallMeBot, owner)</th><td id="cfgWhatsapp">…</td></tr>
             <tr><th>WhatsApp link (customer)</th><td id="cfgWaLink">…</td></tr>
             <tr><th>Email (SMTP, customer)</th><td id="cfgSmtp">…</td></tr>
           </table>
@@ -182,13 +181,34 @@
 
         <div class="settings-card">
           <h2>💵 Server config</h2>
-          <table class="admin-table">
-            <tr><th>Currency</th><td id="cfgCurrency">…</td></tr>
-            <tr><th>Delivery fee</th><td id="cfgDelivery">…</td></tr>
-            <tr><th>Tax rate</th><td id="cfgTax">…</td></tr>
-            <tr><th>Deposit %</th><td id="cfgDeposit">…</td></tr>
-          </table>
-          <small class="muted" style="display:block;margin-top:8px;">Change these by editing the <code>.env</code> on Railway (CURRENCY, DELIVERY_MINOR_UNITS, TAX_RATE, DEPOSIT_PCT) and redeploying.</small>
+          <p>Pricing rules customers see at checkout. Changes apply live to <strong>new</strong> orders — existing orders aren't repriced.</p>
+
+          <label class="form-field">
+            <span>Currency</span>
+            <input id="cfgCurrencyInput" type="text" maxlength="3" disabled />
+            <small class="form-hint">Currency code is set via <code>CURRENCY</code> env var (changing it mid-flight breaks past orders).</small>
+          </label>
+
+          <label class="form-field">
+            <span>Delivery fee (EGP)</span>
+            <input id="cfgDeliveryInput" type="number" min="0" step="1" placeholder="30" />
+            <small class="form-hint">Flat fee added to every order. Set <code>0</code> for free delivery.</small>
+          </label>
+
+          <label class="form-field">
+            <span>Tax rate (%)</span>
+            <input id="cfgTaxInput" type="number" min="0" max="100" step="0.1" placeholder="0" />
+            <small class="form-hint">Egyptian VAT is 14% if you're registered. Most home-bakeries set this to 0.</small>
+          </label>
+
+          <label class="form-field">
+            <span>Deposit % required to confirm an order</span>
+            <input id="cfgDepositInput" type="number" min="1" max="100" step="1" placeholder="50" />
+            <small class="form-hint">A higher % protects you from no-shows; a lower % feels friendlier. 50 is the default.</small>
+          </label>
+
+          <button class="btn btn-primary" id="saveServerCfgBtn" style="margin-top:6px;">Save server config</button>
+          <small id="saveServerCfgStatus" class="muted" style="display:block;margin-top:8px;"></small>
         </div>
 
         <div class="settings-card">

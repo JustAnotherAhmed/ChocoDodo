@@ -22,56 +22,107 @@
       <span class="nav-brand">Choco<em>DoDo</em></span>
     </a>
     <ul class="nav-links" id="navLinks">
-      <li><a href="../index.html" class="nav-link">Home</a></li>
-      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+      <li><a href="../index.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+      <li><a href="../menu.html" class="nav-link" data-i18n="nav.menu">Menu</a></li>
     </ul>
+    <div class="nav-actions" data-lang-toggle-mount></div>
   </div>
 </nav>
 
 <main id="main" class="policy-page">
   <div class="container">
     <article class="policy-card">
-      <header>
-        <span class="section-eyebrow">Returns &amp; Refunds</span>
-        <h1>Returns &amp; Refunds Policy</h1>
-        <p class="muted">Last updated: 11 May 2026</p>
-      </header>
 
-      <p>We hand-make every order from scratch with no shelf stock. That makes returns work a little differently from a typical online shop.</p>
+      <!-- ============= ENGLISH ============= -->
+      <div lang="en">
+        <header>
+          <span class="section-eyebrow">Returns &amp; Refunds</span>
+          <h1>Returns &amp; Refunds Policy</h1>
+          <p class="muted">Last updated: 11 May 2026</p>
+        </header>
 
-      <h2>Problem with your order on arrival?</h2>
-      <p>If your order arrives damaged, wrong, or genuinely unsatisfactory in quality (e.g., burnt, broken, missing items), <strong>tell us within 2 hours of delivery</strong> via WhatsApp with a photo. We'll either:</p>
-      <ul>
-        <li><strong>Replace</strong> the affected items on our next delivery run, or</li>
-        <li><strong>Refund</strong> the affected items by the same payment method (InstaPay/Vodafone Cash transfer back to you, or deduction from your next order).</li>
-      </ul>
+        <p>We hand-make every order from scratch with no shelf stock. That makes returns work a little differently from a typical online shop.</p>
 
-      <h2>Cancellations before delivery</h2>
-      <table class="policy-table">
-        <thead><tr><th>When you cancel</th><th>Refund</th></tr></thead>
-        <tbody>
-          <tr><td>Same day you placed the order (before we start baking)</td><td>100% of deposit refunded</td></tr>
-          <tr><td>1–2 days before delivery (mid-prep)</td><td>50% of deposit refunded</td></tr>
-          <tr><td>Day of delivery (already baked / out for delivery)</td><td>No refund</td></tr>
-        </tbody>
-      </table>
+        <h2>Problem with your order on arrival?</h2>
+        <p>If your order arrives damaged, wrong, or genuinely unsatisfactory in quality (e.g., burnt, broken, missing items), <strong>tell us within 2 hours of delivery</strong> via WhatsApp with a photo. We'll either:</p>
+        <ul>
+          <li><strong>Replace</strong> the affected items on our next delivery run, or</li>
+          <li><strong>Refund</strong> the affected items by the same payment method (InstaPay/Vodafone Cash transfer back to you, or deduction from your next order).</li>
+        </ul>
 
-      <h2>Custom orders</h2>
-      <p>Custom designs, personalised messages, or bespoke flavors are <strong>non-refundable</strong> once we've started preparation, because we can't resell them.</p>
+        <h2>Cancellations before delivery</h2>
+        <table class="policy-table">
+          <thead><tr><th>When you cancel</th><th>Refund</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Same day you placed the order</strong> (before we start preparing ingredients)</td><td>100% of deposit refunded</td></tr>
+            <tr><td><strong>One day or more after</strong> (kitchen has already started)</td><td>No refund</td></tr>
+          </tbody>
+        </table>
+        <p class="muted" style="font-size:13px;">Once we begin preparing your order — usually the day after you place it — ingredients are sourced and time is committed, so deposits are no longer refundable. Please cancel on the same day if you change your mind.</p>
 
-      <h2>What's not refundable</h2>
-      <ul>
-        <li>"Changed my mind" after the kitchen has started baking.</li>
-        <li>Personal taste preferences (e.g., "less sweet than I expected"). We can swap flavors on your next order — just tell us.</li>
-        <li>Failed delivery because you weren't reachable on the phone number provided.</li>
-      </ul>
+        <h2>Custom orders</h2>
+        <p>Custom designs, personalised messages, or bespoke flavors are <strong>non-refundable</strong> once we've started preparation, because we can't resell them.</p>
 
-      <h2>How to request a refund or replacement</h2>
-      <ol>
-        <li>WhatsApp <a id="returnsWa" href="#">our customer service number</a> within 2 hours of delivery (or as soon as you cancel).</li>
-        <li>Include your <strong>order ID</strong> and a photo if the issue is visible.</li>
-        <li>We'll reply within 2 business hours and resolve within 3 business days.</li>
-      </ol>
+        <h2>What's not refundable</h2>
+        <ul>
+          <li>"Changed my mind" after the kitchen has started baking.</li>
+          <li>Personal taste preferences (e.g., "less sweet than I expected"). We can swap flavors on your next order — just tell us.</li>
+          <li>Failed delivery because you weren't reachable on the phone number provided.</li>
+        </ul>
+
+        <h2>How to request a refund or replacement</h2>
+        <ol>
+          <li>WhatsApp <a id="returnsWa" href="#">our customer service number</a> within 2 hours of delivery (or as soon as you cancel).</li>
+          <li>Include your <strong>order ID</strong> and a photo if the issue is visible.</li>
+          <li>We'll reply within 2 business hours and resolve within 3 business days.</li>
+        </ol>
+      </div>
+
+      <!-- ============= ARABIC ============= -->
+      <div lang="ar" dir="rtl">
+        <header>
+          <span class="section-eyebrow">الاسترجاع والاسترداد</span>
+          <h1>سياسة الاسترجاع والاسترداد</h1>
+          <p class="muted">آخر تحديث: ١١ مايو ٢٠٢٦</p>
+        </header>
+
+        <p>نقوم بتحضير كل طلب يدوياً من الصفر بدون مخزون جاهز، لذلك يختلف الاسترجاع لدينا قليلاً عن المتاجر العادية أونلاين.</p>
+
+        <h2>مشكلة في طلبك عند الاستلام؟</h2>
+        <p>إذا وصل طلبك تالفاً أو خطأ أو غير مُرضٍ من ناحية الجودة (مثلاً: محروق، مكسور، أصناف ناقصة)، <strong>أبلغنا خلال ساعتين من الاستلام</strong> عبر واتساب مع صورة. وسنقوم بأحد الإجراءين:</p>
+        <ul>
+          <li><strong>استبدال</strong> الأصناف المتأثرة في رحلة التوصيل التالية، أو</li>
+          <li><strong>استرداد</strong> قيمة الأصناف المتأثرة بنفس طريقة الدفع (تحويل عبر إنستاباي/فودافون كاش، أو خصم من طلبك التالي).</li>
+        </ul>
+
+        <h2>الإلغاء قبل التوصيل</h2>
+        <table class="policy-table">
+          <thead><tr><th>متى تُلغي</th><th>الاسترداد</th></tr></thead>
+          <tbody>
+            <tr><td><strong>في نفس يوم تقديم الطلب</strong> (قبل أن نبدأ بتجهيز المكونات)</td><td>استرداد المقدم بالكامل ١٠٠٪</td></tr>
+            <tr><td><strong>بعد يوم أو أكثر</strong> (بعد أن يبدأ المطبخ بالعمل)</td><td>لا يوجد استرداد</td></tr>
+          </tbody>
+        </table>
+        <p class="muted" style="font-size:13px;">بمجرد أن نبدأ في تحضير طلبك — عادةً في اليوم التالي لتقديم الطلب — فإن المكونات تُشترى والوقت يُلتزم به، لذلك لا يمكن استرداد المقدم. يُرجى الإلغاء في نفس اليوم إذا غيّرت رأيك.</p>
+
+        <h2>الطلبات الخاصة</h2>
+        <p>التصاميم المخصصة والرسائل الشخصية والنكهات الخاصة <strong>غير قابلة للاسترداد</strong> بمجرد بدء التحضير، لأننا لا نستطيع إعادة بيعها.</p>
+
+        <h2>ما لا يُرَدّ</h2>
+        <ul>
+          <li>«غيرت رأيي» بعد أن يبدأ المطبخ بالخبز.</li>
+          <li>التفضيلات الشخصية في الطعم (مثل «كانت أقل حلاوة مما توقعت»). يمكننا تغيير النكهات في طلبك التالي — فقط أخبرنا.</li>
+          <li>فشل التوصيل بسبب عدم القدرة على الوصول إليك على الرقم المُقدَّم.</li>
+        </ul>
+
+        <h2>كيف تطلب استرداداً أو استبدالاً</h2>
+        <ol>
+          <li>راسلنا على واتساب <a id="returnsWaAr" href="#">رقم خدمة العملاء</a> خلال ساعتين من الاستلام (أو فور إلغائك).</li>
+          <li>أرفق <strong>رقم الطلب</strong> وصورة إن كانت المشكلة واضحة بصرياً.</li>
+          <li>سنرد خلال ساعتين عمل ونحل المشكلة خلال ٣ أيام عمل.</li>
+        </ol>
+      </div>
+
     </article>
   </div>
 </main>
@@ -79,8 +130,11 @@
 <script>
   fetch('/api/config-public').then(r => r.ok ? r.json() : null).then(c => {
     if (c?.whatsapp_number) {
+      const link = 'https://wa.me/' + c.whatsapp_number;
       const a = document.getElementById('returnsWa');
-      if (a) a.href = 'https://wa.me/' + c.whatsapp_number;
+      const aAr = document.getElementById('returnsWaAr');
+      if (a) a.href = link;
+      if (aAr) aAr.href = link;
     }
   }).catch(() => {});
 </script>

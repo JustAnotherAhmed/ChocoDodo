@@ -1100,12 +1100,46 @@ function initSlotModal() {
 async function loadSettings() {
   try {
     const cfg = await api('/api/config');
-    $('#cfgCurrency').textContent = (cfg.currency || 'egp').toUpperCase();
-    $('#cfgDelivery').textContent = `${(cfg.delivery_minor / 100).toFixed(2)} ${(cfg.currency || 'egp').toUpperCase()}`;
-    $('#cfgTax').textContent = `${(cfg.tax_rate * 100).toFixed(1)}%`;
-    $('#cfgDeposit').textContent = `${cfg.deposit_pct || 50}%`;
+    // Editable server-config inputs
+    if ($('#cfgCurrencyInput')) $('#cfgCurrencyInput').value = (cfg.currency || 'egp').toUpperCase();
+    if ($('#cfgDeliveryInput')) $('#cfgDeliveryInput').value = Math.round((cfg.delivery_minor || 0) / 100);
+    if ($('#cfgTaxInput')) $('#cfgTaxInput').value = ((cfg.tax_rate || 0) * 100).toFixed(1).replace(/\.0$/, '');
+    if ($('#cfgDepositInput')) $('#cfgDepositInput').value = cfg.deposit_pct || 50;
+
+    $('#saveServerCfgBtn')?.addEventListener('click', async () => {
+      const status = $('#saveServerCfgStatus');
+      const btn = $('#saveServerCfgBtn');
+      btn.disabled = true; btn.textContent = 'Saving…';
+      status.textContent = '';
+      try {
+        const delivery = Number($('#cfgDeliveryInput').value);
+        const tax = Number($('#cfgTaxInput').value);
+        const deposit = Number($('#cfgDepositInput').value);
+
+        if (isNaN(delivery) || delivery < 0) throw new Error('Delivery fee must be 0 or more.');
+        if (isNaN(tax) || tax < 0 || tax > 100) throw new Error('Tax rate must be between 0 and 100.');
+        if (isNaN(deposit) || deposit < 1 || deposit > 100) throw new Error('Deposit % must be between 1 and 100.');
+
+        const updates = [
+          ['cfg_delivery_minor', Math.round(delivery * 100)],   // EGP → piastres
+          ['cfg_tax_rate',       (tax / 100).toString()],       // % → 0.0–1.0 decimal
+          ['cfg_deposit_pct',    Math.round(deposit)],
+        ];
+        for (const [key, value] of updates) {
+          await api('/api/admin/settings/' + key, {
+            method: 'PUT', body: JSON.stringify({ value }),
+          });
+        }
+        status.textContent = `✅ Saved — new orders use ${delivery} EGP delivery, ${tax}% tax, ${deposit}% deposit.`;
+        toast('Server config saved ✓');
+      } catch (err) {
+        status.textContent = '❌ ' + err.message;
+        toast(err.message, '⚠️');
+      } finally {
+        btn.disabled = false; btn.textContent = 'Save server config';
+      }
+    });
     $('#cfgTelegram').textContent = cfg.notifications?.telegram ? '✅ configured' : '⚠️  set TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID in .env';
-    $('#cfgWhatsapp').textContent = cfg.notifications?.whatsapp ? '✅ CallMeBot ready' : '⚠️  set CALLMEBOT_PHONE + CALLMEBOT_API_KEY in .env';
     $('#cfgWaLink').textContent = cfg.notifications?.wa_link ? '✅ WHATSAPP_OWNER_NUMBER set' : '⚠️  set WHATSAPP_OWNER_NUMBER in .env';
     $('#cfgSmtp').textContent = cfg.notifications?.smtp ? '✅ configured' : '⚠️  prints to console (silent fallback)';
 

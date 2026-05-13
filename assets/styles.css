@@ -2854,29 +2854,42 @@ button.verify-channel {
    LANGUAGE TOGGLE
    ============================================ */
 .lang-toggle {
-  padding: 8px 14px;
+  padding: 10px 18px;
   border-radius: 999px;
-  background: var(--gold);
-  color: var(--choc-deep);
-  font-family: 'Tajawal', 'Quicksand', sans-serif;
   font-weight: 700;
-  font-size: 13px;
-  border: 2px solid var(--gold);
-  transition: all 0.3s var(--bounce);
+  font-size: 14px;
+  background: linear-gradient(135deg, var(--berry, #C2185B), #D81B60);
+  color: #fff;
+  border: 2px solid #fff;
   cursor: pointer;
-  white-space: nowrap;
-  box-shadow: 0 3px 10px rgba(212, 175, 55, 0.35);
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: inherit;
+  letter-spacing: 0.3px;
+  transition: transform 0.15s ease, box-shadow 0.2s ease;
+  /* Override placeholder so the more-specific rule below wins */
+  box-shadow: 0 4px 14px rgba(194, 24, 91, 0.35);
 }
 .lang-toggle::before {
-  content: '🌐 ';
-  margin-inline-end: 4px;
+  content: '🌐';
+  font-size: 14px;
 }
 .lang-toggle:hover {
-  background: var(--berry);
-  color: white;
-  border-color: var(--berry);
-  transform: scale(1.06);
-  box-shadow: 0 4px 14px rgba(194, 24, 91, 0.45);
+  transform: translateY(-1px) scale(1.04);
+  box-shadow: 0 6px 18px rgba(194, 24, 91, 0.5);
+}
+.lang-toggle:active {
+  transform: scale(0.97);
+}
+.lang-toggle:focus-visible {
+  outline: 3px solid var(--gold, #D4AF37);
+  outline-offset: 3px;
+}
+/* Make sure it's still visible on the narrow mobile navbar */
+@media (max-width: 720px) {
+  .lang-toggle {
+    padding: 8px 14px;
+    font-size: 13px;
+  }
 }
 
 /* ============================================

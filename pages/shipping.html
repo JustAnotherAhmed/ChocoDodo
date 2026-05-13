@@ -22,52 +22,99 @@
       <span class="nav-brand">Choco<em>DoDo</em></span>
     </a>
     <ul class="nav-links" id="navLinks">
-      <li><a href="../index.html" class="nav-link">Home</a></li>
-      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+      <li><a href="../index.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+      <li><a href="../menu.html" class="nav-link" data-i18n="nav.menu">Menu</a></li>
     </ul>
+    <div class="nav-actions" data-lang-toggle-mount></div>
   </div>
 </nav>
 
 <main id="main" class="policy-page">
   <div class="container">
     <article class="policy-card">
-      <header>
-        <span class="section-eyebrow">Shipping &amp; Delivery</span>
-        <h1>How delivery works</h1>
-      </header>
 
-      <h2>Lead time</h2>
-      <p>Every order is hand-made fresh, so we need <strong>3 to 4 days</strong> from when you place the order until delivery. You'll pick a delivery date at checkout from the available slots.</p>
+      <!-- ============= ENGLISH ============= -->
+      <div lang="en">
+        <header>
+          <span class="section-eyebrow">Shipping &amp; Delivery</span>
+          <h1>How delivery works</h1>
+        </header>
 
-      <h2>Delivery areas</h2>
-      <ul>
-        <li><strong>Greater Cairo</strong> (Heliopolis, New Cairo, 5th Settlement, Madinaty, Maadi, Zamalek, Mohandessin, Dokki, Sheikh Zayed, 6th of October, Nasr City) — 30 EGP</li>
-        <li><strong>Outside Cairo / Giza</strong> — message us on WhatsApp for a courier quote, especially for larger orders</li>
-      </ul>
+        <h2>Lead time</h2>
+        <p>Every order is hand-made fresh, so we need <strong>3 to 4 days</strong> from when you place the order until delivery. You'll pick a delivery date at checkout from the available slots.</p>
 
-      <h2>Delivery slots</h2>
-      <p>We deliver within these time windows. You choose your slot at checkout based on what's available.</p>
-      <ul>
-        <li>Morning: 10:00 – 13:00</li>
-        <li>Afternoon: 14:00 – 17:00</li>
-        <li>Evening: 18:00 – 21:00</li>
-      </ul>
-      <p>Slots fill up — book early for weekend dates.</p>
+        <h2>Delivery areas</h2>
+        <ul>
+          <li><strong>Greater Cairo</strong> (Heliopolis, New Cairo, 5th Settlement, Madinaty, Maadi, Zamalek, Mohandessin, Dokki, Sheikh Zayed, 6th of October, Nasr City) — 30 EGP</li>
+          <li><strong>Outside Cairo / Giza</strong> — message us on WhatsApp for a courier quote, especially for larger orders</li>
+        </ul>
 
-      <h2>What happens after you place the order</h2>
-      <ol>
-        <li><strong>Confirmation</strong> — you receive an email + (if you're on Telegram) a Telegram message.</li>
-        <li><strong>Deposit</strong> — you send the 50% deposit via InstaPay or Vodafone Cash. We confirm within 30 minutes.</li>
-        <li><strong>Preparation</strong> — our kitchen starts baking on the morning of your delivery date.</li>
-        <li><strong>Out for delivery</strong> — your rider gets the box. You receive a status update.</li>
-        <li><strong>Delivered</strong> — pay any remaining balance to the rider in cash (or by Vodafone Cash to the rider's number).</li>
-      </ol>
+        <h2>Delivery slots</h2>
+        <p>We deliver within these time windows. You choose your slot at checkout based on what's available.</p>
+        <ul>
+          <li>Morning: 10:00 – 13:00</li>
+          <li>Afternoon: 14:00 – 17:00</li>
+          <li>Evening: 18:00 – 21:00</li>
+        </ul>
+        <p>Slots fill up — book early for weekend dates.</p>
 
-      <h2>Packaging</h2>
-      <p>Every order ships in our signature gift-style box. Insulated where needed for chocolate-heavy orders to survive Cairo summer heat.</p>
+        <h2>What happens after you place the order</h2>
+        <ol>
+          <li><strong>Confirmation</strong> — you receive an email confirmation right away.</li>
+          <li><strong>Deposit</strong> — you send the 50% deposit via InstaPay or Vodafone Cash. We confirm within 30 minutes.</li>
+          <li><strong>Preparation</strong> — our kitchen starts baking on the morning of your delivery date.</li>
+          <li><strong>Out for delivery</strong> — your rider gets the box. You receive a status update.</li>
+          <li><strong>Delivered</strong> — pay any remaining balance to the rider in cash (or by Vodafone Cash to the rider's number).</li>
+        </ol>
 
-      <h2>Late deliveries</h2>
-      <p>If your rider is more than 30 minutes late on the scheduled slot, we'll WhatsApp you proactively. If we miss your slot entirely without notice and you're unhappy, see our <a href="returns.html">Returns &amp; Refunds policy</a>.</p>
+        <h2>Packaging</h2>
+        <p>Every order ships in our signature gift-style box. Insulated where needed for chocolate-heavy orders to survive Cairo summer heat.</p>
+
+        <h2>Late deliveries</h2>
+        <p>If your rider is more than 30 minutes late on the scheduled slot, we'll WhatsApp you proactively. If we miss your slot entirely without notice and you're unhappy, see our <a href="returns.html">Returns &amp; Refunds policy</a>.</p>
+      </div>
+
+      <!-- ============= ARABIC ============= -->
+      <div lang="ar" dir="rtl">
+        <header>
+          <span class="section-eyebrow">الشحن والتوصيل</span>
+          <h1>كيف يعمل التوصيل</h1>
+        </header>
+
+        <h2>مهلة التحضير</h2>
+        <p>كل طلب يُحضَّر طازجاً بيدنا، لذا نحتاج <strong>٣ إلى ٤ أيام</strong> من وقت تقديم الطلب حتى التوصيل. ستختار يوم التوصيل عند إتمام الطلب من المواعيد المتاحة.</p>
+
+        <h2>مناطق التوصيل</h2>
+        <ul>
+          <li><strong>القاهرة الكبرى</strong> (مصر الجديدة، التجمع الخامس، القاهرة الجديدة، مدينتي، المعادي، الزمالك، المهندسين، الدقي، الشيخ زايد، السادس من أكتوبر، مدينة نصر) — ٣٠ جنيه</li>
+          <li><strong>خارج القاهرة / الجيزة</strong> — راسلنا على واتساب لسعر الشحن، خصوصاً للطلبات الكبيرة</li>
+        </ul>
+
+        <h2>مواعيد التوصيل</h2>
+        <p>نوصل خلال الفترات الزمنية التالية. تختار موعدك عند إتمام الطلب حسب المتاح.</p>
+        <ul>
+          <li>الصباح: ١٠:٠٠ – ١٣:٠٠</li>
+          <li>الظهر: ١٤:٠٠ – ١٧:٠٠</li>
+          <li>المساء: ١٨:٠٠ – ٢١:٠٠</li>
+        </ul>
+        <p>المواعيد تمتلئ بسرعة — احجز مبكراً لمواعيد عطلة نهاية الأسبوع.</p>
+
+        <h2>ماذا يحدث بعد تقديم طلبك</h2>
+        <ol>
+          <li><strong>التأكيد</strong> — يصلك إيميل تأكيد فوراً.</li>
+          <li><strong>المقدم</strong> — ترسل ٥٠٪ مقدم عبر إنستاباي أو فودافون كاش، ونؤكد الاستلام خلال ٣٠ دقيقة.</li>
+          <li><strong>التحضير</strong> — يبدأ مطبخنا في الخبز صباح يوم التوصيل.</li>
+          <li><strong>في الطريق</strong> — يستلم المندوب الصندوق. ويصلك تحديث الحالة.</li>
+          <li><strong>التسليم</strong> — تدفع المتبقي للمندوب نقداً (أو عبر فودافون كاش على رقم المندوب).</li>
+        </ol>
+
+        <h2>التغليف</h2>
+        <p>كل طلب يُغلَّف في صندوق هدايا مميز. مع عزل حراري عند الحاجة للطلبات الغنية بالشكولاتة لتصمد أمام حرارة صيف القاهرة.</p>
+
+        <h2>تأخر التوصيل</h2>
+        <p>إذا تأخر المندوب أكثر من ٣٠ دقيقة عن الموعد، نراسلك على واتساب مبادَرةً. إذا فاتنا الموعد بالكامل دون إخبارك ولم تكن راضياً، راجع <a href="returns.html">سياسة الاسترجاع والاسترداد</a>.</p>
+      </div>
+
     </article>
   </div>
 </main>

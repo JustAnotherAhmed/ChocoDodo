@@ -14,7 +14,7 @@ const rateLimit = require('express-rate-limit');
 const dbApi = require('./lib/db');
 const productApi = require('./lib/products');
 const auth = require('./lib/auth');
-const { priceCart } = require('./lib/pricing');
+const { priceCart, currentDeliveryMinor, currentTaxRate, currentDepositPct } = require('./lib/pricing');
 
 const authRoutes = require('./routes/auth');
 const staffAuthRoutes = require('./routes/staff-auth');
@@ -125,9 +125,9 @@ app.get('/api/health', (req, res) => {
 app.get('/api/config', (req, res) => {
   res.json({
     currency: CURRENCY,
-    delivery_minor: Number(process.env.DELIVERY_MINOR_UNITS || 3000),
-    tax_rate: Number(process.env.TAX_RATE || 0),
-    deposit_pct: Number(process.env.DEPOSIT_PCT || 50),
+    delivery_minor: currentDeliveryMinor(),
+    tax_rate: currentTaxRate(),
+    deposit_pct: currentDepositPct(),
     notifications: {
       telegram: notify.isTelegramConfigured(),
       whatsapp: notify.isCallMeBotConfigured(),
@@ -164,7 +164,8 @@ app.use('/api/admin', auth.requireAdmin, adminRoutes);
 app.use('/api/admin/upload', auth.requireAdmin, uploadRoutes);
 
 // ---------- CHECKOUT ----------
-const DEPOSIT_PCT = Number(process.env.DEPOSIT_PCT || 50);  // 50% deposit by default
+// Deposit % is now read at request time via currentDepositPct() — admin can
+// change it from the Settings panel without restarting the server.
 
 function isEgPhone(s) {
   if (!s) return false;
@@ -216,7 +217,7 @@ app.post('/api/checkout', checkoutLimiter, async (req, res) => {
     // Deposit math
     const depositCents = mode === 'full'
       ? priced.total_cents
-      : Math.ceil(priced.total_cents * (DEPOSIT_PCT / 100));
+      : Math.ceil(priced.total_cents * (currentDepositPct() / 100));
     const remainingCents = priced.total_cents - depositCents;
 
     const baseRow = {
@@ -241,7 +242,7 @@ app.post('/api/checkout', checkoutLimiter, async (req, res) => {
       dbApi.insertOrder(row);
       dbApi.db.prepare(`
         UPDATE orders SET payment_mode = ?, deposit_cents = ?, remaining_cents = ?, deposit_pct = ?, customer_id = ?, delivery_slot_id = ?, tracking_status = 'received'
-        WHERE id = ?`).run(mode, depositCents, remainingCents, mode === 'full' ? 100 : DEPOSIT_PCT, customerId, slotId, orderId);
+        WHERE id = ?`).run(mode, depositCents, remainingCents, mode === 'full' ? 100 : currentDepositPct(), customerId, slotId, orderId);
       if (slotId) dbApi.bookSlot(slotId);
       const stored = dbApi.getOrder(orderId);
       decrementStockForOrder(stored);

@@ -2,9 +2,35 @@
 // Always re-compute on the server. Never trust totals from the browser.
 
 const { byId } = require('./products');
+const dbApi = require('./db');
 
-const TAX_RATE = Number(process.env.TAX_RATE || 0);
-const DELIVERY_MINOR = Number(process.env.DELIVERY_MINOR_UNITS || 3000); // 30 EGP
+// These read from the settings table first, falling back to env vars, then to
+// the defaults. That means an admin can change delivery fee / tax / deposit %
+// live from the admin panel without restarting the server.
+function currentTaxRate() {
+  const fromDb = dbApi.getSetting('cfg_tax_rate', null);
+  if (fromDb !== null && fromDb !== '') {
+    const n = Number(fromDb);
+    if (!isNaN(n) && n >= 0 && n <= 1) return n;
+  }
+  return Number(process.env.TAX_RATE || 0);
+}
+function currentDeliveryMinor() {
+  const fromDb = dbApi.getSetting('cfg_delivery_minor', null);
+  if (fromDb !== null && fromDb !== '') {
+    const n = Number(fromDb);
+    if (!isNaN(n) && n >= 0) return n;
+  }
+  return Number(process.env.DELIVERY_MINOR_UNITS || 3000); // default 30 EGP
+}
+function currentDepositPct() {
+  const fromDb = dbApi.getSetting('cfg_deposit_pct', null);
+  if (fromDb !== null && fromDb !== '') {
+    const n = Number(fromDb);
+    if (!isNaN(n) && n >= 1 && n <= 100) return n;
+  }
+  return Number(process.env.DEPOSIT_PCT || 50);
+}
 
 const toMinor = (egp) => Math.round(egp * 100);
 
@@ -114,8 +140,8 @@ function priceCart(cartItems) {
     });
   }
 
-  const delivery = DELIVERY_MINOR;
-  const tax = Math.round(subtotal * TAX_RATE);
+  const delivery = currentDeliveryMinor();
+  const tax = Math.round(subtotal * currentTaxRate());
   const total = subtotal + delivery + tax;
   return {
     items,
@@ -126,4 +152,11 @@ function priceCart(cartItems) {
   };
 }
 
-module.exports = { priceCart, validateSelectedOptions, describeSelected, TAX_RATE, DELIVERY_MINOR };
+module.exports = {
+  priceCart,
+  validateSelectedOptions,
+  describeSelected,
+  currentTaxRate,
+  currentDeliveryMinor,
+  currentDepositPct,
+};

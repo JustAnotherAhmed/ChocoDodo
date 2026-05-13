@@ -22,46 +22,87 @@
       <span class="nav-brand">Choco<em>DoDo</em></span>
     </a>
     <ul class="nav-links" id="navLinks">
-      <li><a href="../index.html" class="nav-link">Home</a></li>
-      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+      <li><a href="../index.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+      <li><a href="../menu.html" class="nav-link" data-i18n="nav.menu">Menu</a></li>
     </ul>
+    <div class="nav-actions" data-lang-toggle-mount></div>
   </div>
 </nav>
 
 <main id="main" class="policy-page">
   <div class="container">
     <article class="policy-card">
-      <header>
-        <span class="section-eyebrow">Privacy</span>
-        <h1>Privacy Policy</h1>
-        <p class="muted">Last updated: 11 May 2026</p>
-      </header>
 
-      <h2>What we collect</h2>
-      <p>When you create an account or place an order on ChocoDoDo we collect: your name, email address, Egyptian mobile number, delivery addresses, order history, and any notes you leave for the kitchen.</p>
+      <!-- ============= ENGLISH ============= -->
+      <div lang="en">
+        <header>
+          <span class="section-eyebrow">Privacy</span>
+          <h1>Privacy Policy</h1>
+          <p class="muted">Last updated: 11 May 2026</p>
+        </header>
 
-      <h2>How we use it</h2>
-      <ul>
-        <li><strong>To deliver your order</strong> — the kitchen needs your address and phone to reach you; the rider may call to coordinate hand-off.</li>
-        <li><strong>To send transactional emails</strong> — order confirmation, password resets, account verification.</li>
-        <li><strong>To improve the service</strong> — aggregate, anonymous analytics on which products customers prefer.</li>
-      </ul>
-      <p>We <strong>do not</strong> sell your data to third parties and we don't send marketing emails unless you explicitly subscribe to our newsletter.</p>
+        <h2>What we collect</h2>
+        <p>When you create an account or place an order on <bdi class="brand-ltr">ChocoDoDo</bdi> we collect: your name, email address, Egyptian mobile number, delivery addresses, order history, and any notes you leave for the kitchen.</p>
 
-      <h2>Cookies</h2>
-      <p>We use a single session cookie (<code>cd_customer</code> or <code>cd_staff</code>) to keep you signed in, plus your browser's <code>localStorage</code> to remember your cart between visits. No third-party trackers, no ad cookies, no Facebook pixel.</p>
+        <h2>How we use it</h2>
+        <ul>
+          <li><strong>To deliver your order</strong> — the kitchen needs your address and phone to reach you; the rider may call to coordinate hand-off.</li>
+          <li><strong>To send transactional emails</strong> — order confirmation, password resets, account verification.</li>
+          <li><strong>To improve the service</strong> — aggregate, anonymous analytics on which products customers prefer.</li>
+        </ul>
+        <p>We <strong>do not</strong> sell your data to third parties and we don't send marketing emails unless you explicitly subscribe to our newsletter.</p>
 
-      <h2>Payments</h2>
-      <p>ChocoDoDo uses manual-confirmation payments (InstaPay, Vodafone Cash, Cash on Delivery). Your bank details never touch our servers — you transfer money in your own banking app and we confirm receipt manually.</p>
+        <h2>Cookies</h2>
+        <p>We use a single session cookie (<code>cd_customer</code> or <code>cd_staff</code>) to keep you signed in, plus your browser's <code>localStorage</code> to remember your cart between visits. No third-party trackers, no ad cookies, no Facebook pixel.</p>
 
-      <h2>Your rights</h2>
-      <p>Under Egypt's Personal Data Protection Law (Law No. 151 of 2020), you have the right to access, correct, or delete your personal data. To do any of these, message us via WhatsApp or email and we'll respond within 7 business days.</p>
+        <h2>Payments</h2>
+        <p>ChocoDoDo uses manual-confirmation payments (InstaPay, Vodafone Cash, Cash on Delivery). Your bank details never touch our servers — you transfer money in your own banking app and we confirm receipt manually.</p>
 
-      <h2>Data retention</h2>
-      <p>We keep order history indefinitely for accounting purposes. You can delete your account at any time from <a href="account.html">your account page</a>; orders remain in our system but are no longer linked to a deleted account.</p>
+        <h2>Your rights</h2>
+        <p>Under Egypt's Personal Data Protection Law (Law No. 151 of 2020), you have the right to access, correct, or delete your personal data. To do any of these, message us via WhatsApp or email and we'll respond within 7 business days.</p>
 
-      <h2>Contact</h2>
-      <p>For privacy questions: WhatsApp <a id="privacyWa" href="#">our number</a> or email <a id="privacyEmail" href="mailto:Fromchocododo@gmail.com">Fromchocododo@gmail.com</a>.</p>
+        <h2>Data retention</h2>
+        <p>We keep order history indefinitely for accounting purposes. You can delete your account at any time from <a href="account.html">your account page</a>; orders remain in our system but are no longer linked to a deleted account.</p>
+
+        <h2>Contact</h2>
+        <p>For privacy questions: WhatsApp <a id="privacyWa" href="#">our number</a> or email <a href="mailto:Fromchocododo@gmail.com">Fromchocododo@gmail.com</a>.</p>
+      </div>
+
+      <!-- ============= ARABIC ============= -->
+      <div lang="ar" dir="rtl">
+        <header>
+          <span class="section-eyebrow">الخصوصية</span>
+          <h1>سياسة الخصوصية</h1>
+          <p class="muted">آخر تحديث: ١١ مايو ٢٠٢٦</p>
+        </header>
+
+        <h2>ما الذي نجمعه</h2>
+        <p>عندما تنشئ حساباً أو تقدم طلباً على <bdi class="brand-ltr">ChocoDoDo</bdi> نجمع: اسمك، بريدك الإلكتروني، رقم موبايلك المصري، عناوين التوصيل، تاريخ طلباتك، وأي ملاحظات تتركها للمطبخ.</p>
+
+        <h2>كيف نستخدمها</h2>
+        <ul>
+          <li><strong>لتوصيل طلبك</strong> — يحتاج المطبخ إلى عنوانك ورقم هاتفك للوصول إليك، وقد يتصل بك المندوب للتنسيق حول التسليم.</li>
+          <li><strong>لإرسال رسائل البريد الخاصة بالمعاملات</strong> — تأكيد الطلب، إعادة تعيين كلمة المرور، تفعيل الحساب.</li>
+          <li><strong>لتحسين الخدمة</strong> — تحليلات إجمالية ومجهولة عن المنتجات الأكثر تفضيلاً لدى العملاء.</li>
+        </ul>
+        <p><strong>لا نبيع</strong> بياناتك لأي جهة خارجية ولا نرسل رسائل تسويقية إلا إذا اشتركت صراحة في نشرتنا الإخبارية.</p>
+
+        <h2>الكوكيز</h2>
+        <p>نستخدم ملف كوكي واحد للجلسة (<code>cd_customer</code> أو <code>cd_staff</code>) لإبقائك مسجّل الدخول، بالإضافة إلى <code>localStorage</code> في متصفحك لتذكّر سلة الشراء بين الزيارات. لا توجد أدوات تتبّع من أطراف ثالثة ولا كوكيز إعلانية ولا بكسل فيسبوك.</p>
+
+        <h2>الدفع</h2>
+        <p>تستخدم <bdi class="brand-ltr">ChocoDoDo</bdi> الدفع بالتأكيد اليدوي (إنستاباي، فودافون كاش، الدفع عند الاستلام). بيانات حسابك البنكي لا تمر أبداً عبر سيرفراتنا — أنت تحوّل المال من تطبيق البنك الخاص بك ونحن نؤكد الاستلام يدوياً.</p>
+
+        <h2>حقوقك</h2>
+        <p>وفقاً لقانون حماية البيانات الشخصية المصري (قانون رقم ١٥١ لسنة ٢٠٢٠)، يحق لك الاطلاع على بياناتك الشخصية أو تصحيحها أو حذفها. للقيام بأي من ذلك، راسلنا عبر واتساب أو البريد الإلكتروني وسنرد خلال ٧ أيام عمل.</p>
+
+        <h2>الاحتفاظ بالبيانات</h2>
+        <p>نحتفظ بتاريخ الطلبات لأجل غير مسمى لأغراض المحاسبة. يمكنك حذف حسابك في أي وقت من <a href="account.html">صفحة حسابك</a>؛ تبقى الطلبات في نظامنا ولكن لا تعود مرتبطة بحساب محذوف.</p>
+
+        <h2>تواصل معنا</h2>
+        <p>لأسئلة الخصوصية: واتساب <a id="privacyWaAr" href="#">رقمنا</a> أو إيميل <a href="mailto:Fromchocododo@gmail.com">Fromchocododo@gmail.com</a>.</p>
+      </div>
+
     </article>
   </div>
 </main>
@@ -69,8 +110,11 @@
 <script>
   fetch('/api/config-public').then(r => r.ok ? r.json() : null).then(c => {
     if (c?.whatsapp_number) {
+      const link = 'https://wa.me/' + c.whatsapp_number;
       const a = document.getElementById('privacyWa');
-      if (a) a.href = 'https://wa.me/' + c.whatsapp_number;
+      const aAr = document.getElementById('privacyWaAr');
+      if (a) a.href = link;
+      if (aAr) aAr.href = link;
     }
   }).catch(() => {});
 </script>
