@@ -1139,23 +1139,53 @@ function renderOrderSummary() {
 function initPaymentSelector() {
   $$('.payment-option').forEach(opt => {
     opt.addEventListener('click', () => {
-      $$('.payment-option').forEach(o => o.classList.remove('selected'));
+      $$('.payment-option').forEach(o => {
+        o.classList.remove('selected');
+        o.setAttribute('aria-pressed', 'false');
+      });
       opt.classList.add('selected');
+      opt.setAttribute('aria-pressed', 'true');
       $('#paymentMethod').value = opt.dataset.method;
       const m = opt.dataset.method;
+      // Use the .hidden class (not inline display) so CSS layout stays clean
       ['codNotice', 'vcashNotice', 'instapayNotice'].forEach(id => {
         const el = $('#' + id);
-        if (el) el.style.display = 'none';
+        if (el) el.classList.add('hidden');
       });
       const map = { cod: 'codNotice', vcash: 'vcashNotice', instapay: 'instapayNotice' };
       const noticeId = map[m];
       if (noticeId) {
         const el = $('#' + noticeId);
-        if (el) el.style.display = 'block';
+        if (el) el.classList.remove('hidden');
       }
     });
   });
   $('.payment-option')?.click();
+
+  // Wire copy-to-clipboard buttons inside payment notices
+  $$('.pay-copybtn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const target = $(btn.dataset.copy);
+      if (!target) return;
+      const text = target.textContent.trim();
+      if (!text || text === '—') return;
+      try {
+        await navigator.clipboard.writeText(text);
+        const orig = btn.innerHTML;
+        btn.innerHTML = '✅ Copied';
+        btn.classList.add('copied');
+        setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1500);
+      } catch {
+        // Fallback for older browsers / non-HTTPS
+        const ta = document.createElement('textarea');
+        ta.value = text; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); } catch {}
+        ta.remove();
+        btn.innerHTML = '✅ Copied';
+        setTimeout(() => { btn.innerHTML = '📋 Copy'; }, 1500);
+      }
+    });
+  });
 
   // Populate Vodafone / InstaPay numbers from public config
   fetch(`${API_BASE}/api/config-public`)

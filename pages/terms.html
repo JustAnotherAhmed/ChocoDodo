@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service</title>
+  <meta name="description" content="The terms under which you use the ChocoDoDo website and place orders." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="policy-page">
+  <div class="container">
+    <article class="policy-card">
+      <header>
+        <span class="section-eyebrow">Terms</span>
+        <h1>Terms of Service</h1>
+        <p class="muted">Last updated: 11 May 2026</p>
+      </header>
+
+      <h2>The short version</h2>
+      <p>ChocoDoDo is a small Egyptian home-bakery. You place an order through this site, we hand-make it in our kitchen, and we deliver it to you. By using the site you agree to the terms below.</p>
+
+      <h2>1. Orders</h2>
+      <p>Placing an order on the site is an <strong>offer to buy</strong>. The order becomes a contract only after we confirm it (you'll get a Telegram and/or email confirmation). We may refuse or cancel an order for reasons including but not limited to:</p>
+      <ul>
+        <li>Ingredients are out of stock.</li>
+        <li>The delivery address is outside our service area.</li>
+        <li>We can't reach you on the phone number provided to coordinate delivery.</li>
+        <li>The order looks fraudulent.</li>
+      </ul>
+      <p>If we cancel, any deposit you've paid will be refunded by the same method you paid with.</p>
+
+      <h2>2. Pricing and product images</h2>
+      <p>Prices are in Egyptian Pounds (EGP) and shown including any applicable tax. Product photos are illustrative — actual size, decorations, and finishing may vary slightly because every box is hand-made.</p>
+
+      <h2>3. Lead time</h2>
+      <p>We require <strong>3 to 4 days notice</strong> for every order. You choose your delivery date at checkout. We don't do same-day delivery — every box is baked fresh for your order.</p>
+
+      <h2>4. Payments</h2>
+      <p>We accept InstaPay, Vodafone Cash, or Cash on Delivery. A deposit (typically 50%) is required to confirm the order. See the <a href="returns.html">Returns &amp; Refunds policy</a> for cancellation refund rules.</p>
+
+      <h2>5. Delivery</h2>
+      <p>Delivery times are best-effort within the slot you booked. Cairo traffic and weather may cause delays — we'll WhatsApp you if your rider is more than 30 minutes late.</p>
+
+      <h2>6. Your account</h2>
+      <p>You're responsible for keeping your account password safe. Don't share it. If you think someone has accessed your account, reset your password immediately from the <a href="forgot-password.html">password reset page</a>.</p>
+
+      <h2>7. Liability</h2>
+      <p>We're a small kitchen and our liability is limited to the value of the order in dispute. We aren't liable for indirect damages.</p>
+      <p><strong>Allergens:</strong> our products contain or may contain milk, eggs, gluten, nuts (including peanuts), and soy. We cannot guarantee a 100% nut-free or gluten-free environment. If you have a serious allergy, please WhatsApp us before ordering.</p>
+
+      <h2>8. Changes</h2>
+      <p>We may update these terms. Material changes will be announced on the homepage and existing customers will be notified by email.</p>
+
+      <h2>9. Governing law</h2>
+      <p>These terms are governed by the laws of the Arab Republic of Egypt. Any disputes go to the competent courts of Cairo.</p>
+
+      <h2>Contact</h2>
+      <p>Questions: WhatsApp <a id="termsWa" href="#">our number</a> or email <a href="mailto:Fromchocododo@gmail.com">Fromchocododo@gmail.com</a>.</p>
+    </article>
+  </div>
+</main>
+
+<script>
+  fetch('/api/config-public').then(r => r.ok ? r.json() : null).then(c => {
+    if (c?.whatsapp_number) {
+      const a = document.getElementById('termsWa');
+      if (a) a.href = 'https://wa.me/' + c.whatsapp_number;
+    }
+  }).catch(() => {});
+</script>
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Privacy Policy</title>
+  <meta name="description" content="How ChocoDoDo collects, uses, and protects your personal data." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="policy-page">
+  <div class="container">
+    <article class="policy-card">
+      <header>
+        <span class="section-eyebrow">Privacy</span>
+        <h1>Privacy Policy</h1>
+        <p class="muted">Last updated: 11 May 2026</p>
+      </header>
+
+      <h2>What we collect</h2>
+      <p>When you create an account or place an order on ChocoDoDo we collect: your name, email address, Egyptian mobile number, delivery addresses, order history, and any notes you leave for the kitchen.</p>
+
+      <h2>How we use it</h2>
+      <ul>
+        <li><strong>To deliver your order</strong> — the kitchen needs your address and phone to reach you; the rider may call to coordinate hand-off.</li>
+        <li><strong>To send transactional emails</strong> — order confirmation, password resets, account verification.</li>
+        <li><strong>To improve the service</strong> — aggregate, anonymous analytics on which products customers prefer.</li>
+      </ul>
+      <p>We <strong>do not</strong> sell your data to third parties and we don't send marketing emails unless you explicitly subscribe to our newsletter.</p>
+
+      <h2>Cookies</h2>
+      <p>We use a single session cookie (<code>cd_customer</code> or <code>cd_staff</code>) to keep you signed in, plus your browser's <code>localStorage</code> to remember your cart between visits. No third-party trackers, no ad cookies, no Facebook pixel.</p>
+
+      <h2>Payments</h2>
+      <p>ChocoDoDo uses manual-confirmation payments (InstaPay, Vodafone Cash, Cash on Delivery). Your bank details never touch our servers — you transfer money in your own banking app and we confirm receipt manually.</p>
+
+      <h2>Your rights</h2>
+      <p>Under Egypt's Personal Data Protection Law (Law No. 151 of 2020), you have the right to access, correct, or delete your personal data. To do any of these, message us via WhatsApp or email and we'll respond within 7 business days.</p>
+
+      <h2>Data retention</h2>
+      <p>We keep order history indefinitely for accounting purposes. You can delete your account at any time from <a href="account.html">your account page</a>; orders remain in our system but are no longer linked to a deleted account.</p>
+
+      <h2>Contact</h2>
+      <p>For privacy questions: WhatsApp <a id="privacyWa" href="#">our number</a> or email <a id="privacyEmail" href="mailto:Fromchocododo@gmail.com">Fromchocododo@gmail.com</a>.</p>
+    </article>
+  </div>
+</main>
+
+<script>
+  fetch('/api/config-public').then(r => r.ok ? r.json() : null).then(c => {
+    if (c?.whatsapp_number) {
+      const a = document.getElementById('privacyWa');
+      if (a) a.href = 'https://wa.me/' + c.whatsapp_number;
+    }
+  }).catch(() => {});
+</script>
+</body>
+</html>

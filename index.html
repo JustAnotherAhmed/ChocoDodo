@@ -21,6 +21,10 @@
   <meta name="twitter:title" content="ChocoDoDo — Handcrafted chocolates and bakery treats" />
   <meta name="twitter:description" content="Stuffed chocolate, biscuits, donuts, macarons, and seasonal boxes — handmade fresh and delivered across Egypt." />
   <meta name="twitter:image" content="assets/images/logo.jpg" />
+
+  <!-- Canonical -->
+  <link rel="canonical" href="/" />
+
   <title>ChocoDoDo</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,6 +33,41 @@
   <link rel="icon" type="image/png" href="assets/images/logo.jpg" />
   <script src="assets/themes.js"></script>
   <script src="assets/i18n.js"></script>
+
+  <!-- Structured data: Organization + LocalBusiness for Google rich results -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "#organization",
+        "name": "ChocoDoDo",
+        "url": "/",
+        "logo": "assets/images/logo.jpg",
+        "sameAs": []
+      },
+      {
+        "@type": "Bakery",
+        "@id": "#bakery",
+        "name": "ChocoDoDo",
+        "image": "assets/images/logo.jpg",
+        "description": "Handcrafted chocolates, biscuits, donuts, and bakery treats — hand-made fresh and delivered across Egypt.",
+        "priceRange": "EGP",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "EG",
+          "addressLocality": "Cairo",
+          "addressRegion": "Cairo Governorate"
+        },
+        "servesCuisine": "Bakery, Chocolates, Desserts",
+        "areaServed": "Greater Cairo and Giza",
+        "currenciesAccepted": "EGP",
+        "paymentAccepted": "InstaPay, Vodafone Cash, Cash"
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
 
@@ -424,14 +463,15 @@
         <h4 data-i18n="footer.company">Company</h4>
         <a href="#about" data-i18n="footer.about">About</a>
         <a href="#contact" data-i18n="nav.contact">Contact</a>
-        <a href="#" data-i18n="footer.custom">Custom Orders</a>
+        <a id="footerCustom" href="#" data-i18n="footer.custom">Custom Orders</a>
       </div>
       <div class="footer-col">
         <h4 data-i18n="footer.help">Help</h4>
-        <a href="#" data-i18n="footer.shipping">Shipping</a>
-        <a href="#" data-i18n="footer.returns">Returns</a>
-        <a href="#" data-i18n="footer.faq">FAQ</a>
-        <a href="#" data-i18n="footer.privacy">Privacy</a>
+        <a href="pages/shipping.html" data-i18n="footer.shipping">Shipping</a>
+        <a href="pages/returns.html" data-i18n="footer.returns">Returns</a>
+        <a href="pages/faq.html" data-i18n="footer.faq">FAQ</a>
+        <a href="pages/privacy.html" data-i18n="footer.privacy">Privacy</a>
+        <a href="pages/terms.html">Terms</a>
       </div>
     </div>
     <div class="footer-bottom">
@@ -451,7 +491,7 @@
     <div class="cart-footer" id="cartFooter" style="display:none;">
       <div class="cart-total">
         <span>Total:</span>
-        <strong id="cartTotal">$0.00</strong>
+        <strong id="cartTotal">0 EGP</strong>
       </div>
       <a href="pages/checkout.html" class="btn btn-primary btn-block">Checkout</a>
     </div>

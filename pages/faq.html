@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAQ</title>
+  <meta name="description" content="Frequently asked questions about ordering, delivery, and payment with ChocoDoDo." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="policy-page">
+  <div class="container">
+    <article class="policy-card">
+      <header>
+        <span class="section-eyebrow">Frequently Asked Questions</span>
+        <h1>FAQ</h1>
+      </header>
+
+      <details open>
+        <summary><strong>How long does delivery take?</strong></summary>
+        <p>Every order is hand-made from scratch, so we need <strong>3 to 4 days</strong> from when you place the order. You pick the exact delivery day at checkout.</p>
+      </details>
+
+      <details>
+        <summary><strong>Do you deliver outside Cairo?</strong></summary>
+        <p>Currently we deliver within Greater Cairo and Giza. For other governorates, WhatsApp us — we can sometimes arrange courier delivery for larger orders.</p>
+      </details>
+
+      <details>
+        <summary><strong>How much is delivery?</strong></summary>
+        <p>30 EGP flat fee within our standard delivery zones. Outlying areas may cost more — you'll see the exact total before you pay.</p>
+      </details>
+
+      <details>
+        <summary><strong>What payment methods do you accept?</strong></summary>
+        <p>InstaPay (any Egyptian bank), Vodafone Cash, or Cash on Delivery. A 50% deposit is required to confirm your order; the rest is paid on delivery.</p>
+      </details>
+
+      <details>
+        <summary><strong>Can I order for a specific time / occasion?</strong></summary>
+        <p>Yes! At checkout you pick a delivery slot. For weddings, engagements, or large events, WhatsApp us first so we can coordinate.</p>
+      </details>
+
+      <details>
+        <summary><strong>Are your products nut-free / gluten-free?</strong></summary>
+        <p>We have nut-free and lower-sugar options on the menu, but the kitchen handles all of them, so we can't guarantee a 100% allergen-free environment. If you have a serious allergy, please WhatsApp us before ordering.</p>
+      </details>
+
+      <details>
+        <summary><strong>How do I track my order?</strong></summary>
+        <p>You'll get a tracking link by email and Telegram (if you have a customer Telegram). You can also check <a href="track.html">the tracking page</a> with your order ID anytime.</p>
+      </details>
+
+      <details>
+        <summary><strong>Can I cancel or modify my order?</strong></summary>
+        <p>Yes — see the <a href="returns.html">Returns &amp; Refunds policy</a> for the exact rules. The earlier you tell us, the more we can refund.</p>
+      </details>
+
+      <details>
+        <summary><strong>Do you do custom designs / printed photos / corporate gifts?</strong></summary>
+        <p>Yes — message us on WhatsApp with what you have in mind. Custom orders typically need 5–7 days lead time.</p>
+      </details>
+
+      <details>
+        <summary><strong>I didn't get an email after signing up. What now?</strong></summary>
+        <p>Check your spam folder first — Gmail often files brand-new senders there. If it's not there either, request a new verification email from <a href="verify-account.html">your verification page</a>.</p>
+      </details>
+
+      <p style="margin-top:32px;">Question not answered here? <a id="faqWa" href="#">WhatsApp us</a> — we typically reply within minutes during business hours.</p>
+    </article>
+  </div>
+</main>
+
+<script>
+  fetch('/api/config-public').then(r => r.ok ? r.json() : null).then(c => {
+    if (c?.whatsapp_number) {
+      const a = document.getElementById('faqWa');
+      if (a) a.href = 'https://wa.me/' + c.whatsapp_number;
+    }
+  }).catch(() => {});
+</script>
+</body>
+</html>

@@ -438,7 +438,7 @@ button { font-family: inherit; cursor: pointer; border: none; background: none; 
   padding: 14px 28px;
   border-radius: 999px;
   font-weight: 700;
-  font-size: 15px;
+  font-size: 16px;
   transition: all 0.3s var(--bounce);
   cursor: pointer;
   position: relative;
@@ -1154,7 +1154,7 @@ section {
   background: rgba(255, 255, 255, 0.95);
   color: var(--choc-deep);
   font-family: inherit;
-  font-size: 15px;
+  font-size: 16px;
   outline: none;
   transition: all 0.3s var(--ease);
 }
@@ -1279,7 +1279,7 @@ section {
   border-radius: var(--radius-sm);
   background: var(--cream);
   font-family: inherit;
-  font-size: 15px;
+  font-size: 16px;
   color: var(--choc-deep);
   outline: none;
   transition: all 0.3s var(--ease);
@@ -1613,7 +1613,7 @@ section {
   border-radius: var(--radius-sm);
   background: var(--cream);
   font-family: inherit;
-  font-size: 15px;
+  font-size: 16px;
   outline: none;
   transition: all 0.3s var(--ease);
 }
@@ -1625,20 +1625,34 @@ section {
 }
 .payment-options {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 12px;
 }
 .payment-option {
-  padding: 16px;
+  padding: 14px 12px;
   border: 2px solid var(--cream-2);
   border-radius: var(--radius-sm);
-  background: var(--cream);
-  text-align: center;
+  background: #fff;
   cursor: pointer;
-  transition: all 0.3s var(--bounce);
-  font-size: 14px;
+  display: flex; flex-direction: column; align-items: center; gap: 8px;
+  text-align: center;
+  font-family: inherit;
   font-weight: 600;
   color: var(--choc-deep);
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+  min-height: 110px;
+}
+.payment-option .pay-logo {
+  width: 100%;
+  max-width: 160px;
+  height: 56px;
+  object-fit: contain;
+  display: block;
+}
+.payment-option .pay-label {
+  font-size: 13px;
+  color: var(--choc);
+  letter-spacing: 0.2px;
 }
 .payment-option:hover {
   border-color: var(--pink);
@@ -1647,8 +1661,75 @@ section {
 .payment-option.selected {
   border-color: var(--berry);
   background: var(--pink-soft);
+  box-shadow: 0 8px 24px rgba(194,24,91,0.18);
 }
-.payment-option .pay-emoji { font-size: 2rem; display: block; margin-bottom: 6px; }
+
+/* ============================================
+   PAYMENT NOTICES (instructions after selecting a method)
+   ============================================ */
+.pay-notice {
+  margin-top: 14px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid var(--cream-2);
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(62, 39, 35, 0.06);
+}
+.pay-notice-instapay { border-left: 6px solid #E50046; background: linear-gradient(180deg, #FFF7F2, #fff); }
+.pay-notice-vcash    { border-left: 6px solid #E60000; background: linear-gradient(180deg, #FFF1F3, #fff); }
+.pay-notice-cod      { border-left: 6px solid #2E7D32; background: linear-gradient(180deg, #F1F8E9, #fff); }
+.pay-notice-head {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 10px;
+}
+.pay-notice-head .pay-notice-logo {
+  height: 32px; width: auto; max-width: 100px;
+  display: block;
+}
+.pay-notice-head strong {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 16px;
+  color: var(--choc-deep);
+}
+.pay-steps {
+  margin: 0; padding-inline-start: 22px;
+  display: flex; flex-direction: column; gap: 10px;
+  font-size: 14px;
+  color: var(--choc);
+  line-height: 1.55;
+}
+.pay-steps li::marker { color: var(--berry); font-weight: 700; }
+.pay-copyrow {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 4px; flex-wrap: wrap;
+}
+.pay-copyval {
+  font-family: 'Fredoka', 'Courier New', monospace;
+  font-size: 16px;
+  font-weight: 700;
+  background: #fff;
+  border: 1px dashed var(--berry);
+  padding: 4px 10px;
+  border-radius: 8px;
+  color: var(--choc-deep);
+  user-select: all;
+  word-break: break-all;
+}
+.pay-copybtn {
+  background: var(--choc-deep);
+  color: var(--cream);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  transition: background 0.15s ease, transform 0.1s ease;
+}
+.pay-copybtn:hover { background: var(--berry); }
+.pay-copybtn:active { transform: scale(0.95); }
+.pay-copybtn.copied { background: #2E7D32; }
 
 .summary-panel {
   background: white;
@@ -1771,6 +1852,75 @@ section {
 .mt-4 { margin-top: 32px; }
 .mb-4 { margin-bottom: 32px; }
 .hidden { display: none !important; }
+
+/* ============================================
+   POLICY PAGES (Privacy, Terms, Returns, FAQ, Shipping)
+   ============================================ */
+.policy-page {
+  padding: 110px 0 80px;
+  background: var(--cream);
+  min-height: 70vh;
+}
+.policy-card {
+  max-width: 760px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 24px;
+  padding: 48px 56px;
+  box-shadow: 0 6px 32px rgba(62,39,35,0.08);
+  line-height: 1.7;
+  color: var(--choc-deep);
+}
+.policy-card header { margin-bottom: 32px; }
+.policy-card h1 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 2.4rem;
+  color: var(--choc-deep);
+  margin: 8px 0 4px;
+}
+.policy-card h2 {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.3rem;
+  color: var(--berry);
+  margin: 32px 0 12px;
+  border-bottom: 2px dashed var(--cream-2);
+  padding-bottom: 6px;
+}
+.policy-card p, .policy-card li { color: var(--choc); }
+.policy-card ul, .policy-card ol { padding-inline-start: 22px; margin: 12px 0; }
+.policy-card ul li, .policy-card ol li { margin-bottom: 8px; }
+.policy-card code {
+  background: var(--cream); padding: 2px 8px; border-radius: 6px;
+  font-family: 'Courier New', monospace; font-size: 14px;
+}
+.policy-card a { color: var(--berry); font-weight: 600; }
+.policy-card a:hover { text-decoration: underline; }
+.policy-card details {
+  background: var(--cream); border-radius: 12px;
+  padding: 14px 18px; margin-bottom: 10px;
+  border: 1px solid var(--cream-2);
+}
+.policy-card details[open] { background: #fff; border-color: var(--pink); }
+.policy-card details summary { cursor: pointer; padding: 4px 0; }
+.policy-card details summary strong { font-family: 'Fredoka', sans-serif; }
+.policy-card details p, .policy-card details ul { margin-top: 12px; }
+.policy-table {
+  width: 100%; border-collapse: collapse; margin: 16px 0;
+  font-size: 14px;
+}
+.policy-table th, .policy-table td {
+  padding: 10px 14px; text-align: left;
+  border-bottom: 1px solid var(--cream-2);
+}
+.policy-table thead th {
+  background: var(--cream); color: var(--choc-deep);
+  font-family: 'Fredoka', sans-serif; font-weight: 600;
+}
+.policy-table td:last-child { font-weight: 700; color: var(--berry); }
+@media (max-width: 720px) {
+  .policy-card { padding: 28px 22px; border-radius: 16px; }
+  .policy-card h1 { font-size: 1.8rem; }
+}
 
 /* ============================================
    ACCESSIBILITY (a11y) — universal rules
@@ -3994,7 +4144,7 @@ html.theme-summer {
   flex: 1;
   padding: 12px 14px;
   font-family: inherit;
-  font-size: 15px;
+  font-size: 16px;
   border: none;
   outline: none;
   background: transparent;

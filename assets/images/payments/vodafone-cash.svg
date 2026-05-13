@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-label="Vodafone Cash">
+  <rect x="2" y="2" width="196" height="76" rx="14" fill="#E60000"/>
+  <!-- Vodafone-style speech mark -->
+  <g transform="translate(20 14)">
+    <circle cx="26" cy="26" r="24" fill="#fff"/>
+    <path d="M26 12 C18 12 12 18 12 26 C12 32 16 37 22 39 C22 39 18 33 18 27 C18 22 22 17 28 17 C32 17 34 19 34 19 C34 19 32 14 26 12 Z" fill="#E60000"/>
+  </g>
+  <text x="78" y="38" font-family="'Fredoka','Segoe UI',sans-serif" font-size="20" font-weight="700" fill="#fff">Vodafone</text>
+  <text x="78" y="60" font-family="'Fredoka','Segoe UI',sans-serif" font-size="22" font-weight="700" fill="#fff" letter-spacing="0.5">Cash</text>
+</svg>

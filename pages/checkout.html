@@ -188,40 +188,75 @@
               <h3 data-i18n="checkout.method">Payment Method</h3>
             </div>
             <div class="payment-options">
-              <div class="payment-option" data-method="instapay">
-                <span class="pay-emoji">🏦</span>
-                <span data-i18n="checkout.method.instapay">InstaPay</span>
-              </div>
-              <div class="payment-option" data-method="vcash">
-                <span class="pay-emoji">📱</span>
-                <span data-i18n="checkout.method.vcash">Vodafone Cash</span>
-              </div>
-              <div class="payment-option" data-method="cod">
-                <span class="pay-emoji">💵</span>
-                <span data-i18n="checkout.method.cod">Cash on Delivery</span>
-              </div>
+              <button type="button" class="payment-option" data-method="instapay" aria-pressed="false">
+                <img src="../assets/images/payments/instapay.svg" alt="InstaPay" class="pay-logo" />
+                <span class="pay-label" data-i18n="checkout.method.instapay">InstaPay</span>
+              </button>
+              <button type="button" class="payment-option" data-method="vcash" aria-pressed="false">
+                <img src="../assets/images/payments/vodafone-cash.svg" alt="Vodafone Cash" class="pay-logo" />
+                <span class="pay-label" data-i18n="checkout.method.vcash">Vodafone Cash</span>
+              </button>
+              <button type="button" class="payment-option" data-method="cod" aria-pressed="false">
+                <img src="../assets/images/payments/cod.svg" alt="Cash on Delivery" class="pay-logo" />
+                <span class="pay-label" data-i18n="checkout.method.cod">Cash on Delivery</span>
+              </button>
             </div>
             <input type="hidden" id="paymentMethod" value="instapay" />
 
-            <div id="instapayNotice" class="muted" style="display:none; font-size:13px; margin-top:12px; padding:14px; background:#E3F2FD; border-radius:10px; border-left:4px solid #1565C0;">
-              <strong style="color:#0D47A1;">🏦 InstaPay instructions</strong>
-              <p style="margin:6px 0;">After placing your order, transfer the deposit via InstaPay to:</p>
-              <p style="font-family:'Fredoka',sans-serif;font-size:1.1rem;color:#0D47A1;margin:4px 0;">
-                <strong id="instapayHandle">@chocododo</strong> · phone <strong id="instapayPhone">+20 1XX XXX XXXX</strong>
-              </p>
-              <p style="margin:6px 0;">Include your <strong>order ID</strong> in the transfer note. We'll confirm within 30 minutes.</p>
+            <div id="instapayNotice" class="pay-notice pay-notice-instapay hidden" role="region" aria-label="InstaPay payment instructions">
+              <div class="pay-notice-head">
+                <img src="../assets/images/payments/instapay.svg" alt="" class="pay-notice-logo" />
+                <strong>How to pay with InstaPay</strong>
+              </div>
+              <ol class="pay-steps">
+                <li>Open your bank app → InstaPay section.</li>
+                <li>
+                  Send the deposit to this handle:
+                  <span class="pay-copyrow">
+                    <span class="pay-copyval" id="instapayHandle">—</span>
+                    <button type="button" class="pay-copybtn" data-copy="#instapayHandle" aria-label="Copy InstaPay handle">📋 Copy</button>
+                  </span>
+                </li>
+                <li>
+                  Or send to this phone number:
+                  <span class="pay-copyrow">
+                    <span class="pay-copyval" id="instapayPhone">—</span>
+                    <button type="button" class="pay-copybtn" data-copy="#instapayPhone" aria-label="Copy phone number">📋 Copy</button>
+                  </span>
+                </li>
+                <li>
+                  Put your <strong>order ID</strong> in the transfer note. (You'll see it on the confirmation page.)
+                </li>
+                <li>Done — we confirm within 30 minutes on Telegram/WhatsApp.</li>
+              </ol>
             </div>
 
-            <div id="vcashNotice" class="muted" style="display:none; font-size:13px; margin-top:12px; padding:14px; background:#FFE0E6; border-radius:10px; border-left:4px solid #C2185B;">
-              <strong style="color:var(--berry);">📱 Vodafone Cash instructions</strong>
-              <p style="margin:6px 0;">After placing your order, send the deposit amount to:</p>
-              <p style="font-family:'Fredoka',sans-serif;font-size:1.1rem;color:var(--berry);margin:4px 0;"><strong id="vcashNumber">+20 1XX XXX XXXX</strong></p>
-              <p style="margin:6px 0;">Include your <strong>order ID</strong> in the message. We'll confirm within 30 minutes.</p>
+            <div id="vcashNotice" class="pay-notice pay-notice-vcash hidden" role="region" aria-label="Vodafone Cash payment instructions">
+              <div class="pay-notice-head">
+                <img src="../assets/images/payments/vodafone-cash.svg" alt="" class="pay-notice-logo" />
+                <strong>How to pay with Vodafone Cash</strong>
+              </div>
+              <ol class="pay-steps">
+                <li>Open the Vodafone Cash app or dial <strong>*9*</strong>.</li>
+                <li>
+                  Send the deposit to this number:
+                  <span class="pay-copyrow">
+                    <span class="pay-copyval" id="vcashNumber">—</span>
+                    <button type="button" class="pay-copybtn" data-copy="#vcashNumber" aria-label="Copy Vodafone Cash number">📋 Copy</button>
+                  </span>
+                </li>
+                <li>Put your <strong>order ID</strong> in the message field. (You'll see it on the confirmation page.)</li>
+                <li>Done — we confirm within 30 minutes on Telegram/WhatsApp.</li>
+              </ol>
             </div>
 
-            <p id="codNotice" class="muted" style="display:none; font-size:13px; margin-top:12px; padding:12px; background:var(--pink-soft); border-radius:8px;">
-              💡 With Cash on Delivery, the deposit is collected in cash on the same delivery as the rest of the order.
-            </p>
+            <div id="codNotice" class="pay-notice pay-notice-cod hidden" role="region" aria-label="Cash on Delivery information">
+              <div class="pay-notice-head">
+                <img src="../assets/images/payments/cod.svg" alt="" class="pay-notice-logo" />
+                <strong>Cash on Delivery</strong>
+              </div>
+              <p>Pay the full amount in cash to our delivery rider when your order arrives. Please have the exact amount ready if possible.</p>
+            </div>
           </div>
 
           <button type="submit" class="btn btn-primary btn-block" style="margin-top:8px;">
@@ -270,7 +305,7 @@
     <div class="cart-footer" id="cartFooter" style="display:none;">
       <div class="cart-total">
         <span>Total:</span>
-        <strong id="cartTotal">$0.00</strong>
+        <strong id="cartTotal">0 EGP</strong>
       </div>
       <a href="checkout.html" class="btn btn-primary btn-block">Checkout</a>
     </div>

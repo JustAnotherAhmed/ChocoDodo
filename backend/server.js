@@ -9,6 +9,7 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const path = require('path');
+const rateLimit = require('express-rate-limit');
 
 const dbApi = require('./lib/db');
 const productApi = require('./lib/products');
@@ -54,6 +55,56 @@ app.use(cors({
 app.use(express.json({ limit: '64kb' }));
 app.use(cookieParser());
 app.use(auth.attachBoth);  // attaches req.customer + req.staff (separate domains)
+
+// ---------- SEO: dynamic sitemap + robots ----------
+// Sitemap is generated at request time using FRONTEND_URL, so once you switch
+// domains in Railway env, the sitemap auto-updates. Search engines see only
+// public, indexable pages — never the staff/admin endpoints.
+app.get('/sitemap.xml', (req, res) => {
+  const base = (process.env.FRONTEND_URL || `https://${req.headers.host}`).replace(/\/$/, '');
+  const pages = [
+    { path: '/',                       changefreq: 'weekly',  priority: '1.0' },
+    { path: '/menu.html',              changefreq: 'weekly',  priority: '0.9' },
+    { path: '/pages/track.html',       changefreq: 'monthly', priority: '0.6' },
+    { path: '/pages/login.html',       changefreq: 'yearly',  priority: '0.3' },
+    { path: '/pages/signup.html',      changefreq: 'yearly',  priority: '0.3' },
+    { path: '/pages/privacy.html',     changefreq: 'yearly',  priority: '0.2' },
+    { path: '/pages/terms.html',       changefreq: 'yearly',  priority: '0.2' },
+    { path: '/pages/returns.html',     changefreq: 'yearly',  priority: '0.2' },
+    { path: '/pages/faq.html',         changefreq: 'monthly', priority: '0.3' },
+    { path: '/pages/shipping.html',    changefreq: 'yearly',  priority: '0.2' },
+  ];
+  const today = new Date().toISOString().slice(0, 10);
+  const urls = pages.map(p =>
+    `  <url>\n    <loc>${base}${p.path}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${p.changefreq}</changefreq>\n    <priority>${p.priority}</priority>\n  </url>`
+  ).join('\n');
+  res.set('Content-Type', 'application/xml; charset=utf-8');
+  res.send(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>`);
+});
+
+app.get('/robots.txt', (req, res) => {
+  const base = (process.env.FRONTEND_URL || `https://${req.headers.host}`).replace(/\/$/, '');
+  res.set('Content-Type', 'text/plain; charset=utf-8');
+  res.send([
+    'User-agent: *',
+    'Allow: /',
+    'Disallow: /api/',
+    'Disallow: /pages/admin.html',
+    'Disallow: /pages/staff-login.html',
+    'Disallow: /pages/staff-accept-invite.html',
+    'Disallow: /pages/staff-forgot-password.html',
+    'Disallow: /pages/staff-reset-password.html',
+    'Disallow: /pages/account.html',
+    'Disallow: /pages/checkout.html',
+    'Disallow: /pages/confirmation.html',
+    'Disallow: /pages/verify-account.html',
+    'Disallow: /pages/verify-email.html',
+    'Disallow: /pages/reset-password.html',
+    'Disallow: /pages/forgot-password.html',
+    '',
+    `Sitemap: ${base}/sitemap.xml`,
+  ].join('\n'));
+});
 
 // ---------- Health ----------
 app.get('/api/health', (req, res) => {
@@ -121,7 +172,17 @@ function isEgPhone(s) {
   return /^(\+?20|0)?1[0125]\d{8}$/.test(cleaned);
 }
 
-app.post('/api/checkout', async (req, res) => {
+// Rate-limit order placement to deter spammy POSTs that would fill the orders
+// table and flood Telegram. 10 orders / 5 min / IP is generous for real customers
+// (most place one order at a time) and tight against scripts.
+const checkoutLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 10,
+  standardHeaders: true, legacyHeaders: false,
+  message: { error: 'Too many checkout attempts from this connection. Please wait a few minutes and try again.' },
+});
+
+app.post('/api/checkout', checkoutLimiter, async (req, res) => {
   try {
     const { items, customer, payment_method, payment_mode, delivery_slot_id } = req.body || {};
     if (!customer?.name || !customer?.email) {

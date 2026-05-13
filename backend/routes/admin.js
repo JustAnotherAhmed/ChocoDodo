@@ -165,6 +165,49 @@ router.get('/orders', (req, res) => {
   res.json({ orders });
 });
 
+// GET /api/admin/orders.csv  — bookkeeping export
+router.get('/orders.csv', (req, res) => {
+  const limit = Math.min(10000, Number(req.query.limit) || 5000);
+  const orders = dbApi.listOrders(limit);
+  const esc = (v) => {
+    if (v === null || v === undefined) return '';
+    const s = String(v).replace(/"/g, '""');
+    return /[",\n\r]/.test(s) ? `"${s}"` : s;
+  };
+  const headers = [
+    'order_id','created_at','status','tracking_status','payment_method','payment_mode',
+    'customer_name','customer_email','customer_phone','address','notes',
+    'subtotal_egp','delivery_egp','tax_egp','total_egp','deposit_egp','remaining_egp','currency',
+    'items_summary',
+  ];
+  const lines = [headers.join(',')];
+  for (const o of orders) {
+    let itemsSummary = '';
+    try {
+      const items = JSON.parse(o.items_json || '[]');
+      itemsSummary = items.map(i => `${i.name || i.id} x${i.qty}`).join(' | ');
+    } catch {}
+    lines.push([
+      esc(o.id), esc(o.created_at), esc(o.status), esc(o.tracking_status),
+      esc(o.payment_method), esc(o.payment_mode),
+      esc(o.customer_name), esc(o.customer_email), esc(o.customer_phone),
+      esc(o.address), esc(o.notes),
+      esc((o.subtotal_cents || 0) / 100),
+      esc((o.delivery_cents || 0) / 100),
+      esc((o.tax_cents || 0) / 100),
+      esc((o.total_cents || 0) / 100),
+      esc((o.deposit_cents || 0) / 100),
+      esc((o.remaining_cents || 0) / 100),
+      esc(o.currency),
+      esc(itemsSummary),
+    ].join(','));
+  }
+  const filename = `chocododo-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+  res.set('Content-Type', 'text/csv; charset=utf-8');
+  res.set('Content-Disposition', `attachment; filename="${filename}"`);
+  res.send('﻿' + lines.join('\n'));  // BOM so Excel reads UTF-8 correctly
+});
+
 // PATCH /api/admin/orders/:id/status
 router.patch('/orders/:id/status', (req, res) => {
   const { status } = req.body || {};

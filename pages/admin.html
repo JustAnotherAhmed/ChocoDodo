@@ -91,7 +91,13 @@
 
     <!-- ORDERS -->
     <div class="admin-section" data-section="orders">
-      <h1>Orders</h1>
+      <div class="admin-section-head">
+        <h1>Orders</h1>
+        <a href="/api/admin/orders.csv" class="btn btn-ghost" download
+           title="Download all orders as a CSV file (for Excel or your bookkeeper)">
+          📥 Export CSV
+        </a>
+      </div>
       <div id="ordersTable" class="admin-table-wrap"><p>Loading…</p></div>
     </div>
 

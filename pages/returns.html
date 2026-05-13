@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Returns &amp; Refunds</title>
+  <meta name="description" content="ChocoDoDo's returns and refunds policy for hand-made bakery orders." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link">Home</a></li>
+      <li><a href="../menu.html" class="nav-link">Menu</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main id="main" class="policy-page">
+  <div class="container">
+    <article class="policy-card">
+      <header>
+        <span class="section-eyebrow">Returns &amp; Refunds</span>
+        <h1>Returns &amp; Refunds Policy</h1>
+        <p class="muted">Last updated: 11 May 2026</p>
+      </header>
+
+      <p>We hand-make every order from scratch with no shelf stock. That makes returns work a little differently from a typical online shop.</p>
+
+      <h2>Problem with your order on arrival?</h2>
+      <p>If your order arrives damaged, wrong, or genuinely unsatisfactory in quality (e.g., burnt, broken, missing items), <strong>tell us within 2 hours of delivery</strong> via WhatsApp with a photo. We'll either:</p>
+      <ul>
+        <li><strong>Replace</strong> the affected items on our next delivery run, or</li>
+        <li><strong>Refund</strong> the affected items by the same payment method (InstaPay/Vodafone Cash transfer back to you, or deduction from your next order).</li>
+      </ul>
+
+      <h2>Cancellations before delivery</h2>
+      <table class="policy-table">
+        <thead><tr><th>When you cancel</th><th>Refund</th></tr></thead>
+        <tbody>
+          <tr><td>Same day you placed the order (before we start baking)</td><td>100% of deposit refunded</td></tr>
+          <tr><td>1–2 days before delivery (mid-prep)</td><td>50% of deposit refunded</td></tr>
+          <tr><td>Day of delivery (already baked / out for delivery)</td><td>No refund</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Custom orders</h2>
+      <p>Custom designs, personalised messages, or bespoke flavors are <strong>non-refundable</strong> once we've started preparation, because we can't resell them.</p>
+
+      <h2>What's not refundable</h2>
+      <ul>
+        <li>"Changed my mind" after the kitchen has started baking.</li>
+        <li>Personal taste preferences (e.g., "less sweet than I expected"). We can swap flavors on your next order — just tell us.</li>
+        <li>Failed delivery because you weren't reachable on the phone number provided.</li>
+      </ul>
+
+      <h2>How to request a refund or replacement</h2>
+      <ol>
+        <li>WhatsApp <a id="returnsWa" href="#">our customer service number</a> within 2 hours of delivery (or as soon as you cancel).</li>
+        <li>Include your <strong>order ID</strong> and a photo if the issue is visible.</li>
+        <li>We'll reply within 2 business hours and resolve within 3 business days.</li>
+      </ol>
+    </article>
+  </div>
+</main>
+
+<script>
+  fetch('/api/config-public').then(r => r.ok ? r.json() : null).then(c => {
+    if (c?.whatsapp_number) {
+      const a = document.getElementById('returnsWa');
+      if (a) a.href = 'https://wa.me/' + c.whatsapp_number;
+    }
+  }).catch(() => {});
+</script>
+</body>
+</html>

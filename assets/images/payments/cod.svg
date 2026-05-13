@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 80" role="img" aria-label="Cash on Delivery">
+  <defs>
+    <linearGradient id="codG" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2E7D32"/>
+      <stop offset="1" stop-color="#1B5E20"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="196" height="76" rx="14" fill="url(#codG)"/>
+  <g transform="translate(18 18)" fill="#fff">
+    <rect x="0" y="6" width="44" height="32" rx="6" fill="#fff"/>
+    <circle cx="22" cy="22" r="9" fill="none" stroke="#2E7D32" stroke-width="3"/>
+    <text x="22" y="26" font-family="'Fredoka','Segoe UI',sans-serif" font-size="13" font-weight="700" fill="#2E7D32" text-anchor="middle">EGP</text>
+  </g>
+  <text x="76" y="38" font-family="'Fredoka','Segoe UI',sans-serif" font-size="18" font-weight="700" fill="#fff">Cash on</text>
+  <text x="76" y="60" font-family="'Fredoka','Segoe UI',sans-serif" font-size="22" font-weight="700" fill="#fff">Delivery</text>
+</svg>

@@ -518,8 +518,33 @@ function renderOrders(orders) {
           ${!cancelled
             ? `<a href="track.html?id=${encodeURIComponent(o.id)}" class="btn btn-ghost" style="padding:6px 14px;font-size:13px;">📦 Track</a>`
             : ''}
+          <button type="button" class="btn btn-primary reorder-btn"
+                  data-reorder='${JSON.stringify(o.items).replace(/'/g, "&#39;")}'
+                  style="padding:6px 14px;font-size:13px;">
+            🔁 Order again
+          </button>
         </div>
       </div>
     `;
   }).join('');
+
+  // Wire up the "Order again" buttons
+  document.querySelectorAll('.reorder-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      try {
+        const items = JSON.parse(btn.dataset.reorder.replace(/&#39;/g, "'"));
+        // Build cart entries in the same shape script.js expects: {id, qty, options}
+        const cart = items.map(it => ({
+          id: it.id,
+          qty: it.qty || 1,
+          options: it.options || {},
+        }));
+        localStorage.setItem('chocododo_cart', JSON.stringify(cart));
+        toast('🛒 Items added to cart — heading to checkout…');
+        setTimeout(() => { location.href = 'checkout.html'; }, 700);
+      } catch (e) {
+        toast('Could not reorder. Browse the menu and add items again.');
+      }
+    });
+  });
 }
