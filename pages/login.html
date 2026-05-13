@@ -46,6 +46,18 @@
         <span>Password</span>
         <input id="li_password" type="password" required autocomplete="current-password" />
       </label>
+
+      <!-- Revealed only when the account has 2FA enabled. JS toggles .hidden. -->
+      <div id="li_totp_wrap" class="form-field hidden">
+        <label for="li_totp">
+          <span>🛡️ Two-factor code</span>
+          <input id="li_totp" type="text" inputmode="numeric" maxlength="6"
+                 pattern="[0-9]{6}" autocomplete="one-time-code"
+                 placeholder="6-digit code" />
+        </label>
+        <small class="form-hint">From your authenticator app (Google Authenticator, Authy, 1Password, etc.).</small>
+      </div>
+
       <div class="auth-error" id="li_error" role="alert" aria-live="polite"></div>
       <button type="submit" class="btn btn-primary btn-block">
         <span>Sign In</span>

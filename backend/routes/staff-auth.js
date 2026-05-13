@@ -21,6 +21,21 @@ function isValidEmail(s) {
   return typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
 }
 
+// Account-lockout knobs (mirror /api/auth so both auth surfaces behave alike).
+const LOCKOUT_THRESHOLD = 5;
+const LOCKOUT_MINUTES = 30;
+function lockedUntilIso() {
+  return new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000).toISOString();
+}
+function isStillLocked(row) {
+  if (!row?.locked_until) return false;
+  return new Date(row.locked_until).getTime() > Date.now();
+}
+function minutesRemaining(row) {
+  if (!row?.locked_until) return 0;
+  return Math.max(1, Math.ceil((new Date(row.locked_until).getTime() - Date.now()) / 60000));
+}
+
 // POST /api/staff/login
 router.post('/login', loginLimiter, async (req, res) => {
   try {
@@ -28,11 +43,34 @@ router.post('/login', loginLimiter, async (req, res) => {
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
     const s = dbApi.getStaffByEmail(email);
+
+    // Refuse early if the account is locked. Don't reveal whether the email exists.
+    if (s && isStillLocked(s)) {
+      const mins = minutesRemaining(s);
+      return res.status(423).json({
+        error: `Account temporarily locked due to too many failed attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`,
+        locked: true,
+        retry_after_minutes: mins,
+      });
+    }
+
     const okHash = s ? s.password_hash : '$2a$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalid';
     const valid = await auth.verifyPassword(password, okHash);
-    if (!s || !valid) return res.status(401).json({ error: 'Invalid email or password' });
+
+    if (!s || !valid) {
+      if (s) {
+        dbApi.bumpStaffFailedLogin(s.id);
+        const fresh = dbApi.getStaffByIdFull(s.id);
+        if ((fresh.failed_login_count || 0) >= LOCKOUT_THRESHOLD) {
+          dbApi.setStaffLocked(s.id, lockedUntilIso());
+        }
+      }
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
     if (!s.invite_accepted) return res.status(401).json({ error: 'Please accept your invite first (check your inbox)' });
 
+    dbApi.resetStaffLockout(s.id);
     const token = auth.signStaffSession(s);
     auth.setStaffCookie(res, token);
     dbApi.touchStaffLogin(s.id);

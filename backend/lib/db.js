@@ -216,6 +216,22 @@ ensureColumn('orders', 'points_earned',   'INTEGER', '0');
 ensureColumn('orders', 'delivery_date',   'TEXT');
 ensureColumn('orders', 'delivery_window', 'TEXT');
 
+// ====================================================================
+// 2FA + account lockout columns
+// ====================================================================
+// Customers: TOTP-based 2FA (Google Authenticator / Authy / 1Password compatible).
+// totp_secret stores the base32 secret; totp_enabled is 1 only after the user
+// confirmed their first code (otherwise it's just provisional).
+ensureColumn('customers', 'totp_secret',         'TEXT');
+ensureColumn('customers', 'totp_enabled',        'INTEGER', '0');
+// Account lockout: brute-force protection on top of per-IP rate limits.
+ensureColumn('customers', 'failed_login_count',  'INTEGER', '0');
+ensureColumn('customers', 'locked_until',        'TEXT');
+// Staff: lockout only (admins should always be reachable; 2FA on staff is
+// a separate decision worth making explicitly later).
+ensureColumn('staff',     'failed_login_count',  'INTEGER', '0');
+ensureColumn('staff',     'locked_until',        'TEXT');
+
 // One-time migration: copy from users → customers / staff if any rows exist there
 (function migrateUsersToSplitTables() {
   const userRows = db.prepare(`SELECT * FROM users`).all();
@@ -476,6 +492,14 @@ const custStmts = {
   getByResetToken:   db.prepare(`SELECT * FROM customers WHERE reset_token = ?`),
   delete:            db.prepare(`DELETE FROM customers WHERE id = ?`),
   addPoints:         db.prepare(`UPDATE customers SET points = points + ? WHERE id = ?`),
+  // 2FA
+  setTotpSecret:     db.prepare(`UPDATE customers SET totp_secret = ?, totp_enabled = 0 WHERE id = ?`),
+  enableTotp:        db.prepare(`UPDATE customers SET totp_enabled = 1 WHERE id = ?`),
+  disableTotp:       db.prepare(`UPDATE customers SET totp_secret = NULL, totp_enabled = 0 WHERE id = ?`),
+  // Lockout
+  bumpFailedLogin:   db.prepare(`UPDATE customers SET failed_login_count = COALESCE(failed_login_count, 0) + 1 WHERE id = ?`),
+  setLocked:         db.prepare(`UPDATE customers SET locked_until = ? WHERE id = ?`),
+  resetLockout:      db.prepare(`UPDATE customers SET failed_login_count = 0, locked_until = NULL WHERE id = ?`),
 };
 
 // ---------- STAFF ----------
@@ -499,6 +523,10 @@ const staffStmts = {
   setResetToken:     db.prepare(`UPDATE staff SET reset_token = ?, reset_token_expires_at = ? WHERE id = ?`),
   getByResetToken:   db.prepare(`SELECT * FROM staff WHERE reset_token = ?`),
   delete:            db.prepare(`DELETE FROM staff WHERE id = ?`),
+  // Lockout (no 2FA on staff yet — separate decision)
+  bumpFailedLogin:   db.prepare(`UPDATE staff SET failed_login_count = COALESCE(failed_login_count, 0) + 1 WHERE id = ?`),
+  setLocked:         db.prepare(`UPDATE staff SET locked_until = ? WHERE id = ?`),
+  resetLockout:      db.prepare(`UPDATE staff SET failed_login_count = 0, locked_until = NULL WHERE id = ?`),
 };
 
 // ---------- REVIEWS ----------
@@ -615,6 +643,13 @@ module.exports = {
   getCustomerByResetToken:  (t) => custStmts.getByResetToken.get(t),
   deleteCustomer:           (id) => custStmts.delete.run(id),
   addCustomerPoints:        (id, n) => custStmts.addPoints.run(n, id),
+  // 2FA + lockout
+  setCustomerTotpSecret:    (id, secret) => custStmts.setTotpSecret.run(secret, id),
+  enableCustomerTotp:       (id) => custStmts.enableTotp.run(id),
+  disableCustomerTotp:      (id) => custStmts.disableTotp.run(id),
+  bumpCustomerFailedLogin:  (id) => custStmts.bumpFailedLogin.run(id),
+  setCustomerLocked:        (id, until) => custStmts.setLocked.run(until, id),
+  resetCustomerLockout:     (id) => custStmts.resetLockout.run(id),
 
   // ----- staff (separate auth domain) -----
   insertStaff:              (s) => staffStmts.insert.run(s),
@@ -633,6 +668,10 @@ module.exports = {
   setStaffResetToken:       (id, t, exp) => staffStmts.setResetToken.run(t, exp, id),
   getStaffByResetToken:     (t) => staffStmts.getByResetToken.get(t),
   deleteStaff:              (id) => staffStmts.delete.run(id),
+  // Lockout
+  bumpStaffFailedLogin:     (id) => staffStmts.bumpFailedLogin.run(id),
+  setStaffLocked:           (id, until) => staffStmts.setLocked.run(until, id),
+  resetStaffLockout:        (id) => staffStmts.resetLockout.run(id),
 
   // ----- reviews -----
   insertReview:             (r) => reviewStmts.insert.run(r),

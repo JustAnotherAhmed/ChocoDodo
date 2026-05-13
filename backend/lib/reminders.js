@@ -11,9 +11,13 @@
 
 const dbApi = require('./db');
 const notify = require('./notify');
+const path = require('path');
+const fs = require('fs');
+const os = require('os');
 
 const HOUR_TODAY    = 8;   // 08:00 Cairo — today's deliveries
 const HOUR_TOMORROW = 18;  // 18:00 Cairo — tomorrow's deliveries
+const HOUR_BACKUP   = 3;   // 03:00 Cairo — daily DB backup to owner's email
 const TIMEZONE = 'Africa/Cairo';
 
 let _interval = null;
@@ -122,6 +126,59 @@ async function sendDigest(label, isoDate) {
   return { sent: orders.length };
 }
 
+// ---------- Daily SQLite backup ----------
+// At 03:00 Cairo, snapshot the live DB to a temp file (SQLite online-backup API,
+// safe while the DB is being written to) and email it to EMAIL_TO_OWNER as an
+// attachment. Tiny by definition for a small bakery — well under the 25 MB
+// Gmail attachment ceiling for years of orders.
+async function sendDailyDbBackup() {
+  const ownerEmail = process.env.EMAIL_TO_OWNER;
+  if (!ownerEmail) return { skipped: 'EMAIL_TO_OWNER not set' };
+  if (!notify.isSmtpConfigured()) return { skipped: 'SMTP not configured' };
+
+  const stamp = cairoParts().iso;
+  const tmpDir = os.tmpdir();
+  const fileName = `chocododo-backup-${stamp}.db`;
+  const tmpPath = path.join(tmpDir, fileName);
+
+  // better-sqlite3 offers a safe live-backup API. It blocks no writers and
+  // gives us a consistent snapshot file.
+  try {
+    await dbApi.db.backup(tmpPath);
+  } catch (err) {
+    console.error('[backup] sqlite snapshot failed:', err.message);
+    // Fallback: dumb file copy (still works since the WAL keeps reads consistent)
+    try {
+      const livePath = dbApi.db.name;
+      fs.copyFileSync(livePath, tmpPath);
+    } catch (err2) {
+      return { error: 'backup snapshot failed: ' + err2.message };
+    }
+  }
+
+  const sizeKb = Math.round(fs.statSync(tmpPath).size / 1024);
+  try {
+    await notify.sendEmail({
+      to: ownerEmail,
+      subject: `🗄️ ChocoDoDo daily backup — ${stamp}`,
+      html: `
+        <div style="font-family:sans-serif;padding:24px;background:#FFF8E7;color:#3E2723;border-radius:14px;">
+          <h2 style="font-family:Georgia,serif;">🗄️ Daily database backup</h2>
+          <p>Attached: <code>${fileName}</code> (~${sizeKb} KB) — a complete snapshot of the live SQLite database as of ${stamp} Cairo time.</p>
+          <p style="font-size:13px;color:#6B4423;">Keep these somewhere safe. To restore, drop this file into <code>backend/data/orders.db</code> on a fresh deploy.</p>
+          <p style="font-size:12px;color:#6B4423;">— ChocoDoDo backend, automated</p>
+        </div>`,
+      attachments: [{ filename: fileName, path: tmpPath, contentType: 'application/octet-stream' }],
+    });
+    return { sent: true, sizeKb };
+  } catch (err) {
+    return { error: 'email send failed: ' + err.message };
+  } finally {
+    // Cleanup the temp snapshot
+    try { fs.unlinkSync(tmpPath); } catch {}
+  }
+}
+
 async function tick() {
   try {
     const { iso, hour } = cairoParts();
@@ -143,6 +200,15 @@ async function tick() {
         const result = await sendDigest("🌙 Tomorrow's deliveries (prep tonight)", tomorrowIso);
         dbApi.setSetting('reminders_last_tomorrow', iso);
         console.log(`[reminders] tomorrow digest sent for ${tomorrowIso}:`, result);
+      }
+    }
+
+    if (hour === HOUR_BACKUP) {
+      const last = dbApi.getSetting('backup_last_sent', null);
+      if (last !== iso) {
+        const result = await sendDailyDbBackup();
+        dbApi.setSetting('backup_last_sent', iso);
+        console.log(`[backup] daily backup ran (${iso}):`, result);
       }
     }
   } catch (err) {
@@ -171,4 +237,4 @@ async function sendNow(which = 'today') {
   return sendDigest(label, cairoDateOffset(offset));
 }
 
-module.exports = { start, stop, sendNow };
+module.exports = { start, stop, sendNow, sendDailyDbBackup };

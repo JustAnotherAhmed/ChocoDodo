@@ -85,6 +85,72 @@
         <div id="addressList"><p class="muted">Loading…</p></div>
       </section>
 
+      <!-- Two-factor authentication -->
+      <section class="account-panel">
+        <h2>🛡️ Two-factor authentication</h2>
+        <p class="muted" style="font-size:14px;margin-bottom:14px;">
+          Add a second layer of security. Each time you sign in, you'll enter a 6-digit code from an authenticator app on your phone.
+        </p>
+
+        <!-- State A: 2FA OFF — show "Enable" button -->
+        <div id="twofa_off" class="hidden">
+          <p style="margin-bottom:12px;font-size:13px;color:var(--choc);">
+            <strong>Status:</strong> ⚠️ Not enabled. Anyone with your password can sign in.
+          </p>
+          <button id="twofa_setup_btn" class="btn btn-primary">🔒 Enable 2FA</button>
+        </div>
+
+        <!-- State B: setup in progress (QR shown, awaiting first code) -->
+        <div id="twofa_setup" class="hidden">
+          <ol style="font-size:14px;line-height:1.8;padding-inline-start:22px;">
+            <li>Install <strong>Google Authenticator</strong>, <strong>Authy</strong>, or <strong>1Password</strong> on your phone (any TOTP app works).</li>
+            <li>Open the app → "Add account" → "Scan QR code" → point at this:</li>
+          </ol>
+          <div style="text-align:center;margin:18px 0;">
+            <img id="twofa_qr" alt="2FA QR code" style="width:220px;height:220px;border:2px solid var(--cream-2);border-radius:14px;background:#fff;padding:6px;" />
+            <p style="font-size:12px;color:var(--choc);margin-top:8px;">Can't scan? Type this code manually:</p>
+            <code id="twofa_secret" style="background:var(--cream);padding:4px 10px;border-radius:6px;font-size:13px;letter-spacing:2px;user-select:all;"></code>
+          </div>
+          <label class="form-field">
+            <span>Enter the 6-digit code from your app</span>
+            <input id="twofa_setup_code" type="text" inputmode="numeric" maxlength="6"
+                   pattern="[0-9]{6}" autocomplete="off" placeholder="••••••" />
+          </label>
+          <div class="auth-error" id="twofa_setup_err" role="alert" aria-live="polite"></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button id="twofa_enable_btn" class="btn btn-primary">Verify &amp; turn on</button>
+            <button id="twofa_cancel_btn" class="btn btn-ghost">Cancel</button>
+          </div>
+        </div>
+
+        <!-- State C: 2FA ON — show "Disable" -->
+        <div id="twofa_on" class="hidden">
+          <p style="margin-bottom:12px;font-size:13px;color:#2E7D32;">
+            <strong>Status:</strong> ✅ Enabled. Codes from your authenticator app are required on every sign-in.
+          </p>
+          <button id="twofa_disable_btn" class="btn btn-ghost">Disable 2FA</button>
+        </div>
+
+        <!-- State D: disable form -->
+        <div id="twofa_disable" class="hidden">
+          <p style="margin-bottom:12px;font-size:13px;">Confirm with your password or a current 6-digit code to disable 2FA:</p>
+          <label class="form-field">
+            <span>Password (or leave blank and use a code)</span>
+            <input id="twofa_disable_pw" type="password" autocomplete="current-password" />
+          </label>
+          <label class="form-field">
+            <span>Or a 6-digit code from your app</span>
+            <input id="twofa_disable_code" type="text" inputmode="numeric" maxlength="6"
+                   pattern="[0-9]{6}" autocomplete="off" placeholder="••••••" />
+          </label>
+          <div class="auth-error" id="twofa_disable_err" role="alert" aria-live="polite"></div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button id="twofa_confirm_disable_btn" class="btn btn-primary">Turn off 2FA</button>
+            <button id="twofa_cancel_disable_btn" class="btn btn-ghost">Keep it on</button>
+          </div>
+        </div>
+      </section>
+
       <!-- Password -->
       <section class="account-panel">
         <h2>Change password</h2>

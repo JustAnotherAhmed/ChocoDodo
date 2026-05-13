@@ -97,15 +97,17 @@ async function sendCallMeBotWhatsApp(message) {
   }
 }
 
-async function sendEmail({ to, subject, html }) {
+async function sendEmail({ to, subject, html, attachments }) {
   if (!smtpTransporter) {
     console.log(`📧 [email-stub] to=${to} subject="${subject}"`);
     return { ok: false, reason: 'smtp-not-configured' };
   }
   try {
     const from = process.env.EMAIL_FROM || 'ChocoDoDo <noreply@chocododo.local>';
-    await smtpTransporter.sendMail({ from, to, subject, html });
-    return { ok: true };
+    const payload = { from, to, subject, html };
+    if (Array.isArray(attachments) && attachments.length) payload.attachments = attachments;
+    const info = await smtpTransporter.sendMail(payload);
+    return { ok: true, messageId: info?.messageId };
   } catch (err) {
     return { ok: false, reason: 'smtp-error: ' + err.message };
   }

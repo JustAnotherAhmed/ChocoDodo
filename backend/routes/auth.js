@@ -6,6 +6,23 @@ const rateLimit = require('express-rate-limit');
 const dbApi = require('../lib/db');
 const auth = require('../lib/auth');
 const notify = require('../lib/notify');
+const twofactor = require('../lib/twofactor');
+
+// Account-lockout knobs. After this many wrong-password attempts in the
+// failed_login_count window, the account is locked for LOCKOUT_MINUTES.
+const LOCKOUT_THRESHOLD = 5;
+const LOCKOUT_MINUTES = 30;
+function lockedUntilIso() {
+  return new Date(Date.now() + LOCKOUT_MINUTES * 60 * 1000).toISOString();
+}
+function isStillLocked(row) {
+  if (!row?.locked_until) return false;
+  return new Date(row.locked_until).getTime() > Date.now();
+}
+function minutesRemaining(row) {
+  if (!row?.locked_until) return 0;
+  return Math.max(1, Math.ceil((new Date(row.locked_until).getTime() - Date.now()) / 60000));
+}
 
 const router = express.Router();
 
@@ -123,16 +140,67 @@ function escapeHtml(s = '') {
 }
 
 // ----- POST /api/auth/login (customer) -----
+//
+// Login is now a two-step affair when 2FA is enabled:
+//   1. First call: { email, password } → if password OK AND 2fa is on AND no
+//      totp_code provided, respond 200 with { requires_2fa: true }. NO cookie.
+//   2. Second call: { email, password, totp_code } → verify TOTP, set cookie.
+//
+// Plus account lockout: after LOCKOUT_THRESHOLD wrong-password attempts the
+// account is locked for LOCKOUT_MINUTES. Successful login resets the counter.
 router.post('/login', loginLimiter, async (req, res) => {
   try {
-    const { email, password } = req.body || {};
+    const { email, password, totp_code } = req.body || {};
     if (!email || !password) return res.status(400).json({ error: 'Email and password required' });
 
     const c = dbApi.getCustomerByEmail(email);
-    const okHash = c ? c.password_hash : '$2a$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalid';
-    const valid = await auth.verifyPassword(password, okHash);
-    if (!c || !valid) return res.status(401).json({ error: 'Invalid email or password' });
 
+    // If the account is locked, refuse before even checking the password —
+    // prevents an attacker from learning whether they got the password right.
+    if (c && isStillLocked(c)) {
+      const mins = minutesRemaining(c);
+      return res.status(423).json({
+        error: `Account temporarily locked due to too many failed attempts. Try again in ${mins} minute${mins === 1 ? '' : 's'}.`,
+        locked: true,
+        retry_after_minutes: mins,
+      });
+    }
+
+    const okHash = c ? c.password_hash : '$2a$12$invalidinvalidinvalidinvalidinvalidinvalidinvalidinvalid';
+    const validPw = await auth.verifyPassword(password, okHash);
+
+    if (!c || !validPw) {
+      // Count this against the lockout, but only if the account actually exists
+      // (we don't want to leak whether the email is registered).
+      if (c) {
+        dbApi.bumpCustomerFailedLogin(c.id);
+        const fresh = dbApi.getCustomerByIdFull(c.id);
+        if ((fresh.failed_login_count || 0) >= LOCKOUT_THRESHOLD) {
+          dbApi.setCustomerLocked(c.id, lockedUntilIso());
+        }
+      }
+      return res.status(401).json({ error: 'Invalid email or password' });
+    }
+
+    // Password is correct. Check 2FA next.
+    if (c.totp_enabled && c.totp_secret) {
+      if (!totp_code) {
+        // First leg of two-step login — frontend should now prompt for the code.
+        return res.json({ requires_2fa: true });
+      }
+      const valid2fa = twofactor.verifyToken(c.totp_secret, totp_code);
+      if (!valid2fa) {
+        dbApi.bumpCustomerFailedLogin(c.id);
+        const fresh = dbApi.getCustomerByIdFull(c.id);
+        if ((fresh.failed_login_count || 0) >= LOCKOUT_THRESHOLD) {
+          dbApi.setCustomerLocked(c.id, lockedUntilIso());
+        }
+        return res.status(401).json({ error: 'Invalid 2FA code', requires_2fa: true });
+      }
+    }
+
+    // All checks passed — clear lockout counter and sign them in.
+    dbApi.resetCustomerLockout(c.id);
     const token = auth.signCustomerSession(c);
     auth.setCustomerCookie(res, token);
     dbApi.touchCustomerLogin(c.id);
@@ -141,6 +209,7 @@ router.post('/login', loginLimiter, async (req, res) => {
         id: c.id, email: c.email, name: c.name, phone: c.phone,
         points: c.points || 0,
         email_verified: !!c.email_verified,
+        totp_enabled: !!c.totp_enabled,
         role: 'customer',
       },
     });
@@ -157,7 +226,84 @@ router.post('/logout', (req, res) => {
 
 router.get('/me', auth.attachCustomer, (req, res) => {
   if (!req.customer) return res.status(401).json({ error: 'Not signed in' });
-  res.json({ user: { ...req.customer, role: 'customer' } });
+  // Surface the 2FA-enabled flag so the account UI can show the right state
+  const full = dbApi.getCustomerByIdFull(req.customer.id);
+  res.json({
+    user: {
+      ...req.customer,
+      totp_enabled: !!full?.totp_enabled,
+      role: 'customer',
+    },
+  });
+});
+
+// ====================================================================
+// 2FA (TOTP) endpoints — Google Authenticator / Authy / 1Password compatible
+// ====================================================================
+
+// Start enrolment: generate a fresh secret and return the QR code data URI.
+// The secret is staged on the row but totp_enabled stays 0 until the user
+// confirms a code via /2fa/enable.
+router.post('/2fa/setup', auth.attachCustomer, auth.requireCustomer, async (req, res) => {
+  try {
+    const full = dbApi.getCustomerByIdFull(req.customer.id);
+    if (full.totp_enabled) {
+      return res.status(400).json({ error: '2FA is already enabled. Disable it first if you want to re-set up.' });
+    }
+    const { base32, otpauth, qrDataUri } = await twofactor.setupSecret(full.email);
+    dbApi.setCustomerTotpSecret(full.id, base32);
+    res.json({
+      ok: true,
+      // Show the user the secret in case they can't scan the QR (e.g. typing it
+      // into a password manager manually). Never persisted on the client.
+      secret: base32,
+      otpauth_url: otpauth,
+      qr_data_uri: qrDataUri,
+    });
+  } catch (err) {
+    console.error('2fa setup error:', err);
+    res.status(500).json({ error: '2FA setup failed' });
+  }
+});
+
+// Confirm enrolment: the user types the first 6-digit code from their app.
+router.post('/2fa/enable', auth.attachCustomer, auth.requireCustomer, (req, res) => {
+  const { code } = req.body || {};
+  if (!code) return res.status(400).json({ error: 'Code required' });
+  const full = dbApi.getCustomerByIdFull(req.customer.id);
+  if (!full.totp_secret) return res.status(400).json({ error: 'Start 2FA setup first.' });
+  if (full.totp_enabled)  return res.json({ ok: true, already: true });
+  const valid = twofactor.verifyToken(full.totp_secret, code);
+  if (!valid) return res.status(400).json({ error: "Code didn't match. Check your authenticator app's time/sync and try again." });
+  dbApi.enableCustomerTotp(full.id);
+  // Notify the owner so they see new 2FA-protected accounts as they appear.
+  try {
+    notify.sendTelegram(`🛡️ 2FA enabled by <b>${escapeHtml(full.name)}</b> (${escapeHtml(full.email)})`).catch(() => {});
+  } catch {}
+  res.json({ ok: true });
+});
+
+// Turn 2FA off — needs either the current password OR a current TOTP code.
+// (One stops a brute-forcer with the password; the other stops someone who
+// stole the cookie but not the password from disabling the second factor.)
+router.post('/2fa/disable', auth.attachCustomer, auth.requireCustomer, async (req, res) => {
+  const { password, code } = req.body || {};
+  if (!password && !code) {
+    return res.status(400).json({ error: 'Enter your password or a current 6-digit code to disable 2FA.' });
+  }
+  const full = dbApi.getCustomerByIdFull(req.customer.id);
+  let verified = false;
+  if (password) {
+    verified = await auth.verifyPassword(password, full.password_hash);
+  }
+  if (!verified && code && full.totp_secret) {
+    verified = twofactor.verifyToken(full.totp_secret, code);
+  }
+  if (!verified) {
+    return res.status(401).json({ error: "Password or code didn't match." });
+  }
+  dbApi.disableCustomerTotp(full.id);
+  res.json({ ok: true });
 });
 
 router.post('/change-password', auth.attachCustomer, auth.requireCustomer, async (req, res) => {

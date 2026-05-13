@@ -67,21 +67,70 @@ if (signupForm) {
 }
 
 // ============= LOG IN =============
+// Two-step login when 2FA is on: first POST sends email+password; if the
+// response is { requires_2fa: true }, we reveal the TOTP input and POST again
+// with the code. Cookie is only set on the final successful response.
 const loginForm = $('#loginForm');
 if (loginForm) {
+  let _liEmail = '';
+  let _liPassword = '';
+
+  async function submitLogin(body) {
+    return api('/api/auth/login', { method: 'POST', body: JSON.stringify(body) });
+  }
+
+  function showTotpStep() {
+    const wrap = $('#li_totp_wrap');
+    if (wrap) {
+      wrap.classList.remove('hidden');
+      wrap.style.display = '';
+    }
+    const input = $('#li_totp');
+    if (input) {
+      input.value = '';
+      setTimeout(() => input.focus(), 100);
+    }
+    // Hide the password field so the second step feels like a fresh prompt.
+    const pwField = $('#li_password')?.closest('.form-field');
+    if (pwField) pwField.classList.add('hidden');
+    const emailField = $('#li_email')?.closest('.form-field');
+    if (emailField) emailField.classList.add('hidden');
+    const submitBtn = loginForm.querySelector('button[type="submit"]');
+    if (submitBtn) submitBtn.textContent = 'Verify code';
+  }
+
   loginForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     showError('li_error', '');
-    const btn = e.target.querySelector('button');
+    const btn = e.target.querySelector('button[type="submit"]');
     btn.disabled = true;
     try {
-      const data = await api('/api/auth/login', {
-        method: 'POST',
-        body: JSON.stringify({
-          email: $('#li_email').value.trim(),
-          password: $('#li_password').value,
-        }),
-      });
+      const totpInput = $('#li_totp');
+      const isSecondStep = !!(totpInput && totpInput.value.trim());
+
+      let data;
+      if (isSecondStep) {
+        // Second leg — submit cached email/password + the 6-digit code.
+        data = await submitLogin({
+          email: _liEmail,
+          password: _liPassword,
+          totp_code: totpInput.value.trim(),
+        });
+      } else {
+        _liEmail = $('#li_email').value.trim();
+        _liPassword = $('#li_password').value;
+        data = await submitLogin({ email: _liEmail, password: _liPassword });
+      }
+
+      // Account-lockout response (HTTP 423 handled below via the throw path)
+      if (data.requires_2fa && !data.user) {
+        // First-step success — reveal TOTP input and let the user enter the code.
+        showTotpStep();
+        btn.disabled = false;
+        return;
+      }
+
+      // Final success — issued cookie, got user object.
       toast(`Welcome back, ${data.user.name}!`);
       const next = data.user.role === 'admin' ? 'admin.html' : 'account.html';
       setTimeout(() => { location.href = next; }, 600);
@@ -303,6 +352,9 @@ async function initAccount() {
     location.href = '../index.html';
   });
 
+  // 2FA panel — render current state and wire the buttons.
+  initTwoFactorPanel(data.user?.totp_enabled);
+
   // Load orders
   try {
     const { orders } = await api('/api/auth/orders');
@@ -310,6 +362,106 @@ async function initAccount() {
   } catch (err) {
     $('#ordersList').innerHTML = `<p class="muted">${err.message}</p>`;
   }
+}
+
+/* ============= 2FA PANEL ============= */
+function setTwoFactorState(state) {
+  ['twofa_off', 'twofa_setup', 'twofa_on', 'twofa_disable'].forEach(id => {
+    const el = $('#' + id);
+    if (el) el.classList.toggle('hidden', id !== state);
+  });
+}
+
+function initTwoFactorPanel(isEnabled) {
+  // Skip silently if we're not on the account page (no panel in DOM).
+  if (!$('#twofa_off') && !$('#twofa_on')) return;
+
+  setTwoFactorState(isEnabled ? 'twofa_on' : 'twofa_off');
+
+  // Click "Enable 2FA" → ask server for a secret + QR, show setup card
+  $('#twofa_setup_btn')?.addEventListener('click', async () => {
+    const btn = $('#twofa_setup_btn');
+    btn.disabled = true;
+    try {
+      const data = await api('/api/auth/2fa/setup', { method: 'POST' });
+      $('#twofa_qr').src = data.qr_data_uri;
+      $('#twofa_secret').textContent = data.secret;
+      showError('twofa_setup_err', '');
+      $('#twofa_setup_code').value = '';
+      setTwoFactorState('twofa_setup');
+      setTimeout(() => $('#twofa_setup_code')?.focus(), 100);
+    } catch (err) {
+      toast(err.message, '⚠️');
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Confirm first code → flip totp_enabled to true
+  $('#twofa_enable_btn')?.addEventListener('click', async () => {
+    const code = $('#twofa_setup_code').value.trim();
+    showError('twofa_setup_err', '');
+    if (!/^\d{6}$/.test(code)) {
+      showError('twofa_setup_err', 'Code must be 6 digits.');
+      return;
+    }
+    const btn = $('#twofa_enable_btn');
+    btn.disabled = true;
+    try {
+      await api('/api/auth/2fa/enable', {
+        method: 'POST', body: JSON.stringify({ code }),
+      });
+      toast('2FA enabled ✓');
+      setTwoFactorState('twofa_on');
+    } catch (err) {
+      showError('twofa_setup_err', err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Cancel setup mid-flow → server still has a secret persisted but disabled.
+  // That's fine; running setup again rotates the secret.
+  $('#twofa_cancel_btn')?.addEventListener('click', () => {
+    setTwoFactorState('twofa_off');
+  });
+
+  // Open the disable form
+  $('#twofa_disable_btn')?.addEventListener('click', () => {
+    $('#twofa_disable_pw').value = '';
+    $('#twofa_disable_code').value = '';
+    showError('twofa_disable_err', '');
+    setTwoFactorState('twofa_disable');
+  });
+
+  // Confirm disable (password OR current code)
+  $('#twofa_confirm_disable_btn')?.addEventListener('click', async () => {
+    const password = $('#twofa_disable_pw').value;
+    const code = $('#twofa_disable_code').value.trim();
+    showError('twofa_disable_err', '');
+    if (!password && !code) {
+      showError('twofa_disable_err', 'Enter your password or a 6-digit code.');
+      return;
+    }
+    const btn = $('#twofa_confirm_disable_btn');
+    btn.disabled = true;
+    try {
+      await api('/api/auth/2fa/disable', {
+        method: 'POST', body: JSON.stringify({ password, code }),
+      });
+      toast('2FA disabled');
+      setTwoFactorState('twofa_off');
+    } catch (err) {
+      showError('twofa_disable_err', err.message);
+    } finally {
+      btn.disabled = false;
+    }
+  });
+
+  // Cancel disable
+  $('#twofa_cancel_disable_btn')?.addEventListener('click', () => {
+    setTwoFactorState('twofa_on');
+  });
 }
 
 /* ============= ADDRESS BOOK ============= */
