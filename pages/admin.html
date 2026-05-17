@@ -41,7 +41,6 @@
       <button class="admin-tab" data-tab="customers">🧁 Customers</button>
       <button class="admin-tab" data-tab="staff">🛡️ Staff</button>
       <button class="admin-tab" data-tab="reviews">⭐ Reviews</button>
-      <button class="admin-tab" data-tab="slots">🕐 Delivery Slots</button>
       <button class="admin-tab" data-tab="settings">⚙️ Settings</button>
     </nav>
     <p class="admin-foot">Signed in as<br/><strong id="meEmail">…</strong></p>
@@ -126,16 +125,6 @@
       <h1>Reviews</h1>
       <p class="muted">Customer reviews appear automatically on product pages. Use this list to remove anything inappropriate.</p>
       <div id="reviewsTable" class="admin-table-wrap"><p>Loading…</p></div>
-    </div>
-
-    <!-- DELIVERY SLOTS -->
-    <div class="admin-section" data-section="slots">
-      <div class="admin-section-head">
-        <h1>Delivery Slots</h1>
-        <button class="btn btn-primary" id="addSlotBtn">+ Add slot</button>
-      </div>
-      <p class="muted">Define delivery windows customers can book at checkout. Each slot has a capacity to prevent over-booking.</p>
-      <div id="slotsTable" class="admin-table-wrap"><p>Loading…</p></div>
     </div>
 
     <!-- SETTINGS -->
@@ -245,6 +234,24 @@
             <span>Instagram handle</span>
             <input id="setInstagramHandle" type="text" placeholder="e.g. @chocododo or chocododo" />
             <small class="form-hint">Shown on the order confirmation page so customers can tag you.</small>
+          </label>
+
+          <label class="form-field">
+            <span>Facebook page URL</span>
+            <input id="setFacebookUrl" type="url" placeholder="https://facebook.com/chocododo" />
+            <small class="form-hint">Full URL. Leave blank to hide the Facebook icon in the footer.</small>
+          </label>
+
+          <label class="form-field">
+            <span>Instagram page URL</span>
+            <input id="setInstagramUrl" type="url" placeholder="https://instagram.com/chocododo" />
+            <small class="form-hint">Full URL. The clickable Instagram link in the footer points here.</small>
+          </label>
+
+          <label class="form-field">
+            <span>WhatsApp number (E.164, no +)</span>
+            <input id="setWhatsappNumber" type="text" placeholder="201090210256" />
+            <small class="form-hint">Country code + number with no spaces or +. Used for the "Message us on WhatsApp" link in the footer and on the confirmation page.</small>
           </label>
 
           <button class="btn btn-primary" id="saveStoreInfoBtn" style="margin-top:6px;">Save store info</button>

@@ -23,6 +23,16 @@ function showError(id, msg) {
   if (!el) return;
   el.textContent = msg || '';
   el.style.display = msg ? 'block' : 'none';
+  // Make errors impossible to miss — scroll the error into view and flash it.
+  if (msg) {
+    try { el.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch {}
+    el.classList.remove('flash');
+    // Force reflow so the animation re-runs even on repeated errors
+    void el.offsetWidth;
+    el.classList.add('flash');
+    // Also show a toast as a secondary signal
+    toast(msg, '⚠️');
+  }
 }
 
 async function api(path, opts = {}) {
@@ -353,7 +363,10 @@ async function initAccount() {
   });
 
   // 2FA panel — render current state and wire the buttons.
-  initTwoFactorPanel(data.user?.totp_enabled);
+  // (Previously called data.user?.totp_enabled here, but `data` is scoped to
+  // the try-block above and was undefined at this point — that ReferenceError
+  // crashed the whole init function, breaking the 2FA panel AND order loading.)
+  initTwoFactorPanel(user?.totp_enabled);
 
   // Load orders
   try {

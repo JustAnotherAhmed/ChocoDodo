@@ -193,9 +193,13 @@ app.get('/api/config-public', async (req, res) => {
   res.json({
     theme_override: dbApi.getSetting('theme_override', 'auto'),
     store_name:        dbApi.getSetting('store_name', 'ChocoDoDo'),
-    whatsapp_number:   notify.ownerWhatsappNumber() || null,
+    // whatsapp_number: prefer admin-set override, fall back to env var
+    whatsapp_number:   dbApi.getSetting('whatsapp_number_override', '') || notify.ownerWhatsappNumber() || null,
     instapay_handle:   dbApi.getSetting('instapay_handle', ''),
     instagram_handle:  dbApi.getSetting('instagram_handle', ''),
+    // Social links — used by footer.js to render the social icons row
+    facebook_url:      dbApi.getSetting('facebook_url', ''),
+    instagram_url:     dbApi.getSetting('instagram_url', ''),
     telegram_bot_username: await telegramBot.botUsername(),
   });
 });

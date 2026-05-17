@@ -1877,6 +1877,42 @@ section {
 .hidden { display: none !important; }
 
 /* ============================================
+   SOCIAL LINKS (rendered by i18n.js into #socialLinks mounts)
+   ============================================ */
+#socialLinks,
+.social-links-mount {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}
+#socialLinks:empty,
+.social-links-mount:empty { display: none; }
+.social-link {
+  width: 40px; height: 40px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--cream, #FFF8E7);
+  transition: transform 0.2s ease, background 0.2s ease;
+  text-decoration: none;
+}
+.social-link:hover {
+  transform: translateY(-2px) scale(1.06);
+}
+.social-link.social-facebook:hover  { background: #1877F2; color: #fff; }
+.social-link.social-instagram:hover { background: linear-gradient(45deg, #F09433, #E6683C, #DC2743, #CC2366, #BC1888); color: #fff; }
+.social-link.social-whatsapp:hover  { background: #25D366; color: #fff; }
+/* In light contexts (e.g. policy pages footer), use deeper colors */
+.policy-page .social-link,
+.auth-page .social-link {
+  background: var(--cream-2, #EFE2D3);
+  color: var(--choc-deep, #3E2723);
+}
+
+/* ============================================
    CHECKOUT — deposit card (replaces the old deposit/full radio toggle)
    ============================================ */
 .deposit-card {
@@ -2156,13 +2192,25 @@ select:focus-visible {
 .auth-error {
   background: #FCE4E4;
   color: #C62828;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: var(--radius-sm);
   font-size: 14px;
+  font-weight: 600;
   display: none;
-  border-left: 3px solid #C62828;
+  border-left: 4px solid #C62828;
+  box-shadow: 0 2px 8px rgba(198, 40, 40, 0.12);
 }
 .auth-error:not(:empty) { display: block; }
+.auth-error.flash {
+  animation: authErrorFlash 0.6s ease-out;
+}
+@keyframes authErrorFlash {
+  0%   { transform: translateX(-8px); background: #FFCDD2; }
+  25%  { transform: translateX(8px); }
+  50%  { transform: translateX(-4px); }
+  75%  { transform: translateX(4px); }
+  100% { transform: translateX(0); background: #FCE4E4; }
+}
 .auth-alt {
   text-align: center;
   margin-top: 8px;

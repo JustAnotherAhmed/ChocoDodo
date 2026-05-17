@@ -1157,9 +1157,12 @@ async function loadSettings() {
     }
 
     // Store info fields
-    if ($('#setStoreName'))      $('#setStoreName').value      = settings.store_name      || '';
-    if ($('#setInstapayHandle')) $('#setInstapayHandle').value = settings.instapay_handle || '';
-    if ($('#setInstagramHandle')) $('#setInstagramHandle').value = settings.instagram_handle || '';
+    if ($('#setStoreName'))        $('#setStoreName').value        = settings.store_name        || '';
+    if ($('#setInstapayHandle'))   $('#setInstapayHandle').value   = settings.instapay_handle   || '';
+    if ($('#setInstagramHandle'))  $('#setInstagramHandle').value  = settings.instagram_handle  || '';
+    if ($('#setFacebookUrl'))      $('#setFacebookUrl').value      = settings.facebook_url      || '';
+    if ($('#setInstagramUrl'))     $('#setInstagramUrl').value     = settings.instagram_url     || '';
+    if ($('#setWhatsappNumber'))   $('#setWhatsappNumber').value   = settings.whatsapp_number_override || '';
 
     $('#saveStoreInfoBtn')?.addEventListener('click', async () => {
       const status = $('#saveStoreInfoStatus');
@@ -1168,9 +1171,12 @@ async function loadSettings() {
       status.textContent = '';
       try {
         const updates = [
-          ['store_name',       $('#setStoreName').value.trim()],
-          ['instapay_handle',  $('#setInstapayHandle').value.trim()],
-          ['instagram_handle', $('#setInstagramHandle').value.trim()],
+          ['store_name',                $('#setStoreName').value.trim()],
+          ['instapay_handle',           $('#setInstapayHandle').value.trim()],
+          ['instagram_handle',          $('#setInstagramHandle').value.trim()],
+          ['facebook_url',              $('#setFacebookUrl').value.trim()],
+          ['instagram_url',             $('#setInstagramUrl').value.trim()],
+          ['whatsapp_number_override',  $('#setWhatsappNumber').value.trim().replace(/[^0-9]/g, '')],
         ];
         for (const [key, value] of updates) {
           await api('/api/admin/settings/' + key, {
