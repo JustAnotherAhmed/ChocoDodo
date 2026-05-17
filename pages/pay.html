@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Complete payment</title>
+  <meta name="description" content="Send your ChocoDoDo order deposit." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@400;500;600;700&family=Fredoka:wght@400;500;600;700&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../assets/styles.css" />
+  <link rel="icon" type="image/jpg" href="../assets/images/logo.jpg" />
+  <script src="../assets/themes.js"></script>
+  <script src="../assets/i18n.js"></script>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+<nav class="navbar scrolled" id="navbar">
+  <div class="nav-container">
+    <a href="../index.html" class="nav-logo">
+      <img src="../assets/images/logo.jpg" alt="ChocoDoDo" onerror="this.onerror=null;this.src='../assets/images/logo.svg';" />
+      <span class="nav-brand">Choco<em>DoDo</em></span>
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="../index.html" class="nav-link" data-i18n="nav.home">Home</a></li>
+      <li><a href="../menu.html" class="nav-link" data-i18n="nav.menu">Menu</a></li>
+    </ul>
+    <div class="nav-actions" data-lang-toggle-mount></div>
+  </div>
+</nav>
+
+<main id="main" class="policy-page">
+  <div class="container" style="max-width:640px;">
+    <article class="policy-card">
+
+      <!-- Loading -->
+      <div id="payLoading" style="text-align:center;padding:32px;">
+        <div style="font-size:3rem;" aria-hidden="true">⏳</div>
+        <p>Loading order…</p>
+      </div>
+
+      <!-- Order not found -->
+      <div id="payNotFound" class="hidden" style="text-align:center;padding:32px;">
+        <div style="font-size:3.5rem;" aria-hidden="true">🔍</div>
+        <h1>Order not found</h1>
+        <p>Double-check the order ID in your link, or contact us on WhatsApp.</p>
+        <a id="notFoundWa" href="#" class="btn btn-primary" style="margin-top:12px;">💬 WhatsApp us</a>
+      </div>
+
+      <!-- Already paid -->
+      <div id="payAlreadyDone" class="hidden" style="text-align:center;padding:32px;">
+        <div style="font-size:3.5rem;" aria-hidden="true">✅</div>
+        <h1>Already paid!</h1>
+        <p>This order's deposit has already been received. Your kitchen status is <strong id="paidStatus">Preparing</strong>.</p>
+        <a id="paidTrackLink" href="track.html" class="btn btn-primary" style="margin-top:12px;">📦 Track this order</a>
+      </div>
+
+      <!-- Main pay page -->
+      <div id="payMain" class="hidden">
+        <header>
+          <span class="section-eyebrow">💎 <span lang="en">Complete payment</span><span lang="ar" dir="rtl">إتمام الدفع</span></span>
+          <h1 lang="en">Send your deposit</h1>
+          <h1 lang="ar" dir="rtl">أرسل المقدم</h1>
+          <p class="muted">
+            <span lang="en">Order: <code id="po_orderId" style="background:var(--cream);padding:2px 8px;border-radius:6px;">CD-…</code></span>
+            <span lang="ar" dir="rtl">رقم الطلب: <code id="po_orderIdAr" style="background:var(--cream);padding:2px 8px;border-radius:6px;">CD-…</code></span>
+          </p>
+        </header>
+
+        <!-- Deposit amount banner -->
+        <div style="background:linear-gradient(135deg,#FFF7F2,#fff);border:2px solid var(--pink,#F5B7B1);border-radius:18px;padding:20px;margin:20px 0;text-align:center;">
+          <p style="margin:0 0 6px;font-size:14px;color:var(--choc);">
+            <span lang="en">Pay now</span>
+            <span lang="ar" dir="rtl">ادفع الآن</span>
+          </p>
+          <div style="font-family:'Fredoka',sans-serif;font-size:2.4rem;font-weight:700;color:var(--berry,#C2185B);">
+            <span id="po_depositAmount">— EGP</span>
+          </div>
+          <p style="margin:8px 0 0;font-size:13px;color:var(--choc);">
+            <span lang="en">Remaining <strong id="po_remaining">—</strong> due on delivery (cash to rider)</span>
+            <span lang="ar" dir="rtl">المتبقي <strong id="po_remainingAr">—</strong> يُدفع نقداً للمندوب عند التسليم</span>
+          </p>
+        </div>
+
+        <!-- Payment method picker -->
+        <div style="display:flex;gap:10px;justify-content:center;margin:20px 0;flex-wrap:wrap;">
+          <button class="payment-option po-pick selected" data-method="instapay" aria-pressed="true">
+            <img src="../assets/images/payments/instapay.svg" alt="InstaPay" class="pay-logo" />
+          </button>
+          <button class="payment-option po-pick" data-method="vcash" aria-pressed="false">
+            <img src="../assets/images/payments/vodafone-cash.svg" alt="Vodafone Cash" class="pay-logo" />
+          </button>
+        </div>
+
+        <!-- Instructions -->
+        <div id="po_instapay" class="pay-notice pay-notice-instapay">
+          <div class="pay-notice-head">
+            <strong><span lang="en">Send via InstaPay</span><span lang="ar" dir="rtl">حوّل عبر إنستاباي</span></strong>
+          </div>
+          <ol class="pay-steps">
+            <li lang="en">Open your bank app → InstaPay.</li>
+            <li lang="ar" dir="rtl">افتح تطبيق البنك → قسم إنستاباي.</li>
+            <li>
+              <span lang="en">Send <strong id="po_amount_en">— EGP</strong> to:</span>
+              <span lang="ar" dir="rtl">حوّل <strong id="po_amount_ar">— جنيه</strong> إلى:</span>
+              <span class="pay-copyrow">
+                <span class="pay-copyval" id="po_phone">—</span>
+                <button type="button" class="pay-copybtn" data-copy="#po_phone">📋 Copy</button>
+              </span>
+            </li>
+            <li>
+              <span lang="en">Put this <strong>order ID</strong> in the transfer note:</span>
+              <span lang="ar" dir="rtl">اكتب <strong>رقم الطلب</strong> في الملاحظات:</span>
+              <span class="pay-copyrow">
+                <span class="pay-copyval" id="po_idCopy">—</span>
+                <button type="button" class="pay-copybtn" data-copy="#po_idCopy">📋 Copy</button>
+              </span>
+            </li>
+            <li lang="en">Done — once received, your order status flips to <strong>Preparing</strong>.</li>
+            <li lang="ar" dir="rtl">تم — بمجرد الاستلام، تتغير حالة الطلب إلى <strong>قيد التحضير</strong>.</li>
+          </ol>
+        </div>
+
+        <div id="po_vcash" class="pay-notice pay-notice-vcash hidden">
+          <div class="pay-notice-head">
+            <strong><span lang="en">Send via Vodafone Cash</span><span lang="ar" dir="rtl">حوّل عبر فودافون كاش</span></strong>
+          </div>
+          <ol class="pay-steps">
+            <li lang="en">Open Vodafone Cash or dial <strong>*9*</strong>.</li>
+            <li lang="ar" dir="rtl">افتح فودافون كاش أو اطلب <strong>*9*</strong>.</li>
+            <li>
+              <span lang="en">Send <strong id="po_amount2_en">— EGP</strong> to:</span>
+              <span lang="ar" dir="rtl">حوّل <strong id="po_amount2_ar">— جنيه</strong> إلى:</span>
+              <span class="pay-copyrow">
+                <span class="pay-copyval" id="po_phone2">—</span>
+                <button type="button" class="pay-copybtn" data-copy="#po_phone2">📋 Copy</button>
+              </span>
+            </li>
+            <li>
+              <span lang="en">Mention your <strong>order ID</strong>: <code id="po_idDisplay">—</code></span>
+              <span lang="ar" dir="rtl">اذكر <strong>رقم الطلب</strong>: <code id="po_idDisplayAr">—</code></span>
+            </li>
+            <li lang="en">Once received, your order status flips to <strong>Preparing</strong>.</li>
+            <li lang="ar" dir="rtl">بمجرد الاستلام، تتغير حالة الطلب إلى <strong>قيد التحضير</strong>.</li>
+          </ol>
+        </div>
+
+        <div style="text-align:center;margin-top:24px;">
+          <a id="po_trackLink" href="track.html" class="btn btn-ghost">📦 <span lang="en">Track this order</span><span lang="ar" dir="rtl">تتبع هذا الطلب</span></a>
+          <a id="po_waLink" href="#" target="_blank" rel="noopener" class="btn btn-primary" style="background:#25D366;margin-inline-start:8px;">💬 <span lang="en">WhatsApp us</span><span lang="ar" dir="rtl">واتساب</span></a>
+        </div>
+      </div>
+    </article>
+  </div>
+</main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  const $ = (s) => document.querySelector(s);
+  const $$ = (s) => [...document.querySelectorAll(s)];
+  const params = new URLSearchParams(location.search);
+  const orderId = params.get('id');
+  if (!orderId) { showState('payNotFound'); return; }
+
+  function showState(id) {
+    ['payLoading', 'payMain', 'payNotFound', 'payAlreadyDone'].forEach(x => {
+      const el = document.getElementById(x);
+      if (el) el.classList.toggle('hidden', x !== id);
+    });
+  }
+
+  function fmtEgp(cents) {
+    const v = (cents || 0) / 100;
+    return `${Number.isInteger(v) ? v : v.toFixed(2)} EGP`;
+  }
+
+  async function load() {
+    let order, cfg;
+    try {
+      [order, cfg] = await Promise.all([
+        fetch('/api/order/' + encodeURIComponent(orderId)).then(r => r.ok ? r.json() : Promise.reject('not_found')),
+        fetch('/api/config-public').then(r => r.ok ? r.json() : {}),
+      ]);
+    } catch {
+      showState('payNotFound');
+      return;
+    }
+
+    // Already paid? Show success state.
+    const paidStatuses = ['paid', 'cod-confirmed', 'preparing', 'out-for-delivery', 'delivered'];
+    const trackingPaidStates = ['preparing', 'out_for_delivery', 'delivered'];
+    if (paidStatuses.includes(order.status) || trackingPaidStates.includes(order.tracking_status)) {
+      $('#paidStatus').textContent = (order.tracking_status || order.status).replace(/_/g, ' ');
+      $('#paidTrackLink').href = 'track.html?id=' + encodeURIComponent(order.id);
+      showState('payAlreadyDone');
+      return;
+    }
+
+    // Populate main pay view
+    $('#po_orderId').textContent   = order.id;
+    $('#po_orderIdAr').textContent = order.id;
+    $('#po_idCopy').textContent    = order.id;
+    $('#po_idDisplay').textContent = order.id;
+    $('#po_idDisplayAr').textContent = order.id;
+
+    const dep = fmtEgp(order.deposit_cents || order.total_cents);
+    $('#po_depositAmount').textContent = dep;
+    $('#po_amount_en').textContent = dep;
+    $('#po_amount_ar').textContent = dep.replace('EGP', 'جنيه');
+    $('#po_amount2_en').textContent = dep;
+    $('#po_amount2_ar').textContent = dep.replace('EGP', 'جنيه');
+    const remain = fmtEgp(order.remaining_cents || 0);
+    $('#po_remaining').textContent = remain;
+    $('#po_remainingAr').textContent = remain.replace('EGP', 'جنيه');
+
+    // Recipient phone (admin-set or WhatsApp number from env)
+    const phone = '+' + (cfg.whatsapp_number || '');
+    $('#po_phone').textContent  = phone;
+    $('#po_phone2').textContent = phone;
+
+    // WhatsApp + Track links
+    $('#po_trackLink').href = 'track.html?id=' + encodeURIComponent(order.id);
+    if (cfg.whatsapp_number) {
+      const waText = encodeURIComponent(`Hi ChocoDoDo 🍫\nI just paid the deposit for order ${order.id}. Please confirm. Thanks!`);
+      $('#po_waLink').href = `https://wa.me/${cfg.whatsapp_number}?text=${waText}`;
+    }
+    const nfWa = document.getElementById('notFoundWa');
+    if (nfWa && cfg.whatsapp_number) nfWa.href = `https://wa.me/${cfg.whatsapp_number}`;
+
+    // Method picker
+    $$('.po-pick').forEach(b => b.addEventListener('click', () => {
+      $$('.po-pick').forEach(x => { x.classList.remove('selected'); x.setAttribute('aria-pressed', 'false'); });
+      b.classList.add('selected');
+      b.setAttribute('aria-pressed', 'true');
+      $('#po_instapay').classList.toggle('hidden', b.dataset.method !== 'instapay');
+      $('#po_vcash').classList.toggle('hidden', b.dataset.method !== 'vcash');
+    }));
+
+    // Copy buttons
+    $$('.pay-copybtn').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const target = document.querySelector(btn.dataset.copy);
+        if (!target) return;
+        const text = target.textContent.trim();
+        if (!text || text === '—') return;
+        try {
+          await navigator.clipboard.writeText(text);
+          const orig = btn.innerHTML;
+          btn.innerHTML = '✅ Copied';
+          btn.classList.add('copied');
+          setTimeout(() => { btn.innerHTML = orig; btn.classList.remove('copied'); }, 1500);
+        } catch {
+          const ta = document.createElement('textarea');
+          ta.value = text; document.body.appendChild(ta); ta.select();
+          try { document.execCommand('copy'); } catch {}
+          ta.remove();
+        }
+      });
+    });
+
+    showState('payMain');
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>

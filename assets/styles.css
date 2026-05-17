@@ -1877,6 +1877,34 @@ section {
 .hidden { display: none !important; }
 
 /* ============================================
+   TABLET (720–1024px) — fixes for iPad-sized screens
+   that were falling between the mobile and desktop breakpoints.
+   ============================================ */
+@media (min-width: 720px) and (max-width: 1024px) {
+  /* Hero text was too large on portrait tablet, eating the visible space */
+  .hero-title { font-size: clamp(2.6rem, 6vw, 4.4rem); }
+  .hero-content { gap: 24px; }
+  /* Product grid: 2 columns on portrait tablet, 3 on landscape */
+  .products-grid { grid-template-columns: repeat(2, minmax(220px, 1fr)); }
+  /* Admin sidebar: keep visible but slightly narrower */
+  .admin-sidebar { width: 200px; }
+  .admin-page { padding-inline-start: 220px; }
+  /* Stat cards: 3-up on tablet (instead of 2-up at mobile, 7-up at desktop) */
+  .stat-grid { grid-template-columns: repeat(3, 1fr); }
+  /* Checkout main column: don't let it crush the summary panel */
+  .checkout-grid { grid-template-columns: 1fr 320px; gap: 20px; }
+  /* Modal padding bigger so close button isn't too close to content */
+  .modal { max-width: 90vw; }
+  /* Section eyebrows breathe a bit more */
+  .section-eyebrow { letter-spacing: 1.2px; }
+}
+/* Wider tablets / iPad Pro landscape — closer to desktop */
+@media (min-width: 1025px) and (max-width: 1199px) {
+  .products-grid { grid-template-columns: repeat(3, minmax(240px, 1fr)); }
+  .stat-grid { grid-template-columns: repeat(4, 1fr); }
+}
+
+/* ============================================
    SOCIAL LINKS (rendered by i18n.js into #socialLinks mounts)
    ============================================ */
 #socialLinks,

@@ -75,6 +75,24 @@
         <a href="../menu.html" class="btn btn-ghost">Order Again</a>
       </div>
 
+      <!-- QR-code payment card. Customers can scan with another phone (or
+           share the QR) to land on a public payment-instructions page
+           pre-filled with this order's amount + recipient. -->
+      <div id="payQrCard" style="display:none;margin:32px auto 0;max-width:540px;background:white;border-radius:24px;box-shadow:var(--shadow-md);padding:28px;text-align:center;">
+        <h3 style="font-family:'Fredoka',sans-serif;color:var(--choc-deep);margin:0 0 8px;">
+          📲 <span lang="en">Scan to pay</span><span lang="ar" dir="rtl">امسح للدفع</span>
+        </h3>
+        <p class="muted" style="font-size:13px;margin:0 0 16px;">
+          <span lang="en">Scan this with another phone, or tap the link below — it opens a clean payment page pre-filled with your order amount.</span>
+          <span lang="ar" dir="rtl">امسح هذا برقم آخر، أو اضغط الرابط أسفله — يفتح صفحة دفع جاهزة بقيمة طلبك.</span>
+        </p>
+        <img id="payQrImage" src="" alt="Payment QR code"
+             style="width:220px;height:220px;display:block;margin:0 auto;border:2px solid var(--cream-2);border-radius:14px;background:#fff;padding:8px;" />
+        <p style="margin-top:14px;font-size:13px;">
+          <a id="payUrlLink" href="#" target="_blank" rel="noopener" class="btn-link" style="word-break:break-all;">—</a>
+        </p>
+      </div>
+
       <!-- Full receipt the customer can copy/share -->
       <div id="receiptCard" style="display:none;margin:32px auto 0;max-width:540px;background:white;border-radius:24px;box-shadow:var(--shadow-md);padding:28px;text-align:left;">
         <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px;">

@@ -1457,6 +1457,29 @@ if (document.body.classList.contains('confirmation-body')) {
             badge.style.display = 'block';
           }
         }
+
+        // ----- QR-code payment card -----
+        // Skip the QR if the order is already paid (no point showing pay-now UI).
+        const alreadyPaid = ['paid', 'cod-confirmed', 'preparing', 'out-for-delivery', 'delivered']
+          .includes(o.status) || ['preparing', 'out_for_delivery', 'delivered']
+          .includes(o.tracking_status);
+        if (!alreadyPaid && o.pay_url) {
+          fetch(`${API_BASE}/api/order/${encodeURIComponent(o.id)}/pay-qr`)
+            .then(r => r.ok ? r.json() : null)
+            .then(q => {
+              if (!q || !q.qr_data_uri) return;
+              const card = $('#payQrCard');
+              const img  = $('#payQrImage');
+              const link = $('#payUrlLink');
+              if (img) img.src = q.qr_data_uri;
+              if (link) {
+                link.href = q.pay_url;
+                link.textContent = q.pay_url.replace(/^https?:\/\//, '');
+              }
+              if (card) card.style.display = 'block';
+            })
+            .catch(() => {});
+        }
       })
       .catch(() => {});
   }

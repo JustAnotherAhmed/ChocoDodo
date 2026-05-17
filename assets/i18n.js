@@ -229,6 +229,13 @@ window.CHOCODODO_I18N = (function () {
       'admin.customers.hint':   'Stored in a separate, locked-down table. Click any name to edit. Use Reset to generate a fresh password when a customer is locked out.',
       'admin.staff.hint':       'Invite teammates as admins or staff. Each gets a one-time link to set their password. Staff and customers use entirely separate auth.',
       'admin.reviews.hint':     'Customer reviews appear automatically on product pages. Use this list to remove anything inappropriate.',
+      'admin.modal.add_product':'Add product',
+      'admin.modal.add_category':'Add category',
+      'admin.modal.add_customer':'Add customer',
+      'admin.modal.invite_staff':'Invite staff',
+      'admin.save':             'Save',
+      'admin.cancel':           'Cancel',
+      'admin.delete':           'Delete',
     },
     ar: {
       'nav.home':     'الرئيسية',
@@ -449,6 +456,13 @@ window.CHOCODODO_I18N = (function () {
       'admin.customers.hint':   'محفوظون في جدول منفصل ومحكم. اضغط على أي اسم للتعديل. استخدم "إعادة تعيين" لإصدار كلمة مرور مؤقتة عند تعطل حساب العميل.',
       'admin.staff.hint':       'ادعُ أعضاء فريقك كمشرفين أو موظفين. كل واحد يحصل على رابط مرة واحدة لتعيين كلمة مروره. حسابات الموظفين والعملاء منفصلة تماماً.',
       'admin.reviews.hint':     'تقييمات العملاء تظهر تلقائياً في صفحات المنتجات. استخدم هذه القائمة لإزالة أي محتوى غير ملائم.',
+      'admin.modal.add_product':'إضافة منتج',
+      'admin.modal.add_category':'إضافة فئة',
+      'admin.modal.add_customer':'إضافة عميل',
+      'admin.modal.invite_staff':'دعوة موظف',
+      'admin.save':             'حفظ',
+      'admin.cancel':           'إلغاء',
+      'admin.delete':           'حذف',
     },
   };
 

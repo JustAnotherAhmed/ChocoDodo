@@ -396,11 +396,16 @@ app.post('/api/checkout', checkoutLimiter, async (req, res) => {
 app.get('/api/order/:id', (req, res) => {
   const o = dbApi.getOrder(req.params.id);
   if (!o) return res.status(404).json({ error: 'Order not found' });
+  // Build the public pay-info URL — used as the QR-code target on the
+  // confirmation page so customers can scan-and-pay on another device.
+  const base = (process.env.FRONTEND_URL || `https://${req.headers.host}`).replace(/\/$/, '');
+  const payUrl = `${base}/pages/pay.html?id=${encodeURIComponent(o.id)}`;
   res.json({
     id: o.id,
     status: o.status,
     tracking_status: o.tracking_status || 'received',
     payment_mode: o.payment_mode,
+    payment_method: o.payment_method,
     total_cents: o.total_cents,
     deposit_cents: o.deposit_cents,
     remaining_cents: o.remaining_cents,
@@ -408,7 +413,31 @@ app.get('/api/order/:id', (req, res) => {
     created_at: o.created_at,
     items: JSON.parse(o.items_json || '[]'),
     whatsapp_link: notify.customerWaMeLink(o.id, o.customer_name),
+    pay_url: payUrl,
   });
+});
+
+// QR code for an order's payment URL. Returns a PNG data URI the frontend can
+// drop into <img src="…"> directly. Cached aggressively because the URL never
+// changes once the order is created.
+let QRCodeLib = null;
+try { QRCodeLib = require('qrcode'); } catch {}
+app.get('/api/order/:id/pay-qr', async (req, res) => {
+  if (!QRCodeLib) return res.status(500).json({ error: 'QR generator not installed on the server' });
+  const o = dbApi.getOrder(req.params.id);
+  if (!o) return res.status(404).json({ error: 'Order not found' });
+  const base = (process.env.FRONTEND_URL || `https://${req.headers.host}`).replace(/\/$/, '');
+  const payUrl = `${base}/pages/pay.html?id=${encodeURIComponent(o.id)}`;
+  try {
+    const dataUri = await QRCodeLib.toDataURL(payUrl, {
+      margin: 1, width: 280,
+      color: { dark: '#3E2723', light: '#FFF8E7' },
+    });
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.json({ pay_url: payUrl, qr_data_uri: dataUri });
+  } catch (err) {
+    res.status(500).json({ error: 'QR generation failed: ' + err.message });
+  }
 });
 
 // ---------- Legacy quick-key admin HTML (still works) ----------
