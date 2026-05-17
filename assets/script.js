@@ -1023,10 +1023,53 @@ const DEPOSIT_PCT = 50;  // must match server's DEPOSIT_PCT default
 // initCheckout() is called from boot() AFTER auth state has loaded — moved there
 // to fix the prefill bug.
 
+// Cached zones for label-lookup at submit time.
+let _deliveryZones = [];
+async function loadDeliveryZones() {
+  const sel = $('#deliveryZone');
+  if (!sel) return;
+  try {
+    const r = await fetch(`${API_BASE}/api/config-public`);
+    const cfg = await r.json();
+    _deliveryZones = Array.isArray(cfg?.delivery_zones) ? cfg.delivery_zones : [];
+  } catch {
+    _deliveryZones = [];
+  }
+  // Wipe existing options except the placeholder, then add fresh ones.
+  while (sel.options.length > 1) sel.remove(1);
+  for (const z of _deliveryZones) {
+    const opt = document.createElement('option');
+    opt.value = z.id;
+    opt.dataset.zoneName = z.name;
+    opt.dataset.zoneNameAr = z.name_ar || '';
+    opt.dataset.feeEgp = z.fee_egp;
+    // Show both EN + AR names + fee so the customer sees the trade-off
+    opt.textContent = `${z.name} · ${z.name_ar || ''} — ${z.fee_egp} EGP`;
+    sel.appendChild(opt);
+  }
+  // Re-render order summary whenever the zone changes (delivery fee depends on it).
+  sel.addEventListener('change', () => renderOrderSummary());
+}
+
+function deliveryZoneLabel() {
+  const sel = $('#deliveryZone');
+  const opt = sel?.selectedOptions?.[0];
+  return opt?.dataset?.zoneName || '';
+}
+
+function selectedDeliveryFeeMinor() {
+  const sel = $('#deliveryZone');
+  const opt = sel?.selectedOptions?.[0];
+  const fee = Number(opt?.dataset?.feeEgp);
+  if (!isNaN(fee) && fee >= 0) return Math.round(fee * 100);
+  return null;  // null = let renderOrderSummary fall back to the default flat fee
+}
+
 async function initCheckout() {
   initPaymentSelector();
   initPayModeSelector();
   await loadDeliverySlots();
+  await loadDeliveryZones();
 
   // Show guest banner OR autofill from signed-in user
   if (CURRENT_USER) {
@@ -1137,7 +1180,16 @@ function renderAddressPicker(addresses) {
 
 function fillFromAddress(a) {
   $('#address').value = a.line1 || '';
-  if (a.city) $('#city').value = a.city;
+  // Try to map a saved-address city string back to a known zone id
+  if (a.city) {
+    const sel = $('#deliveryZone');
+    if (sel) {
+      const opts = Array.from(sel.options);
+      const found = opts.find(o => (o.dataset.zoneName || '').toLowerCase() === String(a.city).toLowerCase()
+                                 || o.textContent.toLowerCase().includes(String(a.city).toLowerCase()));
+      if (found) { sel.value = found.value; sel.dispatchEvent(new Event('change')); }
+    }
+  }
   if (a.full_name && !$('#fullName').value) $('#fullName').value = a.full_name;
   if (a.phone && !$('#phone').value) $('#phone').value = stripEgPhone(a.phone);
   if (a.notes && !$('#orderNotes').value) $('#orderNotes').value = a.notes;
@@ -1173,7 +1225,13 @@ function renderOrderSummary() {
     `;
   }).join('');
   const subtotal = cartTotal();
-  const delivery = subtotal > 0 ? 30 : 0;
+  // Use the chosen Cairo zone's fee if one is selected; otherwise default to
+  // 30 EGP for the visible preview (server will validate the real value).
+  let delivery = 0;
+  if (subtotal > 0) {
+    const zoneFeeMinor = selectedDeliveryFeeMinor();
+    delivery = zoneFeeMinor !== null ? zoneFeeMinor / 100 : 30;
+  }
   const tax = 0;
   const total = subtotal + delivery + tax;
   $('#sumSubtotal').textContent = formatPrice(subtotal);
@@ -1297,13 +1355,14 @@ async function handleCheckout(e) {
       name:    $('#fullName')?.value || CURRENT_USER?.name || '',
       email:   $('#email')?.value    || CURRENT_USER?.email || '',
       phone,
-      address: ($('#address')?.value || '') + ($('#city')?.value ? `, ${$('#city').value}` : ''),
+      address: ($('#address')?.value || '') + (deliveryZoneLabel() ? `, ${deliveryZoneLabel()}` : ''),
       notes:   $('#orderNotes')?.value || '',
     },
     payment_method: $('#paymentMethod')?.value || 'vcash',
     payment_mode: payMode,
     delivery_date: $('#deliveryDate')?.value || null,
     delivery_window: $('#deliveryWindow')?.value || null,
+    delivery_zone_id: $('#deliveryZone')?.value || null,
     delivery_slot_id: $('#deliverySlotId')?.value ? Number($('#deliverySlotId').value) : null,
   };
 
@@ -1317,7 +1376,7 @@ async function handleCheckout(e) {
           full_name: payload.customer.name,
           phone: payload.customer.phone,
           line1: $('#address').value || '',
-          city: $('#city').value || '',
+          city: deliveryZoneLabel() || '',
           notes: payload.customer.notes || '',
           is_default: false,
         }),

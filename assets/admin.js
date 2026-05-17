@@ -1107,6 +1107,54 @@ async function loadSettings() {
     if ($('#cfgDepositInput')) $('#cfgDepositInput').value = cfg.deposit_pct || 50;
     if ($('#cfgLeadDaysInput')) $('#cfgLeadDaysInput').value = cfg.lead_days ?? 3;
 
+    // Delivery zones JSON editor
+    const zonesInput = $('#cfgZonesInput');
+    if (zonesInput) {
+      try {
+        const pub = await fetch(`${API_BASE}/api/config-public`).then(r => r.json());
+        const zones = Array.isArray(pub?.delivery_zones) ? pub.delivery_zones : [];
+        zonesInput.value = JSON.stringify(zones, null, 2);
+      } catch {}
+      $('#saveZonesBtn')?.addEventListener('click', async () => {
+        const status = $('#saveZonesStatus');
+        status.textContent = '';
+        let parsed;
+        try {
+          parsed = JSON.parse(zonesInput.value);
+          if (!Array.isArray(parsed)) throw new Error('must be a JSON array');
+          for (const z of parsed) {
+            if (!z.id || !z.name || isNaN(Number(z.fee_egp))) {
+              throw new Error(`each zone needs id, name, and fee_egp (problem with: ${JSON.stringify(z)})`);
+            }
+          }
+        } catch (err) {
+          status.textContent = '❌ Invalid JSON: ' + err.message;
+          return;
+        }
+        try {
+          await api('/api/admin/settings/delivery_zones_json', {
+            method: 'PUT',
+            body: JSON.stringify({ value: JSON.stringify(parsed) }),
+          });
+          status.textContent = `✅ Saved — ${parsed.length} zone${parsed.length === 1 ? '' : 's'} live now.`;
+          toast('Zones saved ✓');
+        } catch (err) {
+          status.textContent = '❌ ' + err.message;
+        }
+      });
+      $('#resetZonesBtn')?.addEventListener('click', async () => {
+        if (!confirm('Reset to the default 15 Cairo zones? Your current edits will be lost.')) return;
+        try {
+          await api('/api/admin/settings/delivery_zones_json', {
+            method: 'PUT', body: JSON.stringify({ value: '' }),
+          });
+          location.reload();
+        } catch (err) {
+          toast(err.message, '⚠️');
+        }
+      });
+    }
+
     $('#saveServerCfgBtn')?.addEventListener('click', async () => {
       const status = $('#saveServerCfgStatus');
       const btn = $('#saveServerCfgBtn');

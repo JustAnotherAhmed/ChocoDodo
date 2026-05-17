@@ -220,7 +220,11 @@ router.post('/login', loginLimiter, async (req, res) => {
 });
 
 router.post('/logout', (req, res) => {
+  // Customer logout also clears any linked staff session — same person, one
+  // sign-out everywhere. (If the person is staff and wants to keep their
+  // admin session, the admin panel has its own logout button.)
   auth.clearCustomerCookie(res);
+  auth.clearStaffCookie(res);
   res.json({ ok: true });
 });
 

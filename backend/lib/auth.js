@@ -12,7 +12,10 @@ const dbApi = require('./db');
 
 const COOKIE_CUSTOMER = 'cd_customer';
 const COOKIE_STAFF    = 'cd_staff';
-const COOKIE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000;
+// 90-day "remember me" sessions so customers don't get logged out every time
+// they close the tab. Stored as a signed JWT cookie (HttpOnly + Secure in
+// prod), so it survives browser restarts but can't be stolen by JS.
+const COOKIE_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
 
 function randomToken(bytes = 32) {
   return crypto.randomBytes(bytes).toString('hex');
@@ -38,14 +41,48 @@ async function verifyPassword(plain, hash) {
 function signCustomerSession(c) {
   return jwt.sign(
     { sub: c.id, kind: 'customer', email: c.email },
-    getJwtSecret(), { expiresIn: '30d', audience: 'customer' }
+    getJwtSecret(), { expiresIn: '90d', audience: 'customer' }
   );
 }
 function signStaffSession(s) {
   return jwt.sign(
     { sub: s.id, kind: 'staff', role: s.role, email: s.email },
-    getJwtSecret(), { expiresIn: '30d', audience: 'staff' }
+    getJwtSecret(), { expiresIn: '90d', audience: 'staff' }
   );
+}
+
+/**
+ * Staff/admin shouldn't need a SEPARATE customer account to place an order
+ * for themselves. This helper finds or auto-creates a matching customer
+ * record (by email) so that signing in as staff ALSO gives them the
+ * normal customer experience.
+ *
+ * The auto-created customer gets a random unguessable password — they can
+ * still log in via the staff form, and if they ever want to use the
+ * customer-side login form they can do a normal "forgot password" flow.
+ */
+async function getOrCreateCustomerForStaff(staffRow) {
+  if (!staffRow?.email) return null;
+  let cust = dbApi.getCustomerByEmail(staffRow.email);
+  if (cust) return cust;
+  // No matching customer yet — create one mirroring the staff identity.
+  const randomPassword = randomToken(24);  // 48 hex chars, unguessable
+  const hash = await hashPassword(randomPassword);
+  try {
+    dbApi.insertCustomer({
+      email:               staffRow.email,
+      password_hash:       hash,
+      name:                staffRow.name || 'Staff',
+      phone:               staffRow.phone || '',
+      verification_token:  null,
+      email_verified:      1,  // staff are trusted by definition
+    });
+  } catch (err) {
+    // Race condition: another request created the customer in parallel.
+    // Just re-fetch and continue.
+    if (!String(err.message).includes('UNIQUE')) throw err;
+  }
+  return dbApi.getCustomerByEmail(staffRow.email);
 }
 
 function verifySession(token, audience) {
@@ -138,7 +175,11 @@ async function seedAdmin() {
     role: 'admin', invited_by: null, invite_token: null, invite_accepted: 1,
   });
   console.log(`✅ Seeded admin staff: ${email}`);
-  return dbApi.getStaffByEmail(email);
+  const fresh = dbApi.getStaffByEmail(email);
+  // Also ensure a linked customer record exists so the admin can place
+  // orders without setting up a second account.
+  try { await getOrCreateCustomerForStaff(fresh); } catch {}
+  return fresh;
 }
 
 module.exports = {
@@ -151,4 +192,5 @@ module.exports = {
   attachCustomer, attachStaff, attachBoth,
   requireCustomer, requireStaff, requireAdmin,
   seedAdmin,
+  getOrCreateCustomerForStaff,
 };

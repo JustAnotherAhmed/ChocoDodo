@@ -74,6 +74,19 @@ router.post('/login', loginLimiter, async (req, res) => {
     const token = auth.signStaffSession(s);
     auth.setStaffCookie(res, token);
     dbApi.touchStaffLogin(s.id);
+
+    // Also issue a customer cookie tied to a matching customer record (auto-
+    // created if needed). This way the same person can use the storefront as
+    // a normal customer without juggling a second account.
+    try {
+      const cust = await auth.getOrCreateCustomerForStaff(s);
+      if (cust) {
+        auth.setCustomerCookie(res, auth.signCustomerSession(cust));
+      }
+    } catch (err) {
+      console.warn('staff→customer link failed:', err.message);
+    }
+
     res.json({ user: { id: s.id, email: s.email, name: s.name, role: s.role } });
   } catch (err) {
     console.error('staff login error:', err);
@@ -82,8 +95,11 @@ router.post('/login', loginLimiter, async (req, res) => {
 });
 
 // POST /api/staff/logout
+// Clears BOTH cookies — staff and the linked customer session — so signing
+// out from the admin panel feels like one clean sign-out across the whole site.
 router.post('/logout', (req, res) => {
   auth.clearStaffCookie(res);
+  auth.clearCustomerCookie(res);
   res.json({ ok: true });
 });
 
@@ -136,6 +152,16 @@ router.post('/accept-invite', async (req, res) => {
   const fresh = dbApi.getStaffById(s.id);
   const tok = auth.signStaffSession(fresh);
   auth.setStaffCookie(res, tok);
+
+  // Also issue the matching customer cookie so the new staff member can
+  // immediately use the storefront without a separate signup.
+  try {
+    const cust = await auth.getOrCreateCustomerForStaff(fresh);
+    if (cust) auth.setCustomerCookie(res, auth.signCustomerSession(cust));
+  } catch (err) {
+    console.warn('invite-accept staff→customer link failed:', err.message);
+  }
+
   res.json({ ok: true, user: fresh });
 });
 

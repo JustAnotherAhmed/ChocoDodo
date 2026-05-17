@@ -40,6 +40,53 @@ function currentLeadDays() {
   return Number(process.env.LEAD_DAYS || 3);
 }
 
+// Default Cairo delivery zones. These are the seed values used the very
+// first time someone hits the site; admin can edit them in Settings →
+// Server config → Delivery zones to add areas, change fees, or remove rows.
+const DEFAULT_DELIVERY_ZONES = [
+  { id: 'maadi',          name: 'Maadi',                 name_ar: 'المعادي',        fee_egp: 30 },
+  { id: 'zamalek',        name: 'Zamalek',               name_ar: 'الزمالك',        fee_egp: 30 },
+  { id: 'mohandessin',    name: 'Mohandessin',           name_ar: 'المهندسين',      fee_egp: 30 },
+  { id: 'dokki',          name: 'Dokki',                 name_ar: 'الدقي',          fee_egp: 30 },
+  { id: 'downtown',       name: 'Downtown',              name_ar: 'وسط البلد',      fee_egp: 30 },
+  { id: 'heliopolis',     name: 'Heliopolis',            name_ar: 'مصر الجديدة',    fee_egp: 30 },
+  { id: 'nasr_city',      name: 'Nasr City',             name_ar: 'مدينة نصر',      fee_egp: 35 },
+  { id: 'rehab',          name: 'Rehab',                 name_ar: 'الرحاب',         fee_egp: 50 },
+  { id: 'new_cairo',      name: 'New Cairo',             name_ar: 'القاهرة الجديدة', fee_egp: 60 },
+  { id: 'fifth_settle',   name: '5th Settlement',        name_ar: 'التجمع الخامس',  fee_egp: 60 },
+  { id: 'madinaty',       name: 'Madinaty',              name_ar: 'مدينتي',         fee_egp: 70 },
+  { id: 'shorouk',        name: 'Shorouk',               name_ar: 'الشروق',         fee_egp: 70 },
+  { id: 'obour',          name: 'Obour',                 name_ar: 'العبور',         fee_egp: 70 },
+  { id: 'sheikh_zayed',   name: 'Sheikh Zayed',          name_ar: 'الشيخ زايد',     fee_egp: 70 },
+  { id: '6th_october',    name: '6th of October',        name_ar: 'السادس من أكتوبر', fee_egp: 70 },
+];
+
+/** Returns the live delivery-zone list (parsed from settings, fallback to defaults). */
+function currentDeliveryZones() {
+  const raw = dbApi.getSetting('delivery_zones_json', null);
+  if (raw) {
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    } catch {}
+  }
+  return DEFAULT_DELIVERY_ZONES;
+}
+
+/**
+ * Look up the delivery fee (in piastres) for a given zone id.
+ * Falls back to currentDeliveryMinor() when the zone is unknown — which
+ * lets us evolve the schema without breaking old in-flight orders.
+ */
+function deliveryFeeForZone(zoneId) {
+  if (!zoneId) return currentDeliveryMinor();
+  const zone = currentDeliveryZones().find(z => z.id === zoneId);
+  if (!zone) return currentDeliveryMinor();
+  const egp = Number(zone.fee_egp);
+  if (isNaN(egp) || egp < 0) return currentDeliveryMinor();
+  return Math.round(egp * 100);
+}
+
 const toMinor = (egp) => Math.round(egp * 100);
 
 /**
@@ -148,7 +195,12 @@ function priceCart(cartItems) {
     });
   }
 
-  const delivery = currentDeliveryMinor();
+  // Delivery fee: if the cart includes a zone, use the zone's fee; else fall
+  // back to the flat default. `cartItems._delivery_zone_id` is set by the
+  // server-side checkout handler before calling priceCart (priceCart itself
+  // doesn't know about the customer object).
+  const zoneId = cartItems._delivery_zone_id || null;
+  const delivery = zoneId ? deliveryFeeForZone(zoneId) : currentDeliveryMinor();
   const tax = Math.round(subtotal * currentTaxRate());
   const total = subtotal + delivery + tax;
   return {
@@ -168,4 +220,7 @@ module.exports = {
   currentDeliveryMinor,
   currentDepositPct,
   currentLeadDays,
+  currentDeliveryZones,
+  deliveryFeeForZone,
+  DEFAULT_DELIVERY_ZONES,
 };

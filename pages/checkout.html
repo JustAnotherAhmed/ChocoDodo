@@ -113,8 +113,12 @@
                        autocomplete="street-address" />
               </label>
               <label class="form-field">
-                <span data-i18n="checkout.city">City / Area</span>
-                <input id="city" type="text" placeholder="e.g. Cairo, Giza, Alexandria" autocomplete="address-level2" />
+                <span data-i18n="checkout.city">Area in Cairo</span>
+                <select id="deliveryZone" required>
+                  <option value="">— Select your area —</option>
+                  <!-- Filled in at runtime from /api/config-public -->
+                </select>
+                <small class="form-hint" data-i18n="checkout.zone_hint">We deliver only within Cairo. Fees vary by area — you'll see the total below.</small>
               </label>
               <label class="form-field">
                 <span data-i18n="checkout.save_addr">Save this address?</span>

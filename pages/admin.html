@@ -32,16 +32,16 @@
 
 <main id="main" class="admin-page">
   <aside class="admin-sidebar">
-    <h2 class="admin-title">Admin tools</h2>
+    <h2 class="admin-title" data-i18n="admin.title">Admin tools</h2>
     <nav class="admin-nav">
-      <button class="admin-tab active" data-tab="dash">📊 Dashboard</button>
-      <button class="admin-tab" data-tab="products">🍫 Products</button>
-      <button class="admin-tab" data-tab="categories">🗂️ Categories</button>
-      <button class="admin-tab" data-tab="orders">🛒 Orders</button>
-      <button class="admin-tab" data-tab="customers">🧁 Customers</button>
-      <button class="admin-tab" data-tab="staff">🛡️ Staff</button>
-      <button class="admin-tab" data-tab="reviews">⭐ Reviews</button>
-      <button class="admin-tab" data-tab="settings">⚙️ Settings</button>
+      <button class="admin-tab active" data-tab="dash"><span>📊</span> <span data-i18n="admin.nav.dash">Dashboard</span></button>
+      <button class="admin-tab" data-tab="products"><span>🍫</span> <span data-i18n="admin.nav.products">Products</span></button>
+      <button class="admin-tab" data-tab="categories"><span>🗂️</span> <span data-i18n="admin.nav.categories">Categories</span></button>
+      <button class="admin-tab" data-tab="orders"><span>🛒</span> <span data-i18n="admin.nav.orders">Orders</span></button>
+      <button class="admin-tab" data-tab="customers"><span>🧁</span> <span data-i18n="admin.nav.customers">Customers</span></button>
+      <button class="admin-tab" data-tab="staff"><span>🛡️</span> <span data-i18n="admin.nav.staff">Staff</span></button>
+      <button class="admin-tab" data-tab="reviews"><span>⭐</span> <span data-i18n="admin.nav.reviews">Reviews</span></button>
+      <button class="admin-tab" data-tab="settings"><span>⚙️</span> <span data-i18n="admin.nav.settings">Settings</span></button>
     </nav>
     <p class="admin-foot">Signed in as<br/><strong id="meEmail">…</strong></p>
   </aside>
@@ -50,86 +50,86 @@
 
     <!-- DASHBOARD -->
     <div class="admin-section active" data-section="dash">
-      <h1>Dashboard</h1>
+      <h1 data-i18n="admin.dash.title">Dashboard</h1>
       <div class="stat-grid" id="statGrid">
-        <div class="stat-card"><div class="stat-num" id="statRevenue">…</div><div class="stat-label">Revenue (EGP)</div></div>
-        <div class="stat-card"><div class="stat-num" id="statOrdersToday">…</div><div class="stat-label">Orders today</div></div>
-        <div class="stat-card"><div class="stat-num" id="statOrdersTotal">…</div><div class="stat-label">Orders total</div></div>
-        <div class="stat-card"><div class="stat-num" id="statPaid">…</div><div class="stat-label">Paid orders</div></div>
-        <div class="stat-card"><div class="stat-num" id="statPending">…</div><div class="stat-label">Pending</div></div>
-        <div class="stat-card"><div class="stat-num" id="statProducts">…</div><div class="stat-label">Products</div></div>
-        <div class="stat-card"><div class="stat-num" id="statUsers">…</div><div class="stat-label">Users</div></div>
+        <div class="stat-card"><div class="stat-num" id="statRevenue">…</div><div class="stat-label" data-i18n="admin.stat.revenue">Revenue (EGP)</div></div>
+        <div class="stat-card"><div class="stat-num" id="statOrdersToday">…</div><div class="stat-label" data-i18n="admin.stat.orders_today">Orders today</div></div>
+        <div class="stat-card"><div class="stat-num" id="statOrdersTotal">…</div><div class="stat-label" data-i18n="admin.stat.orders_total">Orders total</div></div>
+        <div class="stat-card"><div class="stat-num" id="statPaid">…</div><div class="stat-label" data-i18n="admin.stat.paid">Paid orders</div></div>
+        <div class="stat-card"><div class="stat-num" id="statPending">…</div><div class="stat-label" data-i18n="admin.stat.pending">Pending</div></div>
+        <div class="stat-card"><div class="stat-num" id="statProducts">…</div><div class="stat-label" data-i18n="admin.stat.products">Products</div></div>
+        <div class="stat-card"><div class="stat-num" id="statUsers">…</div><div class="stat-label" data-i18n="admin.stat.users">Users</div></div>
       </div>
       <div id="lowStockWidget" class="low-stock-widget" style="display:none;">
-        <h2>⚠️ Low stock</h2>
+        <h2 data-i18n="admin.low_stock">⚠️ Low stock</h2>
         <div id="lowStockList"></div>
       </div>
 
-      <h2 style="margin-top:32px">Recent orders</h2>
+      <h2 style="margin-top:32px" data-i18n="admin.recent_orders">Recent orders</h2>
       <div id="recentOrders" class="admin-table-wrap"></div>
     </div>
 
     <!-- PRODUCTS -->
     <div class="admin-section" data-section="products">
       <div class="admin-section-head">
-        <h1>Products</h1>
-        <button class="btn btn-primary" id="addProductBtn">+ Add product</button>
+        <h1 data-i18n="admin.nav.products">Products</h1>
+        <button class="btn btn-primary" id="addProductBtn"><span data-i18n="admin.btn.add_product">+ Add product</span></button>
       </div>
-      <div id="productsTable" class="admin-table-wrap"><p>Loading…</p></div>
+      <div id="productsTable" class="admin-table-wrap"><p data-i18n="admin.loading">Loading…</p></div>
     </div>
 
     <!-- CATEGORIES -->
     <div class="admin-section" data-section="categories">
       <div class="admin-section-head">
-        <h1>Categories</h1>
-        <button class="btn btn-primary" id="addCategoryBtn">+ Add category</button>
+        <h1 data-i18n="admin.nav.categories">Categories</h1>
+        <button class="btn btn-primary" id="addCategoryBtn"><span data-i18n="admin.btn.add_category">+ Add category</span></button>
       </div>
-      <p class="muted">Categories show up in your menu filters and product picker. Add as many as you need.</p>
-      <div id="categoriesTable" class="admin-table-wrap"><p>Loading…</p></div>
+      <p class="muted" data-i18n="admin.categories.hint">Categories show up in your menu filters and product picker. Add as many as you need.</p>
+      <div id="categoriesTable" class="admin-table-wrap"><p data-i18n="admin.loading">Loading…</p></div>
     </div>
 
     <!-- ORDERS -->
     <div class="admin-section" data-section="orders">
       <div class="admin-section-head">
-        <h1>Orders</h1>
+        <h1 data-i18n="admin.nav.orders">Orders</h1>
         <a href="/api/admin/orders.csv" class="btn btn-ghost" download
            title="Download all orders as a CSV file (for Excel or your bookkeeper)">
-          📥 Export CSV
+          <span data-i18n="admin.btn.export_csv">📥 Export CSV</span>
         </a>
       </div>
-      <div id="ordersTable" class="admin-table-wrap"><p>Loading…</p></div>
+      <div id="ordersTable" class="admin-table-wrap"><p data-i18n="admin.loading">Loading…</p></div>
     </div>
 
     <!-- CUSTOMERS — full CRUD -->
     <div class="admin-section" data-section="customers">
       <div class="admin-section-head">
-        <h1>Customers</h1>
-        <button class="btn btn-primary" id="addCustomerBtn">+ Add customer</button>
+        <h1 data-i18n="admin.nav.customers">Customers</h1>
+        <button class="btn btn-primary" id="addCustomerBtn"><span data-i18n="admin.btn.add_customer">+ Add customer</span></button>
       </div>
-      <p class="muted">Stored in a separate, locked-down table. Click any name to edit. Use Reset to generate a fresh password when a customer is locked out.</p>
-      <div id="customersTable" class="admin-table-wrap"><p>Loading…</p></div>
+      <p class="muted" data-i18n="admin.customers.hint">Stored in a separate, locked-down table. Click any name to edit. Use Reset to generate a fresh password when a customer is locked out.</p>
+      <div id="customersTable" class="admin-table-wrap"><p data-i18n="admin.loading">Loading…</p></div>
     </div>
 
     <!-- STAFF (admins + employees) -->
     <div class="admin-section" data-section="staff">
       <div class="admin-section-head">
-        <h1>Staff</h1>
-        <button class="btn btn-primary" id="inviteUserBtn">+ Invite staff</button>
+        <h1 data-i18n="admin.nav.staff">Staff</h1>
+        <button class="btn btn-primary" id="inviteUserBtn"><span data-i18n="admin.btn.invite_staff">+ Invite staff</span></button>
       </div>
-      <p class="muted">Invite teammates as admins or staff. Each gets a one-time link to set their password. Staff and customers use entirely separate auth.</p>
-      <div id="usersTable" class="admin-table-wrap"><p>Loading…</p></div>
+      <p class="muted" data-i18n="admin.staff.hint">Invite teammates as admins or staff. Each gets a one-time link to set their password. Staff and customers use entirely separate auth.</p>
+      <div id="usersTable" class="admin-table-wrap"><p data-i18n="admin.loading">Loading…</p></div>
     </div>
 
     <!-- REVIEWS -->
     <div class="admin-section" data-section="reviews">
-      <h1>Reviews</h1>
-      <p class="muted">Customer reviews appear automatically on product pages. Use this list to remove anything inappropriate.</p>
-      <div id="reviewsTable" class="admin-table-wrap"><p>Loading…</p></div>
+      <h1 data-i18n="admin.nav.reviews">Reviews</h1>
+      <p class="muted" data-i18n="admin.reviews.hint">Customer reviews appear automatically on product pages. Use this list to remove anything inappropriate.</p>
+      <div id="reviewsTable" class="admin-table-wrap"><p data-i18n="admin.loading">Loading…</p></div>
     </div>
 
     <!-- SETTINGS -->
     <div class="admin-section" data-section="settings">
-      <h1>Settings</h1>
+      <h1 data-i18n="admin.nav.settings">Settings</h1>
       <div class="settings-grid">
         <div class="settings-card">
           <h2>🎨 Festive theme</h2>
@@ -212,6 +212,20 @@
 
           <button class="btn btn-primary" id="saveServerCfgBtn" style="margin-top:6px;">Save server config</button>
           <small id="saveServerCfgStatus" class="muted" style="display:block;margin-top:8px;"></small>
+        </div>
+
+        <div class="settings-card">
+          <h2>🗺️ Cairo delivery zones</h2>
+          <p>Areas customers can pick at checkout and the fee for each. We deliver only within Cairo. Edit the JSON below — one entry per area.</p>
+          <label class="form-field">
+            <span>Zones (JSON)</span>
+            <textarea id="cfgZonesInput" rows="14" spellcheck="false"
+              style="font-family:'Courier New',monospace;font-size:12px;line-height:1.5;"></textarea>
+            <small class="form-hint">Format: <code>[{"id":"maadi","name":"Maadi","name_ar":"المعادي","fee_egp":30}, …]</code>. The <code>id</code> must be unique. Saving with broken JSON is rejected.</small>
+          </label>
+          <button class="btn btn-primary" id="saveZonesBtn" style="margin-top:6px;">Save delivery zones</button>
+          <button class="btn btn-ghost" id="resetZonesBtn" style="margin-inline-start:8px;">Reset to defaults</button>
+          <small id="saveZonesStatus" class="muted" style="display:block;margin-top:8px;"></small>
         </div>
 
         <div class="settings-card">

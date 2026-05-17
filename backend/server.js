@@ -201,6 +201,9 @@ app.get('/api/config-public', async (req, res) => {
     facebook_url:      dbApi.getSetting('facebook_url', ''),
     instagram_url:     dbApi.getSetting('instagram_url', ''),
     telegram_bot_username: await telegramBot.botUsername(),
+    // Cairo delivery-zone catalogue (admin-editable) — checkout uses this
+    // to populate the area dropdown and price the order accordingly.
+    delivery_zones: require('./lib/pricing').currentDeliveryZones(),
   });
 });
 app.use('/api/products', productsRoutes);
@@ -241,7 +244,7 @@ const checkoutLimiter = rateLimit({
 
 app.post('/api/checkout', checkoutLimiter, async (req, res) => {
   try {
-    const { items, customer, payment_method, payment_mode, delivery_date, delivery_window, delivery_slot_id } = req.body || {};
+    const { items, customer, payment_method, payment_mode, delivery_date, delivery_window, delivery_slot_id, delivery_zone_id } = req.body || {};
     if (!customer?.name || !customer?.email) {
       return res.status(400).json({ error: 'Name and email required' });
     }
@@ -288,6 +291,20 @@ app.post('/api/checkout', checkoutLimiter, async (req, res) => {
       slotId = slot.id;
     }
 
+    // Validate the chosen delivery zone (if any) — must be in the admin's
+    // configured Cairo zones, or we reject (rather than silently using flat).
+    const zones = require('./lib/pricing').currentDeliveryZones();
+    let cleanZoneId = null;
+    if (delivery_zone_id) {
+      const match = zones.find(z => z.id === delivery_zone_id);
+      if (!match) {
+        return res.status(400).json({ error: 'Selected delivery area is not supported. We deliver only within Cairo.' });
+      }
+      cleanZoneId = match.id;
+    }
+
+    // Tag the items array with the zone id so priceCart() can pick the right fee
+    if (cleanZoneId) items._delivery_zone_id = cleanZoneId;
     const priced = priceCart(items);
     const orderId = 'CD-' + Date.now().toString(36).toUpperCase();
     const customerId = req.customer?.id || null;
